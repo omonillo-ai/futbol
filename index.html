@@ -267,6 +267,10 @@
 
     /* ===== Кнопки языков ===== */
     .yazyki { margin-top: 15px; }
+    #zvuk-knopka {
+      margin-top: 10px; font-size: 22px; padding: 4px 14px; border-radius: 20px; cursor: pointer;
+      border: 2px solid white; background: rgba(255, 255, 255, 0.2);
+    }
     .yazyki button {
       margin: 4px;
       padding: 8px 14px;
@@ -425,6 +429,8 @@
       <button onclick="perevesti('uz')">🇺🇿 Ўзбекча</button>
       <button onclick="perevesti('ky')">🇰🇬 Кыргызча</button>
     </div>
+    <!-- кнопка звука: включить / выключить -->
+    <button id="zvuk-knopka" onclick="pereklyuchitZvuk()">🔊</button>
   </header>
 
   <!-- main = главная часть сайта -->
@@ -1730,6 +1736,7 @@
       let pravilno = poryadok[nomer].otvet;
       vybralVerno = (knopka.dataset.imya === pravilno);
       if (vybralVerno) ochki = ochki + 1;
+      zvuk(vybralVerno ? "verno" : "neverno");   // 🔊
       document.querySelectorAll("#viktorina-varianty button").forEach(function (k) {
         k.disabled = true;
         if (k.dataset.imya === pravilno) k.classList.add("verno");
@@ -1883,6 +1890,7 @@
       posledniyGol = (kuda !== kudaVratar);
       if (posledniyGol) goly = goly + 1;
       udarNomer = udarNomer + 1;
+      zvuk("udar");                                 // 🔊 удар по мячу
 
       // ждём полсекунды, пока мяч летит, потом показываем результат
       setTimeout(function () {
@@ -1891,6 +1899,10 @@
         } else {
           sostoyanie = "posleUdara";
         }
+        zvuk(posledniyGol ? "gol" : "seiv");        // 🔊 гол или вратарь поймал
+        if (sostoyanie === "konecUrovnya") setTimeout(function () { zvuk("uroven"); }, 700);
+        if (sostoyanie === "pobeda")       setTimeout(function () { zvuk("pobeda"); }, 700);
+        if (sostoyanie === "proigrysh")    setTimeout(function () { zvuk("proigrysh"); }, 700);
         obnovitPenalti();
       }, 550);
       obnovitPenalti();
@@ -2079,6 +2091,7 @@
         let uVratarya = m.y > H - 75 && m.y < H - 35 && Math.abs(m.x - vratarX) < 38;
         if (uVratarya) {                 // поймал!
           lovOchki = lovOchki + 1;
+          zvuk("poimal");                // 🔊
           m.el.remove();
           if (lovOchki >= nuzhnoPoimat) urovenProiden();
           obnovitLovlyu();
@@ -2086,6 +2099,7 @@
         }
         if (m.y > H) {                   // упал на землю — пропустил
           lovZhizni = lovZhizni - 1;
+          zvuk("promah");                // 🔊
           m.el.remove();
           if (lovZhizni <= 0 && lovIdet) konecLovli();
           obnovitLovlyu();
@@ -2106,6 +2120,7 @@
       lovIdet = false;
       ubratMyachi();
       lovSostoyanie = (lovUroven === 5) ? "pobeda" : "proiden";
+      zvuk(lovSostoyanie === "pobeda" ? "pobeda" : "uroven");   // 🔊
       if (lovUroven > lovRekord) {               // рекорд = лучший пройденный уровень
         lovRekord = lovUroven; lovNovyiRekord = true;
         try { localStorage.setItem("rekordLovli", lovRekord); } catch (e) {}
@@ -2116,6 +2131,7 @@
       lovIdet = false;
       ubratMyachi();
       lovSostoyanie = "proigrysh";
+      zvuk("proigrysh");                         // 🔊
     }
 
     // все тексты игры на текущем языке
@@ -2185,6 +2201,87 @@
     };
 
     obnovitLovlyu();
+  </script>
+
+  <script>
+    // ===== ЗВУКИ =====
+    // Звуки не из файлов: браузер сам «рисует» их числами (Web Audio).
+    // nota(частота, начало, длительность, форма, громкость)
+    let audio = null;                 // «звуковая карта» сайта (создаём при первом звуке)
+    let zvukVkl = true;               // включён ли звук
+    try { if (localStorage.getItem("zvuk") === "off") zvukVkl = false; } catch (e) {}
+
+    function nota(chastota, nachalo, dlina, forma, gromkost) {
+      let t0 = audio.currentTime + nachalo;
+      let gen = audio.createOscillator();     // генератор звука (как струна)
+      let gr = audio.createGain();            // регулятор громкости
+      gen.type = forma || "sine";             // sine — мягкий, square — «игровой», sawtooth — резкий
+      gen.frequency.setValueAtTime(chastota, t0);
+      gr.gain.setValueAtTime(gromkost || 0.2, t0);
+      gr.gain.exponentialRampToValueAtTime(0.001, t0 + dlina);   // плавно затихает
+      gen.connect(gr); gr.connect(audio.destination);
+      gen.start(t0); gen.stop(t0 + dlina);
+    }
+
+    // шум — для удара по мячу и «ааах» трибун
+    function shum(nachalo, dlina, gromkost) {
+      let t0 = audio.currentTime + nachalo;
+      let bufer = audio.createBuffer(1, Math.floor(audio.sampleRate * dlina), audio.sampleRate);
+      let dannye = bufer.getChannelData(0);
+      for (let i = 0; i < dannye.length; i++) dannye[i] = Math.random() * 2 - 1;   // случайные числа = шум
+      let ist = audio.createBufferSource(); ist.buffer = bufer;
+      let gr = audio.createGain();
+      gr.gain.setValueAtTime(gromkost, t0);
+      gr.gain.exponentialRampToValueAtTime(0.001, t0 + dlina);
+      ist.connect(gr); gr.connect(audio.destination);
+      ist.start(t0);
+    }
+
+    // все звуки сайта в одном месте
+    function zvuk(kakoi) {
+      if (!zvukVkl) return;
+      try {
+        if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+        if (audio.state === "suspended") audio.resume();
+      } catch (e) { return; }
+
+      if (kakoi === "udar") {                 // ⚽ «бум» по мячу
+        nota(150, 0, 0.15, "sine", 0.5); shum(0, 0.08, 0.3);
+      } else if (kakoi === "gol") {           // 🎉 «ГОООЛ» — радостные ноты + трибуны
+        [1047, 784, 659, 523].forEach(function (f, i) { nota(f, i * 0.09, 0.25, "square",    0.12); });
+        shum(0.1, 0.9, 0.12);
+      } else if (kakoi === "seiv") {          // 🧤 вратарь поймал — «ууу» вниз
+        nota(330, 0, 0.18, "sawtooth", 0.12); nota(220, 0.15, 0.35, "sawtooth", 0.12);
+      } else if (kakoi === "poimal") {        // мяч пойман — короткий «динь»
+        nota(880, 0, 0.1, "square", 0.1); nota(1320, 0.05, 0.12, "square", 0.08);
+      } else if (kakoi === "promah") {        // мяч упал — низкий «бух»
+        nota(110, 0, 0.3, "triangle", 0.4);
+      } else if (kakoi === "verno") {         // правильный ответ
+        nota(660, 0, 0.12, "sine", 0.25); nota(990, 0.1, 0.2, "sine", 0.25);
+      } else if (kakoi === "neverno") {       // неправильный ответ
+        nota(200, 0, 0.3, "square", 0.1);
+      } else if (kakoi === "uroven") {        // уровень пройден
+        [523, 659, 784, 659, 1047].forEach(function (f, i) { nota(f, i * 0.12, 0.2, "square", 0.1); });
+      } else if (kakoi === "pobeda") {        // 🏆 победа — фанфары + свисток
+        [523, 523, 523, 659, 784, 1047].forEach(function (f, i) { nota(f, i * 0.14, 0.3, "square", 0.12); });
+        nota(2500, 1.0, 0.6, "sine", 0.08);
+        shum(0.3, 1.5, 0.1);
+      } else if (kakoi === "proigrysh") {     // проигрыш — грустные ноты вниз
+        [392, 349, 311, 262].forEach(function (f, i) { nota(f, i * 0.2, 0.3, "triangle", 0.25); });
+      }
+    }
+
+    // кнопка 🔊 / 🔇
+    function pereklyuchitZvuk() {
+      zvukVkl = !zvukVkl;
+      try { localStorage.setItem("zvuk", zvukVkl ? "on" : "off"); } catch (e) {}
+      pokazatKnopkuZvuka();
+      if (zvukVkl) zvuk("verno");             // проверочный звук
+    }
+    function pokazatKnopkuZvuka() {
+      document.getElementById("zvuk-knopka").textContent = zvukVkl ? "🔊" : "🔇";
+    }
+    pokazatKnopkuZvuka();
   </script>
 
   <script>
