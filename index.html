@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <!-- meta charset: чтобы русские буквы показывались правильно -->
+  <meta charset="UTF-8">
+  <!-- viewport: чтобы сайт красиво выглядел и на телефоне -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мой сайт про футбол</title>
+  <!-- ===== Чтобы сайт стал приложением на телефоне ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    /* ===== Вся страница ===== */
+    body {
+      margin: 0;                          /* убираем белую рамку браузера */
+      font-family: Arial, sans-serif;     /* шрифт */
+      color: white;                       /* текст белый */
+      /* полоски, как газон на стадионе: светло-зелёная и тёмно-зелёная */
+      background: repeating-linear-gradient(
+        90deg, #2e7d32 0px, #2e7d32 80px, #388e3c 80px, #388e3c 160px
+      );
+    }
+
+    /* ===== Верхняя часть (шапка) ===== */
+    header {
+      text-align: center;                 /* всё по центру */
+      padding: 50px 20px;                 /* отступы сверху/снизу и по бокам */
+      background: rgba(0, 0, 0, 0.45);    /* тёмная полупрозрачная полоса */
+      border-bottom: 4px solid white;     /* белая линия, как разметка поля */
+    }
+
+    /* мяч, который крутится */
+    .ball {
+      font-size: 70px;                    /* большой мяч */
+      display: inline-block;              /* нужно, чтобы работало вращение */
+      animation: spin 4s linear infinite; /* крутится бесконечно, 1 круг за 4 секунды */
+    }
+
+    /* как именно крутится мяч: от 0 до 360 градусов */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    h1 {
+      font-size: 42px;
+      color: #ffeb3b;                     /* жёлтый заголовок */
+      margin: 10px 0;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      opacity: 0.9;                       /* чуть-чуть прозрачный текст */
+    }
+
+    /* ===== Основная часть ===== */
+    main {
+      max-width: 800px;                   /* не шире 800 пикселей */
+      margin: 30px auto;                  /* auto = по центру экрана */
+      padding: 0 15px;
+    }
+
+    /* карточка — белый блок с текстом */
+    .card {
+      background: white;
+      color: #1b5e20;                     /* тёмно-зелёный текст внутри */
+      border-radius: 16px;                /* закруглённые углы */
+      padding: 20px 25px;
+      margin-bottom: 20px;                /* расстояние между карточками */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* тень под карточкой */
+      transition: transform 0.2s;         /* плавное движение */
+    }
+
+    /* когда наводишь мышку — карточка чуть поднимается */
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      border-left: 6px solid #ffeb3b;     /* жёлтая полоска слева */
+      padding-left: 10px;
+    }
+
+    /* список с мячиками вместо точек */
+    ul {
+      list-style: none;                   /* убираем обычные точки */
+      padding-left: 0;
+    }
+    li::before {
+      content: "⚽ ";                      /* ставим мяч перед каждым пунктом */
+    }
+    li {
+      margin: 8px 0;
+      font-size: 17px;
+    }
+
+    /* ===== Раздел «Топ-3 игроков» ===== */
+    .section-title {
+      text-align: center;
+      font-size: 32px;
+      color: #ffeb3b;
+      margin: 40px 0 10px;
+    }
+
+    /* название позиции: Вратари, Защитники ... */
+    .position {
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 12px;
+      padding: 10px 15px;
+      margin: 30px 0 20px;
+      font-size: 22px;
+    }
+
+    /* сетка: 3 игрока в ряд, на телефоне — друг под другом */
+    .players {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;                          /* расстояние между карточками */
+    }
+
+    /* карточка игрока */
+    .player {
+      background: white;
+      color: #1b5e20;
+      border-radius: 14px;
+      padding: 18px 15px 15px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      position: relative;                 /* нужно для значка места */
+    }
+
+    /* круглый значок места: 1, 2, 3 */
+    .place {
+      position: absolute;                 /* ставим в угол карточки */
+      top: -12px;
+      left: -12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;                 /* 50% = круг */
+      background: #ffeb3b;
+      font-weight: bold;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .player h3 { margin: 5px 0 3px; font-size: 18px; }
+    .club { font-size: 14px; color: #666; margin: 0 0 10px; }
+    .stat { font-size: 14px; margin: 8px 0 3px; }
+
+    /* серая дорожка полоски */
+    .bar {
+      background: #e0e0e0;
+      border-radius: 6px;
+      height: 10px;
+      overflow: hidden;                   /* заливка не вылезает за края */
+    }
+
+    /* зелёная заливка: её длину ты меняешь через width */
+    .fill { background: #43a047; height: 100%; }
+
+    /* ===== Аватар игрока: круг с инициалами в цветах клуба ===== */
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;                 /* круг */
+      margin: 5px auto 10px;              /* по центру карточки */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      border: 4px solid #ffeb3b;          /* жёлтая рамка */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      background: #9e9e9e;                /* серый — если клуб не указан */
+    }
+    .player h3, .player .club { text-align: center; }
+
+    /* фото игрока: круглое, как значок */
+    .photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;                 /* делаем картинку круглой */
+      object-fit: cover;                  /* картинка заполняет круг и не сплющивается */
+      object-position: top;               /* показываем верх картинки (лицо) */
+      border: 4px solid #ffeb3b;          /* жёлтая рамка, как у значков */
+      display: block;
+      margin: 5px auto 10px;              /* по центру карточки */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* цвета клубов */
+    .bayern    { background: linear-gradient(135deg, #dc052d, #a00020); }
+    .milan     { background: linear-gradient(135deg, #fb090b 50%, #111 50%); }
+    .juventus  { background: linear-gradient(135deg, #111 50%, #fff 50%); color: #111; text-shadow: 0 0 4px #fff; }
+    .barcelona { background: linear-gradient(135deg, #004d98 50%, #a50044 50%); }
+    .santos    { background: linear-gradient(135deg, #fff 50%, #111 50%); color: #111; text-shadow: 0 0 4px #fff; }
+    .real      { background: linear-gradient(135deg, #ffffff, #febe10); color: #00529f; }
+    .ajax      { background: linear-gradient(90deg, #fff 33%, #d2122e 33%, #d2122e 66%, #fff 66%); color: #111; text-shadow: 0 0 4px #fff; }
+    .dinamo    { background: linear-gradient(135deg, #1e3c8c, #0b1f55); }
+
+    /* значок любимой команды в карточке */
+    .team-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 22px;
+      border: 3px solid #febe10;          /* золотая рамка */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+    }
+
+    /* ===== Окно «История игрока» ===== */
+    .player { cursor: pointer; transition: transform 0.2s; }   /* рука-указатель: на карточку можно нажать */
+    .player:hover { transform: translateY(-5px); }             /* карточка чуть поднимается */
+    .hint { text-align: center; font-size: 13px; color: #888; margin-top: 10px; }
+
+    /* тёмный фон на весь экран, сначала спрятан */
+    #okno-fon {
+      display: none;                      /* none = не видно */
+      position: fixed;                    /* поверх всего сайта */
+      inset: 0;                           /* на весь экран */
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    /* само окно */
+    #okno {
+      background: white;
+      color: #1b5e20;
+      border-radius: 16px;
+      padding: 25px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    #okno textarea {
+      width: 100%;
+      height: 180px;
+      font-size: 16px;
+      padding: 10px;
+      border: 2px solid #43a047;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    #okno button {
+      margin-top: 10px;
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn-save  { background: #43a047; color: white; }
+    .btn-close { background: #e0e0e0; color: #333; }
+
+    /* ===== Кнопки языков ===== */
+    .yazyki { margin-top: 15px; }
+    .yazyki button {
+      margin: 4px;
+      padding: 8px 14px;
+      font-size: 15px;
+      border: 2px solid white;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      cursor: pointer;
+    }
+    .yazyki button:hover { background: rgba(255, 255, 255, 0.35); }
+    .yazyki button.active { background: #ffeb3b; color: #1b5e20; border-color: #ffeb3b; }
+
+    /* ===== Мои любимые игроки ===== */
+    .forma input {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 16px;
+      border: 2px solid #43a047;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+    .forma button, .lyubimyi button {
+      padding: 8px 16px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #43a047;
+      color: white;
+      margin-top: 5px;
+    }
+    .lyubimyi {
+      border-left: 6px solid #ffeb3b;     /* жёлтая полоска слева */
+      background: #f1f8e9;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-top: 12px;
+    }
+    .lyubimyi b { font-size: 18px; }
+    .lyubimyi button { background: #e53935; font-size: 13px; padding: 5px 10px; }
+    .pusto { color: #888; font-style: italic; }
+
+    /* ===== Викторина ===== */
+    #viktorina-podskazka {
+      font-size: 18px;
+      background: #f1f8e9;
+      border-left: 6px solid #43a047;
+      border-radius: 10px;
+      padding: 12px 15px;
+    }
+    .varianty {
+      display: grid;
+      grid-template-columns: 1fr 1fr;     /* 2 кнопки в ряд */
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .varianty button, #viktorina-dalee {
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #43a047;
+      border-radius: 10px;
+      background: white;
+      color: #1b5e20;
+      cursor: pointer;
+    }
+    .varianty button:hover { background: #e8f5e9; }
+    .varianty button.verno   { background: #43a047; color: white; }   /* правильный ответ — зелёный */
+    .varianty button.neverno { background: #e53935; color: white; border-color: #e53935; }  /* ошибка — красный */
+    #viktorina-dalee { background: #ffeb3b; border-color: #fbc02d; font-weight: bold; display: none; }
+    #viktorina-schet { font-weight: bold; font-size: 18px; }
+
+    /* подпись автора фото (так требует лицензия) */
+    .avtor-foto { font-size: 10px; color: #999; text-align: center; margin: -6px 0 6px; }
+
+    /* моя эмблема фаната */
+    .moya-emblema { display: block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+    .emblema-podpis { font-size: 13px; font-weight: bold; color: #d4af37; margin: 2px 0 10px; }
+
+    /* ===== Нижняя часть (подвал) ===== */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.45);
+      border-top: 4px solid white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- header = шапка сайта -->
+  <header>
+    <div class="ball">⚽</div>
+    <h1>Мой любимый спорт — футбол</h1>
+    <p class="subtitle">Сайт сделал Мустафо</p>
+    <!-- кнопки языков: onclick вызывает perevesti("код языка") -->
+    <div class="yazyki">
+      <button onclick="perevesti('ru')">🇷🇺 Русский</button>
+      <button onclick="perevesti('en')">🇬🇧 English</button>
+      <button onclick="perevesti('uz')">🇺🇿 Ўзбекча</button>
+      <button onclick="perevesti('ky')">🇰🇬 Кыргызча</button>
+    </div>
+  </header>
+
+  <!-- main = главная часть сайта -->
+  <main>
+
+    <div class="card">
+      <h2>Привет!</h2>
+      <p>Меня зовут Мустафо. Я люблю играть в футбол.</p>
+    </div>
+
+    <div class="card">
+      <h2>Почему я люблю футбол</h2>
+      <ul>
+        <li>Это командная игра</li>
+        <li>Нужны скорость и хороший пас</li>
+        <li>Футбол учит дружбе</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Моя любимая команда</h2>
+        <!-- Моя эмблема фаната: нарисована кодом SVG, поэтому она полностью моя -->
+        <svg class="moya-emblema" viewBox="0 -34 190 154" width="200" height="162" aria-label="Эмблема фан-клуба Мустафо">
+          <!-- 15 золотых звёздочек в 2 строчки — только над щитом -->
+          <text x="15" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="25" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="35" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="45" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="55" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="65" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="75" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="85" y="-20" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="20" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="30" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="40" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="50" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="60" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="70" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <text x="80" y="-6" font-size="11" text-anchor="middle" fill="#d4af37">★</text>
+          <!-- ЩИТ: белый с золотой рамкой, внутри пусто -->
+          <path d="M10 8 H90 V60 Q90 95 50 115 Q10 95 10 60 Z" fill="#ffffff" stroke="#d4af37" stroke-width="5"/>
+          <!-- зелёная полоса с надписью MUSTAFO -->
+          <path d="M13 11 H87 V46 H13 Z" fill="#2e7d32"/>
+          <text x="50" y="25" font-size="10" font-weight="bold" text-anchor="middle" fill="#ffffff" font-family="Arial" letter-spacing="1">MUSTAFO</text>
+          <text x="50" y="39" font-size="8" font-weight="bold" text-anchor="middle" fill="#ffffff" font-family="Arial" letter-spacing="0.5">МАДРИДИСТ</text>
+          <!-- инициалы внутри щита -->
+          <text x="50" y="82" font-size="30" font-weight="bold" text-anchor="middle" fill="#d4af37" font-family="Arial">MZ</text>
+          <!-- БОЛЬШОЙ КУБОК справа — мой рисунок -->
+          <g fill="#d4af37" stroke="#a8862a" stroke-width="1.5">
+            <path d="M110 14 H170 V40 Q170 72 140 76 Q110 72 110 40 Z"/>   <!-- чаша -->
+            <path d="M110 20 Q96 20 96 34 Q96 48 110 50" fill="none" stroke-width="5"/>   <!-- левая ручка -->
+            <path d="M170 20 Q184 20 184 34 Q184 48 170 50" fill="none" stroke-width="5"/>   <!-- правая ручка -->
+            <rect x="134" y="76" width="12" height="16"/>   <!-- ножка -->
+            <rect x="118" y="92" width="44" height="10" rx="3"/>   <!-- подставка -->
+            <rect x="112" y="102" width="56" height="8" rx="3"/>   <!-- нижняя подставка -->
+          </g>
+          <text x="140" y="42" font-size="20" font-weight="bold" text-anchor="middle" fill="#ffffff" stroke="#1b5e20" stroke-width="2.5" paint-order="stroke" font-family="Arial">15</text>
+          <text x="140" y="60" font-size="14" font-weight="bold" text-anchor="middle" fill="#ffffff" stroke="#1b5e20" stroke-width="2.5" paint-order="stroke" font-family="Arial">UCL</text>
+        </svg>
+        <p class="emblema-podpis">Фан-клуб Мустафо</p>
+      <p>Я болею за <b>Реал Мадрид</b>, потому что этот клуб сильный.</p>
+    </div>
+
+    <!-- ===== МОИ ЛЮБИМЫЕ ИГРОКИ ===== -->
+    <div class="card">
+      <h2>⭐ Мои любимые игроки</h2>
+      <div class="forma">
+        <!-- input = поле для имени. onkeydown: если нажали Enter — тоже добавляем -->
+        <input id="lyub-imya" placeholder="Имя игрока" onkeydown="if (event.key === 'Enter') dobavit()">
+        <button onclick="dobavit()">➕ Добавить</button>
+      </div>
+      <!-- сюда JavaScript будет добавлять игроков -->
+      <div id="spisok-lyubimyh"></div>
+    </div>
+
+    <!-- ===== ТОП-3 ИГРОКОВ ПО ПОЗИЦИЯМ ===== -->
+    <h2 class="section-title">Топ-3 игроков по позициям в истории</h2>
+
+    <h3 class="position">🧤 Вратари</h3>
+    <div class="players">
+      <div class="player">
+        <div class="place">1</div>
+        <img src="yashin.png" class="photo" alt="Лев Яшин">
+        <h3>Лев Яшин</h3>
+        <p class="club">Клуб: Динамо (Москва)</p>
+        <p class="stat">Скорость: 60</p>
+        <div class="bar"><div class="fill" style="width: 60%;"></div></div>
+        <p class="stat">Пас (вынос): 75</p>
+        <div class="bar"><div class="fill" style="width: 75%;"></div></div>
+        <p class="stat">Удар: 33</p>
+        <div class="bar"><div class="fill" style="width: 33%;"></div></div>
+        <p class="stat">Рефлексы: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Нырки: 93</p>
+        <div class="bar"><div class="fill" style="width: 93%;"></div></div>
+        <p class="stat">Выбор позиции: 93</p>
+        <div class="bar"><div class="fill" style="width: 93%;"></div></div>
+        <p class="stat">Игра руками: 89</p>
+        <div class="bar"><div class="fill" style="width: 89%;"></div></div>
+        <p class="stat">Физика (сила): 76</p>
+        <div class="bar"><div class="fill" style="width: 76%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">2</div>
+        <img src="neuer.png" class="photo" alt="Мануэль Нойер">
+        <p class="avtor-foto">Фото: Bryan Berlin / WikiPortraits, Wikimedia Commons</p>
+        <h3>Мануэль Нойер</h3>
+        <p class="club">Клуб: Бавария (Германия)</p>
+        <p class="stat">Скорость: 80</p>
+        <div class="bar"><div class="fill" style="width: 80%;"></div></div>
+        <p class="stat">Пас: 87</p>
+        <div class="bar"><div class="fill" style="width: 87%;"></div></div>
+        <p class="stat">Удар: 80</p>
+        <div class="bar"><div class="fill" style="width: 80%;"></div></div>
+        <p class="stat">Защита: 31</p>
+        <div class="bar"><div class="fill" style="width: 31%;"></div></div>
+        <p class="stat">Физика (сила): 80</p>
+        <div class="bar"><div class="fill" style="width: 80%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">3</div>
+        <img src="buffon.png" class="photo" alt="Джанлуиджи Буффон">
+        <h3>Джанлуиджи Буффон</h3>
+        <p class="club">Клуб: Ювентус (Италия)</p>
+        <p class="stat">Скорость: 34</p>
+        <div class="bar"><div class="fill" style="width: 34%;"></div></div>
+        <p class="stat">Пас: 35–40</p>
+        <div class="bar"><div class="fill" style="width: 38%;"></div></div>
+        <p class="stat">Вынос (Kicking): 74</p>
+        <div class="bar"><div class="fill" style="width: 74%;"></div></div>
+        <p class="stat">Удар: 15–35</p>
+        <div class="bar"><div class="fill" style="width: 25%;"></div></div>
+        <p class="stat">Защита: 13–33</p>
+        <div class="bar"><div class="fill" style="width: 23%;"></div></div>
+        <p class="stat">Физика (сила): 75</p>
+        <div class="bar"><div class="fill" style="width: 75%;"></div></div>
+      </div>
+    </div>
+
+    <h3 class="position">🛡️ Защитники</h3>
+    <div class="players">
+      <div class="player">
+        <div class="place">1</div>
+        <img src="beckenbauer.png" class="photo" alt="Франц Беккенбауэр">
+        <p class="avtor-foto">Фото: Panini Group, Wikimedia Commons</p>
+        <h3>Франц Беккенбауэр</h3>
+        <p class="club">Клуб: Бавария (Германия)</p>
+        <p class="stat">Скорость: 82</p>
+        <div class="bar"><div class="fill" style="width: 82%;"></div></div>
+        <p class="stat">Пас: 88</p>
+        <div class="bar"><div class="fill" style="width: 88%;"></div></div>
+        <p class="stat">Удар: 73</p>
+        <div class="bar"><div class="fill" style="width: 73%;"></div></div>
+        <p class="stat">Защита: 93</p>
+        <div class="bar"><div class="fill" style="width: 93%;"></div></div>
+        <p class="stat">Дриблинг: 84</p>
+        <div class="bar"><div class="fill" style="width: 84%;"></div></div>
+        <p class="stat">Физика: 81</p>
+        <div class="bar"><div class="fill" style="width: 81%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">2</div>
+        <img src="maldini.jpg" class="photo" alt="Паоло Мальдини">
+        <h3>Паоло Мальдини</h3>
+        <p class="club">Клуб: Милан (Италия)</p>
+        <p class="stat">Скорость: 85</p>
+        <div class="bar"><div class="fill" style="width: 85%;"></div></div>
+        <p class="stat">Пас: 74</p>
+        <div class="bar"><div class="fill" style="width: 74%;"></div></div>
+        <p class="stat">Удар: 55</p>
+        <div class="bar"><div class="fill" style="width: 55%;"></div></div>
+        <p class="stat">Защита: 95</p>
+        <div class="bar"><div class="fill" style="width: 95%;"></div></div>
+        <p class="stat">Дриблинг: 69</p>
+        <div class="bar"><div class="fill" style="width: 69%;"></div></div>
+        <p class="stat">Физика: 82</p>
+        <div class="bar"><div class="fill" style="width: 82%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">3</div>
+        <img src="baresi.jpg" class="photo" alt="Франко Барези">
+        <p class="avtor-foto">Фото: Kurt Schorrer, Wikimedia Commons</p>
+        <h3>Франко Барези</h3>
+        <p class="club">Клуб: Милан (Италия)</p>
+        <p class="stat">Скорость: 73</p>
+        <div class="bar"><div class="fill" style="width: 73%;"></div></div>
+        <p class="stat">Пас: 75</p>
+        <div class="bar"><div class="fill" style="width: 75%;"></div></div>
+        <p class="stat">Удар: 48</p>
+        <div class="bar"><div class="fill" style="width: 48%;"></div></div>
+        <p class="stat">Защита: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Дриблинг: 70</p>
+        <div class="bar"><div class="fill" style="width: 70%;"></div></div>
+        <p class="stat">Физика: 83</p>
+        <div class="bar"><div class="fill" style="width: 83%;"></div></div>
+      </div>
+    </div>
+
+    <h3 class="position">🎯 Полузащитники</h3>
+    <div class="players">
+      <div class="player">
+        <div class="place">1</div>
+        <img src="zidane.jpg" class="photo" alt="Зинедин Зидан">
+        <p class="avtor-foto">Фото: hywell, CC BY 2.0, Wikimedia Commons</p>
+        <h3>Зинедин Зидан</h3>
+        <p class="club">Клуб: Ювентус (Италия), Реал Мадрид (Испания)</p>
+        <p class="stat">Скорость: 83</p>
+        <div class="bar"><div class="fill" style="width: 83%;"></div></div>
+        <p class="stat">Пас: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Удар: 90</p>
+        <div class="bar"><div class="fill" style="width: 90%;"></div></div>
+        <p class="stat">Защита: 73</p>
+        <div class="bar"><div class="fill" style="width: 73%;"></div></div>
+        <p class="stat">Дриблинг: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Физика: 84</p>
+        <div class="bar"><div class="fill" style="width: 84%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">2</div>
+        <img src="iniesta.jpg" class="photo" alt="Андрес Иньеста">
+        <p class="avtor-foto">Фото: Christopher Johnson, CC BY-SA 2.0, Wikimedia Commons</p>
+        <h3>Андрес Иньеста</h3>
+        <p class="club">Клуб: Барселона (Испания)</p>
+        <p class="stat">Скорость: 83</p>
+        <div class="bar"><div class="fill" style="width: 83%;"></div></div>
+        <p class="stat">Пас: 91</p>
+        <div class="bar"><div class="fill" style="width: 91%;"></div></div>
+        <p class="stat">Удар: 80</p>
+        <div class="bar"><div class="fill" style="width: 80%;"></div></div>
+        <p class="stat">Защита: 62</p>
+        <div class="bar"><div class="fill" style="width: 62%;"></div></div>
+        <p class="stat">Дриблинг: 92</p>
+        <div class="bar"><div class="fill" style="width: 92%;"></div></div>
+        <p class="stat">Физика: 66</p>
+        <div class="bar"><div class="fill" style="width: 66%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">3</div>
+        <img src="xavi.jpg" class="photo" alt="Хави">
+        <h3>Хави</h3>
+        <p class="club">Клуб: Барселона (Испания)</p>
+        <p class="stat">Скорость: 80</p>
+        <div class="bar"><div class="fill" style="width: 80%;"></div></div>
+        <p class="stat">Пас: 92</p>
+        <div class="bar"><div class="fill" style="width: 92%;"></div></div>
+        <p class="stat">Удар: 78</p>
+        <div class="bar"><div class="fill" style="width: 78%;"></div></div>
+        <p class="stat">Защита: 69</p>
+        <div class="bar"><div class="fill" style="width: 69%;"></div></div>
+        <p class="stat">Дриблинг: 91</p>
+        <div class="bar"><div class="fill" style="width: 91%;"></div></div>
+        <p class="stat">Физика: 70</p>
+        <div class="bar"><div class="fill" style="width: 70%;"></div></div>
+      </div>
+    </div>
+
+    <h3 class="position">⚡ Нападающие</h3>
+    <div class="players">
+      <div class="player">
+        <div class="place">1</div>
+        <img src="pele.jpg" class="photo" alt="Пеле">
+        <h3>Пеле</h3>
+        <p class="club">Клуб: Сантос (Бразилия)</p>
+        <p class="stat">Скорость: 93</p>
+        <div class="bar"><div class="fill" style="width: 93%;"></div></div>
+        <p class="stat">Пас: 91</p>
+        <div class="bar"><div class="fill" style="width: 91%;"></div></div>
+        <p class="stat">Удар: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Защита: 58</p>
+        <div class="bar"><div class="fill" style="width: 58%;"></div></div>
+        <p class="stat">Дриблинг: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Физика: 74</p>
+        <div class="bar"><div class="fill" style="width: 74%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">2</div>
+        <img src="ronaldo.jpg" class="photo" alt="Роналдо">        
+        <h3>Роналдо (Феномен)</h3>
+        <p class="club">Клуб: Барселона, Интер, Реал Мадрид</p>
+        <p class="stat">Скорость: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Пас: 79</p>
+        <div class="bar"><div class="fill" style="width: 79%;"></div></div>
+        <p class="stat">Удар: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Защита: 43</p>
+        <div class="bar"><div class="fill" style="width: 43%;"></div></div>
+        <p class="stat">Дриблинг: 94</p>
+        <div class="bar"><div class="fill" style="width: 94%;"></div></div>
+        <p class="stat">Физика: 75</p>
+        <div class="bar"><div class="fill" style="width: 75%;"></div></div>
+      </div>
+      <div class="player">
+        <div class="place">3</div>
+        <img src="cruyff.jpg" class="photo" alt="Йохан Кройф">
+        <h3>Йохан Кройф</h3>
+        <p class="club">Клуб: Аякс (Нидерланды), Барселона</p>
+        <p class="stat">Скорость: 90</p>
+        <div class="bar"><div class="fill" style="width: 90%;"></div></div>
+        <p class="stat">Пас: 90</p>
+        <div class="bar"><div class="fill" style="width: 90%;"></div></div>
+        <p class="stat">Удар: 91</p>
+        <div class="bar"><div class="fill" style="width: 91%;"></div></div>
+        <p class="stat">Защита: 42</p>
+        <div class="bar"><div class="fill" style="width: 42%;"></div></div>
+        <p class="stat">Дриблинг: 93</p>
+        <div class="bar"><div class="fill" style="width: 93%;"></div></div>
+        <p class="stat">Физика: 73</p>
+        <div class="bar"><div class="fill" style="width: 73%;"></div></div>
+      </div>
+    </div>
+
+      <!-- ===== Моя первая кнопка ===== -->
+    <div class="card">
+      <h2>Проверка JavaScript</h2>
+      <!-- onclick = "что сделать, когда нажали" -->
+      <button onclick="privet()">Нажми меня ⚽</button>
+      <!-- сюда JavaScript напишет ответ -->
+      <p id="otvet">Пока ничего не нажато...</p>
+    </div>
+
+    <script>
+      // function = «команда», которую мы придумали сами
+      function privet() {
+        // находим абзац с id="otvet" и меняем его текст
+        document.getElementById("otvet").textContent = "Hala Madrid! ⚪";
+      }
+    </script>    <!-- ===== СРАВНИ ИГРОКОВ ===== -->
+    <div class="card">
+      <h2>⚔️ Сравни игроков</h2>
+
+      <!-- 1-й игрок -->
+      <select id="igrok1">
+        <option value="yashin">Лев Яшин</option>
+        <option value="beckenbauer">Беккенбауэр</option>
+        <option value="maldini">Мальдини</option>
+        <option value="zidane">Зидан</option>
+        <option value="pele">Пеле</option>
+        <option value="ronaldo">Роналдо</option>
+        <option value="cruyff">Кройф</option>
+      </select>
+
+      <b> VS </b>
+
+      <!-- 2-й игрок -->
+      <select id="igrok2">
+        <option value="yashin">Лев Яшин</option>
+        <option value="beckenbauer">Беккенбауэр</option>
+        <option value="maldini">Мальдини</option>
+        <option value="zidane">Зидан</option>
+        <option value="pele">Пеле</option>
+        <option value="ronaldo" selected>Роналдо</option>
+        <option value="cruyff">Кройф</option>
+      </select>
+
+      <!-- что сравниваем: выбирается так же, как игроки -->
+      <select id="harakteristika">
+        <option value="skorost">🏃 Скорость</option>
+        <option value="pas">🎯 Пас</option>
+        <option value="udar">💥 Удар</option>
+        <option value="fizika">💪 Физика</option>
+      </select>
+
+      <button onclick="sravnit()">Сравнить!</button>
+
+      <p id="rezultat">Выбери двух игроков, характеристику и нажми «Сравнить!»</p>
+    </div>
+
+    <script>
+      // igroki = большая коробка. Внутри у каждого игрока — своя маленькая коробка с цифрами
+      let igroki = {
+        yashin: { skorost: 60, pas: 75, udar: 33, fizika: 76 },
+        beckenbauer: { skorost: 82, pas: 88, udar: 73, fizika: 81 },
+        maldini: { skorost: 85, pas: 74, udar: 55, fizika: 82 },
+        zidane: { skorost: 83, pas: 94, udar: 90, fizika: 84 },
+        pele: { skorost: 93, pas: 91, udar: 94, fizika: 74 },
+        ronaldo: { skorost: 94, pas: 79, udar: 94, fizika: 75 },
+        cruyff: { skorost: 90, pas: 90, udar: 91, fizika: 73 }
+      };
+
+      function sravnit() {
+        // кого выбрали
+        let a = document.getElementById("igrok1").value;
+        let b = document.getElementById("igrok2").value;
+        // что сравниваем (skorost, pas, udar или fizika)
+        let h = document.getElementById("harakteristika").value;
+
+        // берём красивые имена из списков (то, что видно на экране)
+        let imya1 = document.getElementById("igrok1").selectedOptions[0].text;
+        let imya2 = document.getElementById("igrok2").selectedOptions[0].text;
+
+        // достаём нужную цифру: igroki[игрок][характеристика]
+        let chislo1 = igroki[a][h];
+        let chislo2 = igroki[b][h];
+
+        // if = «если»: сравниваем и пишем, кто сильнее
+        if (chislo1 > chislo2) {
+          document.getElementById("rezultat").textContent = t("🏆 Сильнее") + " " + imya1 + " (" + chislo1 + " " + t("против") + " " + chislo2 + ")";
+        } else if (chislo1 < chislo2) {
+          document.getElementById("rezultat").textContent = t("🏆 Сильнее") + " " + imya2 + " (" + chislo2 + " " + t("против") + " " + chislo1 + ")";
+        } else {
+          document.getElementById("rezultat").textContent = t("🤝 Ничья! У обоих") + " " + chislo1;
+        }
+      }
+    </script>
+
+    <!-- ===== ВИКТОРИНА «УГАДАЙ ФУТБОЛИСТА» ===== -->
+    <div class="card">
+      <h2>🎮 Угадай футболиста</h2>
+      <p id="viktorina-schet">Вопрос 1 из 12 · Очки: 0</p>
+      <p id="viktorina-podskazka">...</p>
+      <!-- сюда JavaScript поставит 4 кнопки-ответа -->
+      <div class="varianty" id="viktorina-varianty"></div>
+      <p id="viktorina-otvet"></p>
+      <button id="viktorina-dalee" onclick="sleduyushiy()">Дальше ➡️</button>
+    </div>
+
+  </main>
+
+  <!-- footer = подвал сайта -->
+  <footer>
+    <p>© 2026 Мустафо</p>
+  </footer>
+
+
+  <!-- ===== Окно «История игрока» (появляется при нажатии на карточку) ===== -->
+  <div id="okno-fon">
+    <div id="okno">
+      <h2 id="okno-imya">Игрок</h2>
+      <p>📖 Напиши историю этого игрока:</p>
+      <textarea id="okno-tekst" placeholder="Например: где родился, за какие клубы играл, какие трофеи выиграл..."></textarea>
+      <button class="btn-save" onclick="sohranit()">💾 Сохранить</button>
+      <button class="btn-close" onclick="zakryt()">✖ Закрыть</button>
+      <p id="okno-status"></p>
+    </div>
+  </div>
+
+  <script>
+    // gotovye = готовые истории на 4 языках: имя → { ru, en, uz, ky }
+    let gotovye = {
+      "Лев Яшин": {"ru": "Советский вратарь, почти всю карьеру играл за московское «Динамо». Его прозвали «Чёрный паук» за чёрную форму и умение доставать, казалось бы, любые мячи. В 1960 году вместе со сборной СССР выиграл первый чемпионат Европы. Яшин — единственный вратарь в истории, получивший «Золотой мяч» (1963).", "en": "Soviet goalkeeper who played almost his whole career for Dynamo Moscow. He was nicknamed the \"Black Spider\" because of his black kit and his ability to reach almost any ball. In 1960 he won the first European Championship with the USSR team. Yashin is the only goalkeeper in history to win the Ballon d'Or (1963).", "uz": "Совет дарвозабони, деярли бутун фаолиятини Москванинг «Динамо» клубида ўтказган. Қора формаси ва деярли ҳар қандай тўпни ушлай олгани учун уни «Қора ўргимчак» деб аташган. 1960 йилда СССР терма жамоаси билан биринчи Европа чемпионатида ғолиб бўлган. Яшин — тарихда «Олтин тўп» олган ягона дарвозабон (1963).", "ky": "Советтик дарбазачы, дээрлик бүт карьерасын Москванын «Динамо» клубунда өткөргөн. Кара формасы жана дээрлик ар кандай топту кармай алганы үчүн аны «Кара жөргөмүш» деп аташкан. 1960-жылы СССР курама командасы менен биринчи Европа чемпионатын утуп алган. Яшин — тарыхта «Алтын топ» алган жалгыз дарбазачы (1963)."},
+      "Мануэль Нойер": {"ru": "Немецкий вратарь. Начинал в «Шальке», а с 2011 года играет за «Баварию». Чемпион мира 2014 года и двукратный победитель Лиги чемпионов. Нойер изменил игру вратарей: он часто выходит далеко из ворот и играет ногами почти как полевой игрок, поэтому его называют «вратарь-свипер».", "en": "German goalkeeper. He started at Schalke and has played for Bayern since 2011. World Cup winner in 2014 and two-time Champions League winner. Neuer changed how goalkeepers play: he often comes far out of his goal and plays with his feet almost like an outfield player, which is why he is called a \"sweeper-keeper\".", "uz": "Германиялик дарвозабон. «Шальке»да бошлаган, 2011 йилдан бери «Бавария»да ўйнайди. 2014 йилги жаҳон чемпиони ва Чемпионлар лигасининг икки карра ғолиби. Нойер дарвозабонлар ўйинини ўзгартирди: у кўпинча дарвозадан узоққа чиқади ва оёқ билан деярли майдон ўйинчисидек ўйнайди, шунинг учун уни «свипер-дарвозабон» дейишади.", "ky": "Германиялык дарбазачы. «Шальке» клубунан баштаган, 2011-жылдан бери «Баварияда» ойнойт. 2014-жылдагы дүйнө чемпиону жана Чемпиондор лигасынын эки жолку жеңүүчүсү. Нойер дарбазачылардын оюнун өзгөрттү: ал көп учурда дарбазадан алыс чыгып, бут менен дээрлик талаа оюнчусундай ойнойт, ошондуктан аны «свипер-дарбазачы» деп аташат."},
+      "Джанлуиджи Буффон": {"ru": "Итальянский вратарь, легенда «Ювентуса», за который отыграл большую часть карьеры. Начинал в «Парме» и там же закончил карьеру. Чемпион мира 2006 года. Играл на высоком уровне почти до 45 лет и стал примером того, как долго можно оставаться лучшим.", "en": "Italian goalkeeper and a Juventus legend, where he spent most of his career. He started at Parma and finished his career there too. World Cup winner in 2006. He played at a high level until almost 45 and became an example of how long you can stay one of the best.", "uz": "Италиялик дарвозабон, «Ювентус» афсонаси — фаолиятининг катта қисмини шу клубда ўтказган. «Парма»да бошлаган ва фаолиятини ҳам ўша ерда якунлаган. 2006 йилги жаҳон чемпиони. Деярли 45 ёшгача юқори даражада ўйнаб, энг яхшилардан бири бўлиб қанча узоқ қолиш мумкинлигига намуна бўлди.", "ky": "Италиялык дарбазачы, «Ювентустун» легендасы — карьерасынын көбүн ушул клубда өткөргөн. «Пармада» баштап, карьерасын да ошол жерде аяктаган. 2006-жылдагы дүйнө чемпиону. Дээрлик 45 жашка чейин жогорку деңгээлде ойноп, мыктылардын бири болуп канча убакыт калса болорунун үлгүсү болгон."},
+      "Франц Беккенбауэр": {"ru": "Немецкий защитник по прозвищу «Кайзер» (император). Легенда «Баварии»: выиграл с ней три Кубка чемпионов подряд. Сделал знаменитой роль либеро — защитника, который ещё и начинает атаки. Чемпион мира как игрок (1974) и как тренер (1990), двукратный обладатель «Золотого мяча».", "en": "German defender nicknamed \"Der Kaiser\" (the Emperor). A Bayern legend: he won three European Cups in a row with the club. He made the libero role famous — a defender who also starts attacks. World Cup winner as a player (1974) and as a coach (1990), and a two-time Ballon d'Or winner.", "uz": "«Кайзер» (император) лақабли германиялик ҳимоячи. «Бавария» афсонаси: клуб билан кетма-кет учта Европа кубогини ютган. Либеро ролини машҳур қилган — бу ҳужумни ҳам бошлайдиган ҳимоячи. Ўйинчи сифатида (1974) ва мураббий сифатида (1990) жаҳон чемпиони, икки карра «Олтин тўп» соҳиби.", "ky": "«Кайзер» (император) лакаптуу германиялык коргоочу. «Бавариянын» легендасы: клуб менен катары менен үч Европа кубогун утуп алган. Либеро ролун атактуу кылган — бул чабуулду да баштаган коргоочу. Оюнчу катары (1974) жана машыктыруучу катары (1990) дүйнө чемпиону, эки жолу «Алтын топту» алган."},
+      "Паоло Мальдини": {"ru": "Итальянский защитник, который всю клубную карьеру — больше 20 сезонов — провёл в одном клубе, «Милане». Был капитаном и пять раз выигрывал Кубок / Лигу чемпионов. Его считают одним из самых умных защитников: он отбирал мяч чисто, почти без фолов.", "en": "Italian defender who spent his entire club career — more than 20 seasons — at one club, AC Milan. He was captain and won the European Cup / Champions League five times. He is considered one of the smartest defenders ever: he won the ball cleanly, with almost no fouls.", "uz": "Италиялик ҳимоячи, бутун клуб фаолиятини — 20 мавсумдан кўпроқ — битта клубда, «Милан»да ўтказган. Сардор бўлган ва Европа кубоги / Чемпионлар лигасини беш марта ютган. У энг ақлли ҳимоячилардан бири ҳисобланади: тўпни тоза, деярли қоидабузарликсиз олиб қўярди.", "ky": "Италиялык коргоочу, бүт клубдук карьерасын — 20 сезондон ашык — бир клубда, «Миланда» өткөргөн. Капитан болгон жана Европа кубогун / Чемпиондор лигасын беш жолу утуп алган. Ал эң акылдуу коргоочулардын бири болуп эсептелет: топту таза, дээрлик эрежени бузбай алчу."},
+      "Франко Барези": {"ru": "Итальянский защитник и капитан «Милана», за который сыграл всю карьеру. Вместе с Мальдини они были основой одной из лучших защит в истории. Барези был невысоким, но отлично читал игру. В «Милане» навсегда закрепили его номер 6 — больше его никто не носит.", "en": "Italian defender and AC Milan captain, who played his whole career there. Together with Maldini he formed the core of one of the best defences in history. Baresi was not tall, but he read the game brilliantly. Milan retired his number 6 forever — no one else wears it.", "uz": "Италиялик ҳимоячи ва «Милан» сардори, бутун фаолиятини шу клубда ўтказган. Мальдини билан бирга тарихдаги энг яхши ҳимоялардан бирининг асоси бўлган. Барези баланд бўйли эмасди, лекин ўйинни жуда яхши тушунарди. «Милан»да унинг 6-рақамини абадий ёпиб қўйишган — уни бошқа ҳеч ким киймайди.", "ky": "Италиялык коргоочу жана «Миландын» капитаны, бүт карьерасын ушул клубда өткөргөн. Мальдини менен бирге тарыхтагы эң мыкты коргонуулардын биринин негизи болгон. Барези бойлуу эмес болчу, бирок оюнду абдан жакшы түшүнчү. «Миланда» анын 6-номерин түбөлүккө жабышкан — аны башка эч ким кийбейт."},
+      "Зинедин Зидан": {"ru": "Французский полузащитник. Играл за «Канн», «Бордо», «Ювентус» и «Реал Мадрид». В финале чемпионата мира 1998 забил два гола головой, и Франция впервые стала чемпионом мира. Обладатель «Золотого мяча» 1998 года. Позже как тренер «Реала» выиграл три Лиги чемпионов подряд.", "en": "French midfielder. He played for Cannes, Bordeaux, Juventus and Real Madrid. In the 1998 World Cup final he scored two headers, and France became world champions for the first time. Ballon d'Or winner in 1998. Later, as Real Madrid coach, he won three Champions Leagues in a row.", "uz": "Франциялик ярим ҳимоячи. «Канн», «Бордо», «Ювентус» ва «Реал Мадрид»да ўйнаган. 1998 йилги жаҳон чемпионати финалида бош билан икки гол урган ва Франция илк бор жаҳон чемпиони бўлган. 1998 йилги «Олтин тўп» соҳиби. Кейинчалик «Реал» мураббийи сифатида кетма-кет учта Чемпионлар лигасини ютган.", "ky": "Франциялык жарым коргоочу. «Канн», «Бордо», «Ювентус» жана «Реал Мадридде» ойногон. 1998-жылдагы дүйнө чемпионатынын финалында баш менен эки гол киргизип, Франция биринчи жолу дүйнө чемпиону болгон. 1998-жылдагы «Алтын топтун» ээси. Кийин «Реалдын» машыктыруучусу катары катары менен үч Чемпиондор лигасын утуп алган."},
+      "Андрес Иньеста": {"ru": "Испанский полузащитник, воспитанник академии «Барселоны». Мастер дриблинга и паса, очень спокойный с мячом. Забил победный гол в финале чемпионата мира 2010 года. Вместе с Хави долгие годы был сердцем «Барселоны» и сборной Испании.", "en": "Spanish midfielder who came through Barcelona's academy. A master of dribbling and passing, always calm on the ball. He scored the winning goal in the 2010 World Cup final. Together with Xavi, he was the heart of Barcelona and the Spanish national team for many years.", "uz": "Испаниялик ярим ҳимоячи, «Барселона» академиясининг тарбияланувчиси. Дриблинг ва узатма устаси, тўп билан доим хотиржам. 2010 йилги жаҳон чемпионати финалида ғалаба голини урган. Хави билан бирга кўп йиллар «Барселона» ва Испания терма жамоасининг юраги бўлган.", "ky": "Испаниялык жарым коргоочу, «Барселона» академиясынын тарбиялануучусу. Дриблинг жана пастын устаты, топ менен дайыма токтоо. 2010-жылдагы дүйнө чемпионатынын финалында жеңиш голун киргизген. Хави менен бирге көп жылдар «Барселонанын» жана Испания курама командасынын жүрөгү болгон."},
+      "Хави": {"ru": "Испанский полузащитник, легенда «Барселоны». Почти никогда не терял мяч и управлял игрой короткими передачами — это стиль «тики-така». Чемпион мира 2010 и двукратный чемпион Европы (2008, 2012). Позже стал главным тренером «Барселоны».", "en": "Spanish midfielder and a Barcelona legend. He almost never lost the ball and controlled the game with short passes — the \"tiki-taka\" style. World Cup winner in 2010 and two-time European champion (2008, 2012). Later he became Barcelona's head coach.", "uz": "Испаниялик ярим ҳимоячи, «Барселона» афсонаси. Тўпни деярли йўқотмасди ва ўйинни қисқа узатмалар билан бошқарарди — бу «тики-така» услуби. 2010 йилги жаҳон чемпиони ва икки карра Европа чемпиони (2008, 2012). Кейинчалик «Барселона»нинг бош мураббийи бўлган.", "ky": "Испаниялык жарым коргоочу, «Барселонанын» легендасы. Топту дээрлик жоготчу эмес жана оюнду кыска пастар менен башкарчу — бул «тики-така» стили. 2010-жылдагы дүйнө чемпиону жана эки жолку Европа чемпиону (2008, 2012). Кийин «Барселонанын» башкы машыктыруучусу болгон."},
+      "Пеле": {"ru": "Бразильский нападающий, которого называют «Королём футбола». Большую часть карьеры играл за «Сантос». Единственный футболист в истории, трижды ставший чемпионом мира: 1958, 1962 и 1970. Забивал очень много и сделал футбол популярным по всему миру.", "en": "Brazilian forward known as the \"King of Football\". He played most of his career for Santos. The only footballer in history to win the World Cup three times: 1958, 1962 and 1970. He scored a huge number of goals and made football popular all over the world.", "uz": "Бразилиялик ҳужумчи, уни «Футбол қироли» деб аташади. Фаолиятининг катта қисмини «Сантос»да ўтказган. Тарихда уч марта жаҳон чемпиони бўлган ягона футболчи: 1958, 1962 ва 1970. Жуда кўп гол урган ва футболни бутун дунёда машҳур қилган.", "ky": "Бразилиялык чабуулчу, аны «Футболдун падышасы» деп аташат. Карьерасынын көбүн «Сантос» клубунда өткөргөн. Тарыхта үч жолу дүйнө чемпиону болгон жалгыз футболчу: 1958, 1962 жана 1970. Абдан көп гол киргизген жана футболду бүт дүйнөгө атактуу кылган."},
+      "Роналдо (Феномен)": {"ru": "Бразильский нападающий по прозвищу «Феномен». Играл за «Барселону», «Интер», «Реал Мадрид» и другие клубы. Был очень быстрым и техничным. Дважды чемпион мира (1994 и 2002); в 2002 году вернулся после тяжёлых травм колена и стал лучшим бомбардиром турнира. Двукратный обладатель «Золотого мяча».", "en": "Brazilian forward nicknamed \"The Phenomenon\". He played for Barcelona, Inter, Real Madrid and other clubs. He was extremely fast and skilful. Two-time World Cup winner (1994 and 2002); in 2002 he came back after serious knee injuries and became the tournament's top scorer. Two-time Ballon d'Or winner.", "uz": "«Феномен» лақабли бразилиялик ҳужумчи. «Барселона», «Интер», «Реал Мадрид» ва бошқа клубларда ўйнаган. Жуда тез ва техникали бўлган. Икки карра жаҳон чемпиони (1994 ва 2002); 2002 йилда тиззасидаги оғир жароҳатлардан кейин қайтиб, турнирнинг энг яхши тўпурари бўлган. Икки карра «Олтин тўп» соҳиби.", "ky": "«Феномен» лакаптуу бразилиялык чабуулчу. «Барселона», «Интер», «Реал Мадрид» жана башка клубдарда ойногон. Абдан ылдам жана техникалуу болгон. Эки жолку дүйнө чемпиону (1994 жана 2002); 2002-жылы тизесиндеги оор жаракаттардан кийин кайтып келип, турнирдин эң мыкты бомбардири болгон. Эки жолу «Алтын топту» алган."},
+      "Йохан Кройф": {"ru": "Нидерландский нападающий, звезда «Аякса» и «Барселоны». С «Аяксом» выиграл три Кубка чемпионов подряд. Главный игрок «тотального футбола», где все игроки меняются позициями. Трижды получал «Золотой мяч». Финт «поворот Кройфа» назван в его честь. Потом как тренер построил стиль игры «Барселоны».", "en": "Dutch forward, the star of Ajax and Barcelona. With Ajax he won three European Cups in a row. He was the key player of \"Total Football\", where all players swap positions. He won the Ballon d'Or three times. The \"Cruyff turn\" trick is named after him. Later, as a coach, he built Barcelona's style of play.", "uz": "Нидерландиялик ҳужумчи, «Аякс» ва «Барселона» юлдузи. «Аякс» билан кетма-кет учта Европа кубогини ютган. Барча ўйинчилар позицияларини алмаштирадиган «тотал футбол»нинг асосий ўйинчиси бўлган. Уч марта «Олтин тўп»ни олган. «Кройф бурилиши» финти унинг номи билан аталган. Кейинчалик мураббий сифатида «Барселона»нинг ўйин услубини яратган.", "ky": "Нидерландиялык чабуулчу, «Аякстын» жана «Барселонанын» жылдызы. «Аякс» менен катары менен үч Европа кубогун утуп алган. Бардык оюнчулар позицияларын алмаштырган «тоталдык футболдун» негизги оюнчусу болгон. Үч жолу «Алтын топту» алган. «Кройфтун бурулушу» финти анын аты менен аталган. Кийин машыктыруучу катары «Барселонанын» оюн стилин түзгөн."}
+    };
+
+    // tekushiy = имя игрока, чьё окно сейчас открыто
+    let tekushiy = "";
+
+    // находим ВСЕ карточки игроков и каждой говорим: «когда на тебя нажмут — открой окно»
+    let kartochki = document.querySelectorAll(".player");
+    kartochki.forEach(function (kartochka) {
+      // добавляем подсказку внизу карточки
+      let podskazka = document.createElement("p");
+      podskazka.className = "hint";
+      podskazka.textContent = "👆 Нажми, чтобы написать историю";
+      kartochka.appendChild(podskazka);
+
+      // addEventListener("click") = «слушай нажатия»
+      // запоминаем имя по-русски: по нему хранятся истории, даже если язык поменяли
+      let imyaRu = kartochka.querySelector("h3").textContent;
+      kartochka.addEventListener("click", function () {
+        otkryt(imyaRu);
+        // в заголовке окна показываем имя на текущем языке
+        document.getElementById("okno-imya").textContent = kartochka.querySelector("h3").textContent;
+      });
+    });
+
+    // kluch = «ключ» в памяти браузера. Для русского — как раньше, для других языков — свой
+    function kluch(imya) {
+      let ya = (typeof yazyk !== "undefined") ? yazyk : "ru";
+      return ya === "ru" ? "istoriya_" + imya : "istoriya_" + ya + "_" + imya;
+    }
+
+    function otkryt(imya) {
+      tekushiy = imya;
+      document.getElementById("okno-imya").textContent = imya;
+      // достаём сохранённую историю (если есть)
+      let istoriya = "";
+      try { istoriya = localStorage.getItem(kluch(imya)) || ""; } catch (e) {}
+      // если своей истории нет — показываем готовую на текущем языке
+      if (istoriya === "" && gotovye[imya]) {
+        let ya = (typeof yazyk !== "undefined") ? yazyk : "ru";
+        istoriya = gotovye[imya][ya] || gotovye[imya].ru;
+      }
+      document.getElementById("okno-tekst").value = istoriya;
+      document.getElementById("okno-status").textContent = "";
+      document.getElementById("okno-fon").style.display = "flex";   // показываем окно
+    }
+
+    function sohranit() {
+      let tekst = document.getElementById("okno-tekst").value;
+      try {
+        // localStorage = память браузера: история не пропадёт после F5
+        localStorage.setItem(kluch(tekushiy), tekst);
+        document.getElementById("okno-status").textContent = t("✅ Сохранено!");
+      } catch (e) {
+        document.getElementById("okno-status").textContent = t("⚠️ Не получилось сохранить в этом браузере");
+      }
+    }
+
+    function zakryt() {
+      document.getElementById("okno-fon").style.display = "none";   // прячем окно
+    }
+  </script>
+
+  <script>
+    // ===== ПЕРЕВОД САЙТА =====
+    // slovar = большая коробка: русский текст → его перевод на en, uz, ky
+    let slovar = {
+  "Мой любимый спорт — футбол": {
+    "en": "My favorite sport is football",
+    "uz": "Менинг севимли спортим — футбол",
+    "ky": "Менин сүйүктүү спортум — футбол"
+  },
+  "Сайт сделал Мустафо": {
+    "en": "Website made by Mustafo",
+    "uz": "Сайтни Мустафо ясади",
+    "ky": "Сайтты Мустафо жасады"
+  },
+  "Привет!": {
+    "en": "Hi!",
+    "uz": "Салом!",
+    "ky": "Салам!"
+  },
+  "Меня зовут Мустафо. Я люблю играть в футбол.": {
+    "en": "My name is Mustafo. I love playing football.",
+    "uz": "Менинг исмим Мустафо. Мен футбол ўйнашни яхши кўраман.",
+    "ky": "Менин атым Мустафо. Мен футбол ойногонду жакшы көрөм."
+  },
+  "Почему я люблю футбол": {
+    "en": "Why I love football",
+    "uz": "Нега мен футболни яхши кўраман",
+    "ky": "Эмне үчүн мен футболду жакшы көрөм"
+  },
+  "Это командная игра": {
+    "en": "It's a team game",
+    "uz": "Бу жамоавий ўйин",
+    "ky": "Бул командалык оюн"
+  },
+  "Нужны скорость и хороший пас": {
+    "en": "You need speed and good passing",
+    "uz": "Тезлик ва яхши узатма керак",
+    "ky": "Ылдамдык жана жакшы пас керек"
+  },
+  "Футбол учит дружбе": {
+    "en": "Football teaches friendship",
+    "uz": "Футбол дўстликка ўргатади",
+    "ky": "Футбол достукка үйрөтөт"
+  },
+  "Моя любимая команда": {
+    "en": "My favorite team",
+    "uz": "Менинг севимли жамоам",
+    "ky": "Менин сүйүктүү командам"
+  },
+  "Я болею за": {
+    "en": "I support",
+    "uz": "Мен",
+    "ky": "Мен"
+  },
+  ", потому что этот клуб сильный.": {
+    "en": ", because this club is strong.",
+    "uz": " мухлисиман, чунки бу клуб кучли.",
+    "ky": " командасынын күйөрманымын, анткени бул клуб күчтүү."
+  },
+  "Реал Мадрид": {
+    "en": "Real Madrid",
+    "uz": "Реал Мадрид",
+    "ky": "Реал Мадрид"
+  },
+  "Топ-3 игроков по позициям в истории": {
+    "en": "Top 3 players by position in history",
+    "uz": "Тарихдаги энг яхши 3 ўйинчи — позициялар бўйича",
+    "ky": "Тарыхтагы мыкты 3 оюнчу — позициялар боюнча"
+  },
+  "🧤 Вратари": {
+    "en": "🧤 Goalkeepers",
+    "uz": "🧤 Дарвозабонлар",
+    "ky": "🧤 Дарбазачылар"
+  },
+  "🛡️ Защитники": {
+    "en": "🛡️ Defenders",
+    "uz": "🛡️ Ҳимоячилар",
+    "ky": "🛡️ Коргоочулар"
+  },
+  "🎯 Полузащитники": {
+    "en": "🎯 Midfielders",
+    "uz": "🎯 Ярим ҳимоячилар",
+    "ky": "🎯 Жарым коргоочулар"
+  },
+  "⚡ Нападающие": {
+    "en": "⚡ Forwards",
+    "uz": "⚡ Ҳужумчилар",
+    "ky": "⚡ Чабуулчулар"
+  },
+  "Скорость:": {
+    "en": "Speed:",
+    "uz": "Тезлик:",
+    "ky": "Ылдамдык:"
+  },
+  "Пас (вынос):": {
+    "en": "Passing (kicking):",
+    "uz": "Узатма (тепиш):",
+    "ky": "Пас (тебүү):"
+  },
+  "Удар:": {
+    "en": "Shooting:",
+    "uz": "Зарба:",
+    "ky": "Сокку:"
+  },
+  "Рефлексы:": {
+    "en": "Reflexes:",
+    "uz": "Рефлекслар:",
+    "ky": "Рефлекстер:"
+  },
+  "Нырки:": {
+    "en": "Diving:",
+    "uz": "Ташланиш:",
+    "ky": "Ыргытылуу:"
+  },
+  "Выбор позиции:": {
+    "en": "Positioning:",
+    "uz": "Жой танлаш:",
+    "ky": "Позиция тандоо:"
+  },
+  "Игра руками:": {
+    "en": "Handling:",
+    "uz": "Қўл билан ўйин:",
+    "ky": "Кол менен ойноо:"
+  },
+  "Физика (сила):": {
+    "en": "Physical (strength):",
+    "uz": "Жисмоний (куч):",
+    "ky": "Физика (күч):"
+  },
+  "Пас:": {
+    "en": "Passing:",
+    "uz": "Узатма:",
+    "ky": "Пас:"
+  },
+  "Защита:": {
+    "en": "Defending:",
+    "uz": "Ҳимоя:",
+    "ky": "Коргоо:"
+  },
+  "Вынос (Kicking):": {
+    "en": "Kicking:",
+    "uz": "Тепиш (Kicking):",
+    "ky": "Тебүү (Kicking):"
+  },
+  "Дриблинг:": {
+    "en": "Dribbling:",
+    "uz": "Дриблинг:",
+    "ky": "Дриблинг:"
+  },
+  "Физика:": {
+    "en": "Physical:",
+    "uz": "Жисмоний:",
+    "ky": "Физика:"
+  },
+  "Клуб: Динамо (Москва)": {
+    "en": "Club: Dynamo (Moscow)",
+    "uz": "Клуб: Динамо (Москва)",
+    "ky": "Клуб: Динамо (Москва)"
+  },
+  "Клуб: Бавария (Германия)": {
+    "en": "Club: Bayern (Germany)",
+    "uz": "Клуб: Бавария (Германия)",
+    "ky": "Клуб: Бавария (Германия)"
+  },
+  "Клуб: Ювентус (Италия)": {
+    "en": "Club: Juventus (Italy)",
+    "uz": "Клуб: Ювентус (Италия)",
+    "ky": "Клуб: Ювентус (Италия)"
+  },
+  "Клуб: Милан (Италия)": {
+    "en": "Club: Milan (Italy)",
+    "uz": "Клуб: Милан (Италия)",
+    "ky": "Клуб: Милан (Италия)"
+  },
+  "Клуб: Ювентус (Италия), Реал Мадрид (Испания)": {
+    "en": "Club: Juventus (Italy), Real Madrid (Spain)",
+    "uz": "Клуб: Ювентус (Италия), Реал Мадрид (Испания)",
+    "ky": "Клуб: Ювентус (Италия), Реал Мадрид (Испания)"
+  },
+  "Клуб: Барселона (Испания)": {
+    "en": "Club: Barcelona (Spain)",
+    "uz": "Клуб: Барселона (Испания)",
+    "ky": "Клуб: Барселона (Испания)"
+  },
+  "Клуб: Сантос (Бразилия)": {
+    "en": "Club: Santos (Brazil)",
+    "uz": "Клуб: Сантос (Бразилия)",
+    "ky": "Клуб: Сантос (Бразилия)"
+  },
+  "Клуб: Барселона, Интер, Реал Мадрид": {
+    "en": "Club: Barcelona, Inter, Real Madrid",
+    "uz": "Клуб: Барселона, Интер, Реал Мадрид",
+    "ky": "Клуб: Барселона, Интер, Реал Мадрид"
+  },
+  "Клуб: Аякс (Нидерланды), Барселона": {
+    "en": "Club: Ajax (Netherlands), Barcelona",
+    "uz": "Клуб: Аякс (Нидерландия), Барселона",
+    "ky": "Клуб: Аякс (Нидерландия), Барселона"
+  },
+  "Лев Яшин": {
+    "en": "Lev Yashin",
+    "uz": "Лев Яшин",
+    "ky": "Лев Яшин"
+  },
+  "Мануэль Нойер": {
+    "en": "Manuel Neuer",
+    "uz": "Мануэль Нойер",
+    "ky": "Мануэль Нойер"
+  },
+  "Джанлуиджи Буффон": {
+    "en": "Gianluigi Buffon",
+    "uz": "Джанлуиджи Буффон",
+    "ky": "Джанлуиджи Буффон"
+  },
+  "Франц Беккенбауэр": {
+    "en": "Franz Beckenbauer",
+    "uz": "Франц Беккенбауэр",
+    "ky": "Франц Беккенбауэр"
+  },
+  "Паоло Мальдини": {
+    "en": "Paolo Maldini",
+    "uz": "Паоло Мальдини",
+    "ky": "Паоло Мальдини"
+  },
+  "Франко Барези": {
+    "en": "Franco Baresi",
+    "uz": "Франко Барези",
+    "ky": "Франко Барези"
+  },
+  "Зинедин Зидан": {
+    "en": "Zinedine Zidane",
+    "uz": "Зинедин Зидан",
+    "ky": "Зинедин Зидан"
+  },
+  "Андрес Иньеста": {
+    "en": "Andrés Iniesta",
+    "uz": "Андрес Иньеста",
+    "ky": "Андрес Иньеста"
+  },
+  "Хави": {
+    "en": "Xavi",
+    "uz": "Хави",
+    "ky": "Хави"
+  },
+  "Пеле": {
+    "en": "Pelé",
+    "uz": "Пеле",
+    "ky": "Пеле"
+  },
+  "Роналдо (Феномен)": {
+    "en": "Ronaldo (Phenomenon)",
+    "uz": "Роналдо (Феномен)",
+    "ky": "Роналдо (Феномен)"
+  },
+  "Йохан Кройф": {
+    "en": "Johan Cruyff",
+    "uz": "Йохан Кройф",
+    "ky": "Йохан Кройф"
+  },
+  "Беккенбауэр": {
+    "en": "Beckenbauer",
+    "uz": "Беккенбауэр",
+    "ky": "Беккенбауэр"
+  },
+  "Мальдини": {
+    "en": "Maldini",
+    "uz": "Мальдини",
+    "ky": "Мальдини"
+  },
+  "Зидан": {
+    "en": "Zidane",
+    "uz": "Зидан",
+    "ky": "Зидан"
+  },
+  "Роналдо": {
+    "en": "Ronaldo",
+    "uz": "Роналдо",
+    "ky": "Роналдо"
+  },
+  "Кройф": {
+    "en": "Cruyff",
+    "uz": "Кройф",
+    "ky": "Кройф"
+  },
+  "Проверка JavaScript": {
+    "en": "JavaScript test",
+    "uz": "JavaScript синови",
+    "ky": "JavaScript текшерүү"
+  },
+  "Нажми меня ⚽": {
+    "en": "Click me ⚽",
+    "uz": "Мени бос ⚽",
+    "ky": "Мени бас ⚽"
+  },
+  "Пока ничего не нажато...": {
+    "en": "Nothing clicked yet...",
+    "uz": "Ҳали ҳеч нарса босилмади...",
+    "ky": "Азырынча эч нерсе басылган жок..."
+  },
+  "⚔️ Сравни игроков": {
+    "en": "⚔️ Compare players",
+    "uz": "⚔️ Ўйинчиларни солиштир",
+    "ky": "⚔️ Оюнчуларды салыштыр"
+  },
+  "🏃 Скорость": {
+    "en": "🏃 Speed",
+    "uz": "🏃 Тезлик",
+    "ky": "🏃 Ылдамдык"
+  },
+  "🎯 Пас": {
+    "en": "🎯 Passing",
+    "uz": "🎯 Узатма",
+    "ky": "🎯 Пас"
+  },
+  "💥 Удар": {
+    "en": "💥 Shooting",
+    "uz": "💥 Зарба",
+    "ky": "💥 Сокку"
+  },
+  "💪 Физика": {
+    "en": "💪 Physical",
+    "uz": "💪 Жисмоний",
+    "ky": "💪 Физика"
+  },
+  "Сравнить!": {
+    "en": "Compare!",
+    "uz": "Солиштир!",
+    "ky": "Салыштыр!"
+  },
+  "Выбери двух игроков, характеристику и нажми «Сравнить!»": {
+    "en": "Pick two players and a stat, then press \"Compare!\"",
+    "uz": "Икки ўйинчи ва кўрсаткични танла, кейин «Солиштир!» ни бос",
+    "ky": "Эки оюнчуну жана көрсөткүчтү танда, анан «Салыштыр!» баскычын бас"
+  },
+  "© 2026 Мустафо": {
+    "en": "© 2026 Mustafo",
+    "uz": "© 2026 Мустафо",
+    "ky": "© 2026 Мустафо"
+  },
+  "Игрок": {
+    "en": "Player",
+    "uz": "Ўйинчи",
+    "ky": "Оюнчу"
+  },
+  "📖 Напиши историю этого игрока:": {
+    "en": "📖 Write this player's story:",
+    "uz": "📖 Бу ўйинчининг тарихини ёз:",
+    "ky": "📖 Бул оюнчунун тарыхын жаз:"
+  },
+  "Например: где родился, за какие клубы играл, какие трофеи выиграл...": {
+    "en": "For example: where he was born, which clubs he played for, what trophies he won...",
+    "uz": "Масалан: қаерда туғилган, қайси клубларда ўйнаган, қандай кубоклар ютган...",
+    "ky": "Мисалы: кайда төрөлгөн, кайсы клубдарда ойногон, кандай кубоктарды утуп алган..."
+  },
+  "💾 Сохранить": {
+    "en": "💾 Save",
+    "uz": "💾 Сақлаш",
+    "ky": "💾 Сактоо"
+  },
+  "✖ Закрыть": {
+    "en": "✖ Close",
+    "uz": "✖ Ёпиш",
+    "ky": "✖ Жабуу"
+  },
+  "👆 Нажми, чтобы написать историю": {
+    "en": "👆 Click to write the story",
+    "uz": "👆 Тарихни ёзиш учун бос",
+    "ky": "👆 Тарыхты жазуу үчүн бас"
+  },
+  "🏆 Сильнее": {
+    "en": "🏆 Stronger:",
+    "uz": "🏆 Кучлироқ:",
+    "ky": "🏆 Күчтүүрөөк:"
+  },
+  "против": {
+    "en": "vs",
+    "uz": "vs",
+    "ky": "vs"
+  },
+  "🤝 Ничья! У обоих": {
+    "en": "🤝 Draw! Both have",
+    "uz": "🤝 Дуранг! Иккаласида ҳам",
+    "ky": "🤝 Тең! Экөөндө тең"
+  },
+  "✅ Сохранено!": {
+    "en": "✅ Saved!",
+    "uz": "✅ Сақланди!",
+    "ky": "✅ Сакталды!"
+  },
+  "⚠️ Не получилось сохранить в этом браузере": {
+    "en": "⚠️ Couldn't save in this browser",
+    "uz": "⚠️ Бу браузерда сақлаб бўлмади",
+    "ky": "⚠️ Бул браузерде сактоо мүмкүн болгон жок"
+  }
+};
+
+    let yazyk = "ru";   // текущий язык
+
+    // t = «переведи»: даёшь русский текст, получаешь текст на текущем языке
+    function t(ru) {
+      if (yazyk === "ru") return ru;
+      if (slovar[ru] && slovar[ru][yazyk]) return slovar[ru][yazyk];
+      // пробуем ещё раз маленькими буквами и без пробелов по краям («Очень быстрый » = «очень быстрый»)
+      let prosto = String(ru).trim().toLowerCase();
+      for (let klyuch in slovar) {
+        if (klyuch.toLowerCase() === prosto && slovar[klyuch][yazyk]) return slovar[klyuch][yazyk];
+      }
+      return ru;   // если перевода нет — оставляем как есть
+    }
+
+    // запоминаем все русские тексты на странице (один раз, при загрузке)
+    let originaly = [];
+    let hodok = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (hodok.nextNode()) {
+      let uzel = hodok.currentNode;
+      let roditel = uzel.parentNode.nodeName;
+      if (roditel === "SCRIPT" || roditel === "STYLE") continue;
+      if (uzel.nodeValue.trim() === "") continue;
+      originaly.push({ uzel: uzel, tekst: uzel.nodeValue });
+    }
+    let tekstPole = document.getElementById("okno-tekst");
+    let podskazkaRu = tekstPole.placeholder;
+
+    function perevesti(novyYazyk) {
+      yazyk = novyYazyk;
+      originaly.forEach(function (o) {
+        let s = o.tekst;
+        let nachalo = s.match(/^\s*/)[0];          // пробелы в начале
+        let konec = s.match(/\s*$/)[0];            // пробелы в конце
+        let sut = s.trim();
+        // «Скорость: 82» → переводим только «Скорость:», число оставляем
+        let m = sut.match(/^(.*?:)\s*([\d–]+)$/);
+        if (m) {
+          o.uzel.nodeValue = nachalo + t(m[1]) + " " + m[2] + konec;
+        } else {
+          o.uzel.nodeValue = nachalo + t(sut) + konec;
+        }
+      });
+      tekstPole.placeholder = t(podskazkaRu);
+      document.documentElement.lang = novyYazyk;
+
+      // подсвечиваем нажатую кнопку языка
+      document.querySelectorAll(".yazyki button").forEach(function (knopka) {
+        knopka.classList.toggle("active", knopka.getAttribute("onclick").includes("'" + novyYazyk + "'"));
+      });
+      // запоминаем выбранный язык
+      try { localStorage.setItem("yazyk", novyYazyk); } catch (e) {}
+    }
+
+    // при открытии сайта включаем язык, который выбирали в прошлый раз
+    let sohranenyi = "ru";
+    try { sohranenyi = localStorage.getItem("yazyk") || "ru"; } catch (e) {}
+    perevesti(sohranenyi);
+  </script>
+
+  <script>
+    // ===== МОИ ЛЮБИМЫЕ ИГРОКИ =====
+    // новые слова для словаря перевода
+    Object.assign(slovar, {
+      "⭐ Мои любимые игроки": { en: "⭐ My favorite players", uz: "⭐ Менинг севимли ўйинчиларим", ky: "⭐ Менин сүйүктүү оюнчуларым" },
+      "Добавь своих любимых футболистов:": { en: "Add your favorite footballers:", uz: "Севимли футболчиларингни қўш:", ky: "Сүйүктүү футболчуларыңды кош:" },
+      "Имя игрока": { en: "Player name", uz: "Ўйинчи исми", ky: "Оюнчунун аты" },
+      "Клуб": { en: "Club", uz: "Клуб", ky: "Клуб" },
+      "Клуб:": { en: "Club:", uz: "Клуб:", ky: "Клуб:" },
+      "Почему он тебе нравится?": { en: "Why do you like him?", uz: "Нега у сенга ёқади?", ky: "Ал сага эмнеси менен жагат?" },
+      "➕ Добавить": { en: "➕ Add", uz: "➕ Қўшиш", ky: "➕ Кошуу" },
+      "Пока здесь пусто. Добавь первого игрока!": { en: "Nothing here yet. Add your first player!", uz: "Ҳозирча бу ер бўш. Биринчи ўйинчини қўш!", ky: "Азырынча бул жер бош. Биринчи оюнчуну кош!" },
+      "🗑 Удалить": { en: "🗑 Delete", uz: "🗑 Ўчириш", ky: "🗑 Өчүрүү" },
+      "Напиши имя игрока!": { en: "Write the player's name!", uz: "Ўйинчи исмини ёз!", ky: "Оюнчунун атын жаз!" },
+
+      // ---- частые клубы ----
+      "Барселона": { en: "Barcelona", uz: "Барселона", ky: "Барселона" },
+      "Бавария": { en: "Bayern", uz: "Бавария", ky: "Бавария" },
+      "Ливерпуль": { en: "Liverpool", uz: "Ливерпуль", ky: "Ливерпуль" },
+      "Манчестер Сити": { en: "Manchester City", uz: "Манчестер Сити", ky: "Манчестер Сити" },
+      "Манчестер Юнайтед": { en: "Manchester United", uz: "Манчестер Юнайтед", ky: "Манчестер Юнайтед" },
+      "Арсенал": { en: "Arsenal", uz: "Арсенал", ky: "Арсенал" },
+      "Челси": { en: "Chelsea", uz: "Челси", ky: "Челси" },
+      "ПСЖ": { en: "PSG", uz: "ПСЖ", ky: "ПСЖ" },
+      "Ювентус": { en: "Juventus", uz: "Ювентус", ky: "Ювентус" },
+      "Милан": { en: "Milan", uz: "Милан", ky: "Милан" },
+      "Интер": { en: "Inter", uz: "Интер", ky: "Интер" },
+
+      // ---- частые фразы «почему нравится» ----
+      "очень быстрый": { en: "very fast", uz: "жуда тез", ky: "абдан ылдам" },
+      "очень сильный": { en: "very strong", uz: "жуда кучли", ky: "абдан күчтүү" },
+      "хорошо бьёт": { en: "great shot", uz: "яхши зарба беради", ky: "жакшы сокку урат" },
+      "хорошо бьет": { en: "great shot", uz: "яхши зарба беради", ky: "жакшы сокку урат" },
+      "забивает много голов": { en: "scores a lot of goals", uz: "кўп гол уради", ky: "көп гол киргизет" },
+      "хороший дриблинг": { en: "great dribbling", uz: "яхши дриблинг", ky: "жакшы дриблинг" },
+      "хороший пас": { en: "great passing", uz: "яхши узатма", ky: "жакшы пас" },
+      "лучший игрок": { en: "the best player", uz: "энг яхши ўйинчи", ky: "эң мыкты оюнчу" },
+      "мой кумир": { en: "my idol", uz: "менинг бутим", ky: "менин кумирим" },
+      "играет красиво": { en: "plays beautifully", uz: "чиройли ўйнайди", ky: "кооз ойнойт" },
+      "надёжный защитник": { en: "a reliable defender", uz: "ишончли ҳимоячи", ky: "ишенимдүү коргоочу" },
+      "отличный вратарь": { en: "an excellent goalkeeper", uz: "аъло дарвозабон", ky: "мыкты дарбазачы" }
+    });
+
+
+    // ===== ПЕРЕВОД ТВОЕГО ТЕКСТА ПО КУСОЧКАМ =====
+    // kusochki = маленький словарь слов и фраз. Длинные фразы стоят первыми,
+    // чтобы «Быстрый футболист» перевёлся целиком, а не по одному слову.
+    let kusochki = [{"ru": "Уверенность и спокойствие под давлением", "en": "Confidence and calm under pressure", "uz": "Босим остида ишонч ва хотиржамлик", "ky": "Басым астында ишеним жана токтоолук"}, {"ru": "Дисциплина и самоорганизация", "en": "Discipline and self-organization", "uz": "Интизом ва ўзини ташкил этиш", "ky": "Тартип жана өзүн уюштуруу"}, {"ru": "Финты в нужных ситуациях", "en": "Feints at the right moments", "uz": "Керакли пайтда финтлар", "ky": "Керектүү учурда финттер"}, {"ru": "Дриблинг с контролем", "en": "Controlled dribbling", "uz": "Назоратли дриблинг", "ky": "Көзөмөлдүү дриблинг"}, {"ru": "Игра обеими ногами", "en": "Plays with both feet", "uz": "Икки оёқ билан ўйнаш", "ky": "Эки бут менен ойноо"}, {"ru": "Лидерские качества", "en": "Leadership", "uz": "Етакчилик фазилатлари", "ky": "Лидердик сапаттар"}, {"ru": "Точность удара", "en": "Shot accuracy", "uz": "Зарба аниқлиги", "ky": "Сокку тактыгы"}, {"ru": "Быстрый футболист", "en": "Fast footballer", "uz": "Тез футболчи", "ky": "Ылдам футболчу"}, {"ru": "Сила и мощь", "en": "Strength and power", "uz": "Куч ва қувват", "ky": "Күч жана кубат"}, {"ru": "Чтение игры", "en": "Reading the game", "uz": "Ўйинни ўқиш", "ky": "Оюнду окуу"}, {"ru": "Контроль мяча", "en": "Ball control", "uz": "Тўпни назорат қилиш", "ky": "Топту көзөмөлдөө"}, {"ru": "Универсальность", "en": "Versatility", "uz": "Ҳар томонламалик", "ky": "Ар тараптуулук"}, {"ru": "Выносливость", "en": "Stamina", "uz": "Чидамлилик", "ky": "Чыдамкайлык"}, {"ru": "Возвращение в", "en": "Return to", "uz": "Яна", "ky": "Кайра"}, {"ru": "Пари Сен-Жермен", "en": "Paris Saint-Germain", "uz": "Пари Сен-Жермен", "ky": "Пари Сен-Жермен"}, {"ru": "Манчестер Юнайтед", "en": "Manchester United", "uz": "Манчестер Юнайтед", "ky": "Манчестер Юнайтед"}, {"ru": "Манчестер Сити", "en": "Manchester City", "uz": "Манчестер Сити", "ky": "Манчестер Сити"}, {"ru": "Саудовская Аравия", "en": "Saudi Arabia", "uz": "Саудия Арабистони", "ky": "Сауд Арабиясы"}, {"ru": "Реал Мадрид", "en": "Real Madrid", "uz": "Реал Мадрид", "ky": "Реал Мадрид"}, {"ru": "Аль-Хиляль", "en": "Al-Hilal", "uz": "Ал-Ҳилол", "ky": "Аль-Хилал"}, {"ru": "Аль-Наср", "en": "Al-Nassr", "uz": "Ан-Наср", "ky": "Ан-Наср"}, {"ru": "Барселона", "en": "Barcelona", "uz": "Барселона", "ky": "Барселона"}, {"ru": "Спортинг", "en": "Sporting", "uz": "Спортинг", "ky": "Спортинг"}, {"ru": "Ювентус", "en": "Juventus", "uz": "Ювентус", "ky": "Ювентус"}, {"ru": "Ливерпуль", "en": "Liverpool", "uz": "Ливерпуль", "ky": "Ливерпуль"}, {"ru": "Бавария", "en": "Bayern", "uz": "Бавария", "ky": "Бавария"}, {"ru": "Сантос", "en": "Santos", "uz": "Сантос", "ky": "Сантос"}, {"ru": "Монако", "en": "Monaco", "uz": "Монако", "ky": "Монако"}, {"ru": "Лиссабон", "en": "Lisbon", "uz": "Лиссабон", "ky": "Лиссабон"}, {"ru": "Бразилия", "en": "Brazil", "uz": "Бразилия", "ky": "Бразилия"}, {"ru": "Испания", "en": "Spain", "uz": "Испания", "ky": "Испания"}, {"ru": "Франция", "en": "France", "uz": "Франция", "ky": "Франция"}, {"ru": "Англия", "en": "England", "uz": "Англия", "ky": "Англия"}, {"ru": "Италия", "en": "Italy", "uz": "Италия", "ky": "Италия"}, {"ru": "Германия", "en": "Germany", "uz": "Германия", "ky": "Германия"}, {"ru": "Португалия", "en": "Portugal", "uz": "Португалия", "ky": "Португалия"}, {"ru": "Аргентина", "en": "Argentina", "uz": "Аргентина", "ky": "Аргентина"}, {"ru": "Дриблинг", "en": "Dribbling", "uz": "Дриблинг", "ky": "Дриблинг"}, {"ru": "Быстрый", "en": "Fast", "uz": "Тез", "ky": "Ылдам"}, {"ru": "Сильный", "en": "Strong", "uz": "Кучли", "ky": "Күчтүү"}, {"ru": "Техничный", "en": "Skilful", "uz": "Техникали", "ky": "Техникалуу"}, {"ru": " года", "en": "", "uz": " йил", "ky": " жыл"}, {"ru": "ПСЖ", "en": "PSG", "uz": "ПСЖ", "ky": "ПСЖ"}, {"ru": "с 20", "en": "since 20", "uz": "20", "ky": "20"}];
+
+    // escapeRegExp — делаем текст безопасным для поиска (точки, скобки и т.п.)
+    function bezopasno(tekst) { return tekst.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+    // perevodTeksta: сначала ищем фразу целиком в словаре, потом меняем знакомые кусочки
+    function perevodTeksta(tekst) {
+      if (!tekst || yazyk === "ru") return tekst;
+      let celikom = t(tekst);
+      if (celikom !== tekst) return celikom;
+      let rezultat = tekst;
+      kusochki.forEach(function (k) {
+        let poisk = new RegExp(bezopasno(k.ru), "gi");   // g = везде, i = без разницы БОЛЬШИЕ/маленькие
+        rezultat = rezultat.replace(poisk, k[yazyk]);
+      });
+      return rezultat;
+    }
+
+    // lyubimye = массив (список) любимых игроков. Массив — это коробка с номерованными местами: [0], [1], [2]...
+    let lyubimye = [];
+    try { lyubimye = JSON.parse(localStorage.getItem("lyubimye") || "[]"); } catch (e) { lyubimye = []; }
+
+    function sohranitLyubimyh() {
+      try { localStorage.setItem("lyubimye", JSON.stringify(lyubimye)); } catch (e) {}
+    }
+
+    // рисуем список любимых игроков заново
+    function pokazatLyubimyh() {
+      let spisok = document.getElementById("spisok-lyubimyh");
+      spisok.innerHTML = "";   // очищаем
+      if (lyubimye.length === 0) {
+        let p = document.createElement("p");
+        p.className = "pusto";
+        p.textContent = t("Пока здесь пусто. Добавь первого игрока!");
+        spisok.appendChild(p);
+        return;
+      }
+      // for = цикл: повторяем для каждого игрока в списке
+      for (let i = 0; i < lyubimye.length; i++) {
+        let igrok = lyubimye[i];
+        let blok = document.createElement("div");
+        blok.className = "lyubimyi";
+
+        let imya = document.createElement("b");
+        imya.textContent = "⭐ " + igrok.imya;
+        blok.appendChild(imya);
+
+        if (igrok.klub) {
+          let klub = document.createElement("p");
+          klub.textContent = t("Клуб:") + " " + perevodTeksta(igrok.klub);
+          blok.appendChild(klub);
+        }
+        if (igrok.pochemu) {
+          let pochemu = document.createElement("p");
+          pochemu.textContent = "💬 " + perevodTeksta(igrok.pochemu);
+          blok.appendChild(pochemu);
+        }
+        let knopka = document.createElement("button");
+        knopka.textContent = t("🗑 Удалить");
+        knopka.onclick = function () { udalit(i); };
+        blok.appendChild(knopka);
+
+        spisok.appendChild(blok);
+      }
+    }
+
+    function dobavit() {
+      let imya = document.getElementById("lyub-imya").value.trim();
+      if (imya === "") { alert(t("Напиши имя игрока!")); return; }
+      // push = «положи в конец списка»
+      lyubimye.push({ imya: imya });   // сохраняем только имя
+      sohranitLyubimyh();
+      // очищаем поля
+      document.getElementById("lyub-imya").value = "";   // очищаем поле
+      pokazatLyubimyh();
+    }
+
+    function udalit(nomer) {
+      // splice = «вырежи из списка 1 элемент под этим номером»
+      lyubimye.splice(nomer, 1);
+      sohranitLyubimyh();
+      pokazatLyubimyh();
+    }
+
+    // переводим подсказки в полях и список при смене языка
+    let polya = [
+      ["lyub-imya", "Имя игрока"],
+      ["lyub-klub", "Клуб"],
+      ["lyub-pochemu", "Почему он тебе нравится?"]
+    ];
+    let stariyPerevod = perevesti;
+    perevesti = function (novyYazyk) {
+      stariyPerevod(novyYazyk);
+      polya.forEach(function (p) { let pole = document.getElementById(p[0]); if (pole) pole.placeholder = t(p[1]); });
+      pokazatLyubimyh();
+    };
+
+    perevesti(yazyk);   // применяем текущий язык и рисуем список
+  </script>
+
+  <script>
+    // ===== ВИКТОРИНА «УГАДАЙ ФУТБОЛИСТА» =====
+    // voprosy = массив вопросов. У каждого: подсказка и правильный ответ
+    let voprosy = [
+      { podskazka: "🧤 Вратарь из СССР. Его прозвали «Чёрный паук».", otvet: "Лев Яшин" },
+      { podskazka: "🧤 Вратарь «Баварии», который играет ногами почти как полевой игрок.", otvet: "Мануэль Нойер" },
+      { podskazka: "🧤 Итальянский вратарь, чемпион мира 2006, легенда «Ювентуса».", otvet: "Джанлуиджи Буффон" },
+      { podskazka: "🛡️ Его прозвище «Кайзер». Чемпион мира и как игрок, и как тренер.", otvet: "Франц Беккенбауэр" },
+      { podskazka: "🛡️ Больше 20 сезонов играл только за «Милан» и 5 раз выигрывал главный кубок Европы.", otvet: "Паоло Мальдини" },
+      { podskazka: "🛡️ Капитан «Милана». Его номер 6 в клубе больше никто не носит.", otvet: "Франко Барези" },
+      { podskazka: "🎯 В финале чемпионата мира 1998 забил два гола головой.", otvet: "Зинедин Зидан" },
+      { podskazka: "🎯 Забил победный гол в финале чемпионата мира 2010.", otvet: "Андрес Иньеста" },
+      { podskazka: "🎯 Мастер «тики-таки», потом стал тренером «Барселоны».", otvet: "Хави" },
+      { podskazka: "⚡ Единственный футболист, который трижды стал чемпионом мира.", otvet: "Пеле" },
+      { podskazka: "⚡ Прозвище «Феномен». Лучший бомбардир чемпионата мира 2002.", otvet: "Роналдо" },
+      { podskazka: "⚡ В его честь назван знаменитый финт-поворот.", otvet: "Йохан Кройф" }
+    ];
+
+    let poryadok = [];   // в каком порядке пойдут вопросы
+    let nomer = 0;       // какой вопрос сейчас (0 = первый)
+    let ochki = 0;       // сколько правильных ответов
+
+    // peremeshat = перемешать массив (как перетасовать карты)
+    function peremeshat(massiv) {
+      let kopiya = massiv.slice();
+      for (let i = kopiya.length - 1; i > 0; i--) {
+        // Math.random() даёт случайное число от 0 до 1
+        let j = Math.floor(Math.random() * (i + 1));
+        let vremenno = kopiya[i]; kopiya[i] = kopiya[j]; kopiya[j] = vremenno;
+      }
+      return kopiya;
+    }
+
+    function nachatViktorinu() {
+      poryadok = peremeshat(voprosy);
+      nomer = 0;
+      ochki = 0;
+      pokazatVopros();
+    }
+
+    function pokazatVopros() {
+      let vopros = poryadok[nomer];
+      document.getElementById("viktorina-schet").textContent =
+        "Вопрос " + (nomer + 1) + " из " + poryadok.length + " · Очки: " + ochki;
+      document.getElementById("viktorina-podskazka").textContent = vopros.podskazka;
+      document.getElementById("viktorina-otvet").textContent = "";
+      document.getElementById("viktorina-dalee").style.display = "none";
+
+      // 4 варианта: правильный + 3 случайных неправильных
+      let drugie = voprosy.map(function (v) { return v.otvet; })
+                          .filter(function (imya) { return imya !== vopros.otvet; });
+      let varianty = peremeshat([vopros.otvet].concat(peremeshat(drugie).slice(0, 3)));
+
+      let mesto = document.getElementById("viktorina-varianty");
+      mesto.innerHTML = "";
+      varianty.forEach(function (imya) {
+        let knopka = document.createElement("button");
+        knopka.textContent = imya;
+        knopka.onclick = function () { proverit(knopka, imya, vopros.otvet); };
+        mesto.appendChild(knopka);
+      });
+    }
+
+    function proverit(knopka, vybor, pravilno) {
+      let vse = document.querySelectorAll("#viktorina-varianty button");
+      vse.forEach(function (k) {
+        k.disabled = true;                                  // больше нажимать нельзя
+        if (k.textContent === pravilno) k.classList.add("verno");   // правильный — зелёным
+      });
+      if (vybor === pravilno) {
+        ochki = ochki + 1;
+        document.getElementById("viktorina-otvet").textContent = "✅ Правильно! ГОООЛ! ⚽";
+      } else {
+        knopka.classList.add("neverno");
+        document.getElementById("viktorina-otvet").textContent = "❌ Не угадал. Правильный ответ: " + pravilno;
+      }
+      document.getElementById("viktorina-schet").textContent =
+        "Вопрос " + (nomer + 1) + " из " + poryadok.length + " · Очки: " + ochki;
+
+      let dalee = document.getElementById("viktorina-dalee");
+      dalee.textContent = (nomer + 1 < poryadok.length) ? "Дальше ➡️" : "Узнать результат 🏆";
+      dalee.style.display = "inline-block";
+    }
+
+    function sleduyushiy() {
+      nomer = nomer + 1;
+      if (nomer < poryadok.length) {
+        pokazatVopros();
+      } else {
+        // конец игры
+        let itog = "🏆 Игра окончена! Ты набрал " + ochki + " из " + poryadok.length + ". ";
+        if (ochki === poryadok.length) itog += "Ты настоящий знаток футбола! 🌟";
+        else if (ochki >= 8) itog += "Отличный результат! 💪";
+        else itog += "Попробуй ещё раз, у тебя получится! 🙂";
+        document.getElementById("viktorina-podskazka").textContent = itog;
+        document.getElementById("viktorina-varianty").innerHTML = "";
+        document.getElementById("viktorina-otvet").textContent = "";
+        let dalee = document.getElementById("viktorina-dalee");
+        dalee.textContent = "🔄 Сыграть ещё раз";
+        dalee.onclick = function () { dalee.onclick = sleduyushiy; nachatViktorinu(); };
+      }
+    }
+
+    nachatViktorinu();   // запускаем игру при открытии сайта
+  </script>
+
+  <script>
+    // регистрируем «помощника» приложения (работает, когда сайт открыт по https:// в интернете)
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("sw.js");
+    }
+  </script>
+</body>
+</html>
