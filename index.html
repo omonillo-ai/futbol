@@ -389,6 +389,26 @@
     }
     #pen-info { font-weight: bold; font-size: 18px; }
     #pen-rezultat { font-size: 20px; font-weight: bold; min-height: 28px; }
+
+    /* ===== ПОЙМАЙ МЯЧ ===== */
+    #lov-pole {
+      position: relative; width: 100%; max-width: 360px; height: 320px;
+      margin: 10px auto; border-radius: 12px; overflow: hidden;
+      background: linear-gradient(#90caf9, #81c784 70%, #388e3c);   /* небо и трава */
+      touch-action: none;           /* чтобы палец двигал вратаря, а не страницу */
+    }
+    #lov-vratar, .padayushiy {
+      position: absolute; line-height: 1; transform: translateX(-50%);
+    }
+    #lov-vratar { bottom: 6px; left: 50%; font-size: 46px; }
+    .padayushiy { font-size: 30px; }
+    .lov-knopki button, #lov-start {
+      font-size: 18px; padding: 10px 18px; margin: 4px; border-radius: 10px; cursor: pointer;
+      border: 2px solid #2e7d32; background: #e8f5e9;
+    }
+    #lov-start { background: #ffeb3b; border-color: #fbc02d; font-weight: bold; }
+    #lov-info { font-weight: bold; font-size: 18px; }
+    #lov-rezultat { font-size: 19px; font-weight: bold; min-height: 26px; }
   </style>
 </head>
 <body>
@@ -846,6 +866,24 @@
       </div>
       <p id="pen-rezultat"></p>
       <button id="pen-dalee" onclick="penDalee()"></button>
+    </div>
+
+    <!-- ===== ИГРА «ПОЙМАЙ МЯЧ» ===== -->
+    <div class="card">
+      <h2>🧤 Поймай мяч</h2>
+      <p>Двигай вратаря стрелками ⬅️ ➡️ на клавиатуре или пальцем по полю. Поймай 10 мячей, чтобы пройти уровень. Пропустишь 3 — начнёшь уровень заново!</p>
+      <p id="lov-info"></p>
+      <div id="lov-pole">
+        <div id="lov-vratar">🧤</div>
+        <!-- сюда JavaScript будет добавлять падающие мячи -->
+      </div>
+      <!-- кнопки для телефона: держи палец на кнопке -->
+      <div class="lov-knopki">
+        <button id="lov-vlevo">⬅️</button>
+        <button id="lov-vpravo">➡️</button>
+      </div>
+      <p id="lov-rezultat"></p>
+      <button id="lov-start" onclick="nachatLovlyu()"></button>
     </div>
 
   </main>
@@ -1921,6 +1959,232 @@
     };
 
     obnovitPenalti();
+  </script>
+
+  <script>
+    // ===== ИГРА «ПОЙМАЙ МЯЧ» =====
+    Object.assign(slovar, {
+      "🧤 Поймай мяч": { en: "🧤 Catch the ball", uz: "🧤 Тўпни ушла", ky: "🧤 Топту карма" },
+      "Двигай вратаря стрелками ⬅️ ➡️ на клавиатуре или пальцем по полю. Поймай 10 мячей, чтобы пройти уровень. Пропустишь 3 — начнёшь уровень заново!": {
+        en: "Move the goalkeeper with the ⬅️ ➡️ arrow keys or with your finger on the field. Catch 10 balls to pass the level. Miss 3 and you restart the level!",
+        uz: "Дарвозабонни клавиатурадаги ⬅️ ➡️ стрелкалар ёки бармоғинг билан майдонда юргиз. Босқични ўтиш учун 10 та тўп ушла. 3 тасини ўтказиб юборсанг, босқич қайтадан бошланади!",
+        ky: "Дарбазачыны клавиатурадагы ⬅️ ➡️ жебелер же манжаң менен талаада жылдыр. Деңгээлден өтүү үчүн 10 топ карма. 3 топту өткөрүп жиберсең, деңгээл кайра башталат!" },
+      "▶️ Начать игру": { en: "▶️ Start the game", uz: "▶️ Ўйинни бошлаш", ky: "▶️ Оюнду баштоо" },
+      "🔄 Играть ещё": { en: "🔄 Play again", uz: "🔄 Яна ўйнаш", ky: "🔄 Дагы ойноо" },
+      "🎉 Новый рекорд!": { en: "🎉 New record!", uz: "🎉 Янги рекорд!", ky: "🎉 Жаңы рекорд!" },
+      "Следующий уровень ➡️": { en: "Next level ➡️", uz: "Кейинги босқич ➡️", ky: "Кийинки деңгээл ➡️" },
+      "🔄 Начать уровень заново": { en: "🔄 Restart the level", uz: "🔄 Босқични қайта бошлаш", ky: "🔄 Деңгээлди кайра баштоо" },
+      "🔄 Играть сначала": { en: "🔄 Play from the start", uz: "🔄 Бошидан ўйнаш", ky: "🔄 Башынан ойноо" },
+      "🏆 Ты прошёл все 5 уровней! Ты лучший вратарь!": {
+        en: "🏆 You passed all 5 levels! You're the best goalkeeper!",
+        uz: "🏆 Сен 5 та босқичнинг ҳаммасини ўтдинг! Сен энг зўр дарвозабонсан!",
+        ky: "🏆 Сен 5 деңгээлдин баарынан өттүң! Сен эң мыкты дарбазачысың!" }
+    });
+    let lovInfoTekst = {
+      ru: function (u, o, n, j, r) { return "Уровень " + u + " из 5 · Поймано: " + o + " из " + n + " · Жизни: " + j + " · Рекорд: уровень " + r; },
+      en: function (u, o, n, j, r) { return "Level " + u + " of 5 · Caught: " + o + " of " + n + " · Lives: " + j + " · Record: level " + r; },
+      uz: function (u, o, n, j, r) { return "Босқич " + u + " / 5 · Ушланди: " + o + " / " + n + " · Жонлар: " + j + " · Рекорд: " + r + "-босқич"; },
+      ky: function (u, o, n, j, r) { return "Деңгээл " + u + " / 5 · Кармалды: " + o + " / " + n + " · Жандар: " + j + " · Рекорд: " + r + "-деңгээл"; }
+    };
+    let lovUrovenProiden = {
+      ru: function (u) { return "🎉 Уровень " + u + " пройден! Дальше мячи будут быстрее!"; },
+      en: function (u) { return "🎉 Level " + u + " passed! Next, the balls will be faster!"; },
+      uz: function (u) { return "🎉 " + u + "-босқич ўтилди! Энди тўплар тезроқ тушади!"; },
+      ky: function (u) { return "🎉 " + u + "-деңгээлден өттүң! Эми топтор тезирээк түшөт!"; }
+    };
+    let lovKonecTekst = {
+      ru: function (u) { return "😮 Ты пропустил 3 мяча на уровне " + u + ". Попробуй ещё раз!"; },
+      en: function (u) { return "😮 You missed 3 balls on level " + u + ". Try again!"; },
+      uz: function (u) { return "😮 Сен " + u + "-босқичда 3 та тўпни ўтказиб юбординг. Яна уриниб кўр!"; },
+      ky: function (u) { return "😮 Сен " + u + "-деңгээлде 3 топту өткөрүп жибердиң. Дагы аракет кыл!"; }
+    };
+
+    // настройки уровней: скорость падения и как часто появляются мячи
+    // уровень:          1     2     3     4     5
+    let skorostUrovnya = [0.10, 0.14, 0.18, 0.23, 0.28];   // пикселей за миллисекунду
+    let pauzaUrovnya   = [1300, 1100, 900,  750,  620];    // мс между мячами
+    let nuzhnoPoimat = 10;                                  // столько мячей поймать на уровне
+
+    let lovPole = document.getElementById("lov-pole");
+    let lovVratar = document.getElementById("lov-vratar");
+
+    let lovIdet = false;      // идёт ли игра
+    let lovSostoyanie = "nachalo";   // nachalo | igra | proiden | proigrysh | pobeda
+    let lovUroven = 1;
+    let lovOchki = 0;         // поймано на этом уровне
+    let lovZhizni = 3;
+    let lovNovyiRekord = false;
+    let lovRekord = 0;        // лучший пройденный уровень
+    try { lovRekord = Number(localStorage.getItem("rekordLovli")) || 0; } catch (e) {}
+
+    let vratarX = 180;        // где вратарь (в пикселях от левого края поля)
+    let myachi = [];          // массив падающих мячей
+    let doNovogo = 0;         // сколько миллисекунд осталось до нового мяча
+    let nazhato = { l: false, r: false };   // какие стрелки сейчас зажаты
+    let proshloeVremya = 0;
+
+    function shirinaPolya() { return lovPole.clientWidth || 360; }
+
+    // кнопка под полем: что делать, зависит от состояния
+    function nachatLovlyu() {
+      if (lovSostoyanie === "proiden") lovUroven = lovUroven + 1;          // следующий уровень
+      else if (lovSostoyanie === "pobeda" || lovSostoyanie === "nachalo") lovUroven = 1;
+      // если проиграл — играем тот же уровень заново
+      myachi.forEach(function (m) { m.el.remove(); });
+      myachi = [];
+      lovOchki = 0; lovZhizni = 3; lovNovyiRekord = false;
+      lovSostoyanie = "igra";
+      vratarX = shirinaPolya() / 2;
+      doNovogo = 0;
+      lovIdet = true;
+      obnovitLovlyu();
+      proshloeVremya = performance.now();
+      requestAnimationFrame(shag);   // запускаем «кадры» игры
+    }
+
+    // shag = один кадр игры (примерно 60 раз в секунду)
+    function shag(seichas) {
+      if (!lovIdet) return;
+      let dt = Math.min(seichas - proshloeVremya, 50);   // сколько мс прошло с прошлого кадра
+      proshloeVremya = seichas;
+      let W = shirinaPolya();
+      let H = lovPole.clientHeight || 320;
+
+      // 1) двигаем вратаря стрелками
+      let skorostVratarya = 0.45 * dt;
+      if (nazhato.l) vratarX = vratarX - skorostVratarya;
+      if (nazhato.r) vratarX = vratarX + skorostVratarya;
+      vratarX = Math.max(25, Math.min(W - 25, vratarX));   // не выходим за поле
+      lovVratar.style.left = vratarX + "px";
+
+      // 2) иногда добавляем новый мяч (чем больше очков, тем чаще)
+      doNovogo = doNovogo - dt;
+      if (doNovogo <= 0) {
+        let el = document.createElement("div");
+        el.className = "padayushiy";
+        el.textContent = "⚽";
+        lovPole.appendChild(el);
+        myachi.push({ el: el, x: 20 + Math.random() * (W - 40), y: -30,
+                      // скорость уровня + чуть быстрее с каждым пойманным мячом
+                      skorost: skorostUrovnya[lovUroven - 1] + lovOchki * 0.004 + Math.random() * 0.04 });
+        doNovogo = pauzaUrovnya[lovUroven - 1];
+      }
+
+      // 3) двигаем мячи вниз и проверяем: поймал или пропустил
+      myachi = myachi.filter(function (m) {
+        if (!lovIdet) return false;      // уровень уже закончился — больше не считаем
+        m.y = m.y + m.skorost * dt;
+        m.el.style.left = m.x + "px";
+        m.el.style.top = m.y + "px";
+        let uVratarya = m.y > H - 75 && m.y < H - 35 && Math.abs(m.x - vratarX) < 38;
+        if (uVratarya) {                 // поймал!
+          lovOchki = lovOchki + 1;
+          m.el.remove();
+          if (lovOchki >= nuzhnoPoimat) urovenProiden();
+          obnovitLovlyu();
+          return false;                  // убираем мяч из массива
+        }
+        if (m.y > H) {                   // упал на землю — пропустил
+          lovZhizni = lovZhizni - 1;
+          m.el.remove();
+          if (lovZhizni <= 0 && lovIdet) konecLovli();
+          obnovitLovlyu();
+          return false;
+        }
+        return true;                     // мяч ещё летит
+      });
+
+      if (!lovIdet) myachi = [];
+      if (lovIdet) requestAnimationFrame(shag);
+    }
+
+    function ubratMyachi() {
+      myachi.forEach(function (m) { m.el.remove(); });
+    }
+
+    function urovenProiden() {
+      lovIdet = false;
+      ubratMyachi();
+      lovSostoyanie = (lovUroven === 5) ? "pobeda" : "proiden";
+      if (lovUroven > lovRekord) {               // рекорд = лучший пройденный уровень
+        lovRekord = lovUroven; lovNovyiRekord = true;
+        try { localStorage.setItem("rekordLovli", lovRekord); } catch (e) {}
+      }
+    }
+
+    function konecLovli() {
+      lovIdet = false;
+      ubratMyachi();
+      lovSostoyanie = "proigrysh";
+    }
+
+    // все тексты игры на текущем языке
+    function obnovitLovlyu() {
+      let ya = yazyk;
+      let serdtsa = "❤️".repeat(Math.max(lovZhizni, 0)) || "—";
+      document.getElementById("lov-info").textContent =
+        lovInfoTekst[ya](lovUroven, lovOchki, nuzhnoPoimat, serdtsa, lovRekord);
+      let start = document.getElementById("lov-start");
+      let rez = document.getElementById("lov-rezultat");
+      let rekord = lovNovyiRekord ? " " + t("🎉 Новый рекорд!") : "";
+      start.style.display = "inline-block";
+      if (lovSostoyanie === "igra") {
+        start.style.display = "none";
+        rez.textContent = "";
+      } else if (lovSostoyanie === "nachalo") {
+        rez.textContent = "";
+        start.textContent = t("▶️ Начать игру");
+      } else if (lovSostoyanie === "proiden") {
+        rez.textContent = lovUrovenProiden[ya](lovUroven) + rekord;
+        start.textContent = t("Следующий уровень ➡️");
+      } else if (lovSostoyanie === "proigrysh") {
+        rez.textContent = lovKonecTekst[ya](lovUroven);
+        start.textContent = t("🔄 Начать уровень заново");
+      } else if (lovSostoyanie === "pobeda") {
+        rez.textContent = t("🏆 Ты прошёл все 5 уровней! Ты лучший вратарь!") + rekord;
+        start.textContent = t("🔄 Играть сначала");
+      }
+    }
+
+    // управление: стрелки на клавиатуре
+    document.addEventListener("keydown", function (e) {
+      if (!lovIdet) return;
+      if (e.key === "ArrowLeft")  { nazhato.l = true; e.preventDefault(); }
+      if (e.key === "ArrowRight") { nazhato.r = true; e.preventDefault(); }
+    });
+    document.addEventListener("keyup", function (e) {
+      if (e.key === "ArrowLeft")  nazhato.l = false;
+      if (e.key === "ArrowRight") nazhato.r = false;
+    });
+
+    // управление: палец или мышка по полю
+    lovPole.addEventListener("pointermove", function (e) {
+      if (!lovIdet) return;
+      if (e.pointerType === "mouse" && e.buttons === 0) return;   // мышкой — только с зажатой кнопкой
+      vratarX = e.clientX - lovPole.getBoundingClientRect().left;
+    });
+    lovPole.addEventListener("pointerdown", function (e) {
+      if (!lovIdet) return;
+      vratarX = e.clientX - lovPole.getBoundingClientRect().left;
+    });
+
+    // управление: кнопки ⬅️ ➡️ (держи нажатой)
+    [["lov-vlevo", "l"], ["lov-vpravo", "r"]].forEach(function (para) {
+      let knopka = document.getElementById(para[0]);
+      knopka.addEventListener("pointerdown", function () { nazhato[para[1]] = true; });
+      ["pointerup", "pointerleave", "pointercancel"].forEach(function (sob) {
+        knopka.addEventListener(sob, function () { nazhato[para[1]] = false; });
+      });
+    });
+
+    // при смене языка обновляем и эту игру
+    let perevodDoLovli = perevesti;
+    perevesti = function (novyYazyk) {
+      perevodDoLovli(novyYazyk);
+      obnovitLovlyu();
+    };
+
+    obnovitLovlyu();
   </script>
 
   <script>
