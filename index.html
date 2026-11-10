@@ -354,6 +354,41 @@
       background: rgba(0, 0, 0, 0.45);
       border-top: 4px solid white;
     }
+
+    /* ===== ПЕНАЛЬТИ ===== */
+    #pole {
+      position: relative;          /* внутри можно ставить вещи по координатам */
+      width: 100%; max-width: 360px; height: 230px;
+      margin: 10px auto;
+      background: linear-gradient(#81c784, #388e3c);   /* трава */
+      border-radius: 12px; overflow: hidden;
+    }
+    #vorota {
+      position: absolute; top: 15px; left: 10%; width: 80%; height: 110px;
+      border: 6px solid white; border-bottom: none;   /* штанги и перекладина */
+      background:                                     /* сетка из полосок */
+        repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 1px, transparent 1px 12px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 1px, transparent 1px 12px);
+      box-sizing: border-box;
+    }
+    #vratar, #myach {
+      position: absolute; font-size: 42px; line-height: 1;
+      transform: translateX(-50%);                    /* центр по координате left */
+      transition: left 0.5s, top 0.5s;                /* плавный полёт */
+    }
+    #vratar { top: 70px; left: 50%; }
+    #myach  { top: 180px; left: 50%; font-size: 34px; }
+    .udary button {
+      font-size: 17px; padding: 10px 14px; margin: 4px;
+      border-radius: 10px; border: 2px solid #2e7d32; background: #e8f5e9; cursor: pointer;
+    }
+    .udary button:disabled { opacity: 0.5; cursor: default; }
+    #pen-dalee {
+      font-size: 17px; padding: 10px 16px; margin-top: 8px; border-radius: 10px;
+      border: 2px solid #fbc02d; background: #ffeb3b; font-weight: bold; cursor: pointer; display: none;
+    }
+    #pen-info { font-weight: bold; font-size: 18px; }
+    #pen-rezultat { font-size: 20px; font-weight: bold; min-height: 28px; }
   </style>
 </head>
 <body>
@@ -790,6 +825,27 @@
       <div class="varianty" id="viktorina-varianty"></div>
       <p id="viktorina-otvet"></p>
       <button id="viktorina-dalee" onclick="sleduyushiy()">Дальше ➡️</button>
+    </div>
+
+    <!-- ===== ИГРА «ПЕНАЛЬТИ» ===== -->
+    <div class="card">
+      <h2>⚽ Пенальти</h2>
+      <p>Выбери, куда бить. Забей хотя бы 3 гола из 5, чтобы пройти уровень!</p>
+      <p id="pen-info"></p>
+      <!-- поле: ворота, вратарь и мяч -->
+      <div id="pole">
+        <div id="vorota"></div>
+        <div id="vratar">🧤</div>
+        <div id="myach">⚽</div>
+      </div>
+      <!-- три кнопки удара -->
+      <div class="udary">
+        <button id="udar-l" onclick="udar('l')">⬅️ Влево</button>
+        <button id="udar-c" onclick="udar('c')">⬆️ В центр</button>
+        <button id="udar-r" onclick="udar('r')">➡️ Вправо</button>
+      </div>
+      <p id="pen-rezultat"></p>
+      <button id="pen-dalee" onclick="penDalee()"></button>
     </div>
 
   </main>
@@ -1710,6 +1766,161 @@
 
     nachatViktorinu();
     perevesti(yazyk);   // сразу применяем выбранный язык
+  </script>
+
+  <script>
+    // ===== ИГРА «ПЕНАЛЬТИ» С УРОВНЯМИ =====
+    Object.assign(slovar, {
+      "⚽ Пенальти": { en: "⚽ Penalty", uz: "⚽ Пенальти", ky: "⚽ Пенальти" },
+      "Выбери, куда бить. Забей хотя бы 3 гола из 5, чтобы пройти уровень!": {
+        en: "Choose where to shoot. Score at least 3 goals out of 5 to pass the level!",
+        uz: "Қаерга уришни танла. Босқични ўтиш учун 5 тадан камида 3 та гол ур!",
+        ky: "Кайда тээп жатканыңды танда. Деңгээлден өтүү үчүн 5тен жок дегенде 3 гол киргиз!" },
+      "⬅️ Влево": { en: "⬅️ Left", uz: "⬅️ Чапга", ky: "⬅️ Солго" },
+      "⬆️ В центр": { en: "⬆️ Center", uz: "⬆️ Ўртага", ky: "⬆️ Ортого" },
+      "➡️ Вправо": { en: "➡️ Right", uz: "➡️ Ўнгга", ky: "➡️ Оңго" },
+      "⚽ ГОООЛ!": { en: "⚽ GOOOAL!", uz: "⚽ ГООЛ!", ky: "⚽ ГООЛ!" },
+      "🧤 Вратарь поймал!": { en: "🧤 The goalkeeper saved it!", uz: "🧤 Дарвозабон ушлаб олди!", ky: "🧤 Дарбазачы кармап алды!" },
+      "Следующий удар ➡️": { en: "Next shot ➡️", uz: "Кейинги зарба ➡️", ky: "Кийинки сокку ➡️" },
+      "Следующий уровень ➡️": { en: "Next level ➡️", uz: "Кейинги босқич ➡️", ky: "Кийинки деңгээл ➡️" },
+      "🔄 Ещё раз": { en: "🔄 Try again", uz: "🔄 Яна бир марта", ky: "🔄 Дагы бир жолу" },
+      "🔄 Играть сначала": { en: "🔄 Play from the start", uz: "🔄 Бошидан ўйнаш", ky: "🔄 Башынан ойноо" },
+      "🏆 Ты прошёл все 5 уровней! Ты настоящий чемпион!": {
+        en: "🏆 You passed all 5 levels! You're a real champion!",
+        uz: "🏆 Сен 5 та босқичнинг ҳаммасини ўтдинг! Сен ҳақиқий чемпионсан!",
+        ky: "🏆 Сен 5 деңгээлдин баарынан өттүң! Сен чыныгы чемпионсуң!" }
+    });
+
+    // фразы с числами — функции для каждого языка
+    let penInfoTekst = {
+      ru: function (u, n, g) { return "Уровень " + u + " из 5 · Удар " + n + " из 5 · Голы: " + g; },
+      en: function (u, n, g) { return "Level " + u + " of 5 · Shot " + n + " of 5 · Goals: " + g; },
+      uz: function (u, n, g) { return "Босқич " + u + " / 5 · Зарба " + n + " / 5 · Голлар: " + g; },
+      ky: function (u, n, g) { return "Деңгээл " + u + " / 5 · Сокку " + n + " / 5 · Голдор: " + g; }
+    };
+    let penProshel = {
+      ru: function (g) { return "🎉 Уровень пройден! Голов: " + g + " из 5"; },
+      en: function (g) { return "🎉 Level passed! Goals: " + g + " of 5"; },
+      uz: function (g) { return "🎉 Босқич ўтилди! Голлар: 5 тадан " + g + " та"; },
+      ky: function (g) { return "🎉 Деңгээлден өттүң! Голдор: 5тен " + g; }
+    };
+    let penNeProshel = {
+      ru: function (g) { return "😕 Голов: " + g + " из 5. Нужно хотя бы 3. Попробуй ещё раз!"; },
+      en: function (g) { return "😕 Goals: " + g + " of 5. You need at least 3. Try again!"; },
+      uz: function (g) { return "😕 Голлар: 5 тадан " + g + " та. Камида 3 та керак. Яна уриниб кўр!"; },
+      ky: function (g) { return "😕 Голдор: 5тен " + g + ". Жок дегенде 3 керек. Дагы аракет кыл!"; }
+    };
+
+    // шанс, что вратарь угадает направление, на каждом уровне
+    // уровень 1 — легко (20%), уровень 5 — очень трудно (75%)
+    let shansVratarya = [0.20, 0.35, 0.50, 0.62, 0.75];
+
+    // где стоят вещи: l — лево, c — центр, r — право (в процентах от ширины поля)
+    let mestoX = { l: 22, c: 50, r: 78 };
+
+    let uroven = 1;        // текущий уровень (1..5)
+    let udarNomer = 0;     // сколько ударов уже сделано на уровне
+    let goly = 0;          // сколько голов забито на уровне
+    let sostoyanie = "igra";  // igra | udar | konecUrovnya | pobeda
+    let posledniyGol = false;
+
+    function udar(kuda) {
+      if (sostoyanie !== "igra") return;
+      sostoyanie = "udar";
+
+      // вратарь: с шансом угадывает, иначе прыгает в другую сторону
+      let kudaVratar;
+      if (Math.random() < shansVratarya[uroven - 1]) {
+        kudaVratar = kuda;
+      } else {
+        let drugie = ["l", "c", "r"].filter(function (s) { return s !== kuda; });
+        kudaVratar = drugie[Math.floor(Math.random() * 2)];
+      }
+
+      // двигаем мяч и вратаря (CSS сделает это плавно)
+      document.getElementById("myach").style.left = mestoX[kuda] + "%";
+      document.getElementById("myach").style.top = "60px";
+      document.getElementById("vratar").style.left = mestoX[kudaVratar] + "%";
+
+      posledniyGol = (kuda !== kudaVratar);
+      if (posledniyGol) goly = goly + 1;
+      udarNomer = udarNomer + 1;
+
+      // ждём полсекунды, пока мяч летит, потом показываем результат
+      setTimeout(function () {
+        if (udarNomer === 5) {
+          sostoyanie = (goly >= 3) ? (uroven === 5 ? "pobeda" : "konecUrovnya") : "proigrysh";
+        } else {
+          sostoyanie = "posleUdara";
+        }
+        obnovitPenalti();
+      }, 550);
+      obnovitPenalti();
+    }
+
+    function postavitNaMesto() {
+      document.getElementById("myach").style.left = "50%";
+      document.getElementById("myach").style.top = "180px";
+      document.getElementById("vratar").style.left = "50%";
+    }
+
+    function penDalee() {
+      if (sostoyanie === "posleUdara") {
+        sostoyanie = "igra";
+      } else if (sostoyanie === "konecUrovnya") {
+        uroven = uroven + 1; udarNomer = 0; goly = 0; sostoyanie = "igra";
+      } else if (sostoyanie === "proigrysh") {
+        udarNomer = 0; goly = 0; sostoyanie = "igra";          // тот же уровень заново
+      } else if (sostoyanie === "pobeda") {
+        uroven = 1; udarNomer = 0; goly = 0; sostoyanie = "igra"; // всё сначала
+      }
+      postavitNaMesto();
+      obnovitPenalti();
+    }
+
+    // все тексты игры на текущем языке
+    function obnovitPenalti() {
+      let ya = yazyk;
+      let nomerNaEkrane = (sostoyanie === "igra") ? udarNomer + 1 : udarNomer;
+      document.getElementById("pen-info").textContent = penInfoTekst[ya](uroven, nomerNaEkrane, goly);
+
+      ["l", "c", "r"].forEach(function (s) {
+        document.getElementById("udar-" + s).disabled = (sostoyanie !== "igra");
+      });
+
+      let rez = document.getElementById("pen-rezultat");
+      let dalee = document.getElementById("pen-dalee");
+      dalee.style.display = "inline-block";
+
+      if (sostoyanie === "igra" || sostoyanie === "udar") {
+        rez.textContent = "";
+        dalee.style.display = "none";
+      } else {
+        let udarTekst = posledniyGol ? t("⚽ ГОООЛ!") : t("🧤 Вратарь поймал!");
+        if (sostoyanie === "posleUdara") {
+          rez.textContent = udarTekst;
+          dalee.textContent = t("Следующий удар ➡️");
+        } else if (sostoyanie === "konecUrovnya") {
+          rez.textContent = udarTekst + " " + penProshel[ya](goly);
+          dalee.textContent = t("Следующий уровень ➡️");
+        } else if (sostoyanie === "proigrysh") {
+          rez.textContent = udarTekst + " " + penNeProshel[ya](goly);
+          dalee.textContent = t("🔄 Ещё раз");
+        } else if (sostoyanie === "pobeda") {
+          rez.textContent = udarTekst + " " + t("🏆 Ты прошёл все 5 уровней! Ты настоящий чемпион!");
+          dalee.textContent = t("🔄 Играть сначала");
+        }
+      }
+    }
+
+    // при смене языка обновляем и пенальти
+    let perevodDoPenalti = perevesti;
+    perevesti = function (novyYazyk) {
+      perevodDoPenalti(novyYazyk);
+      obnovitPenalti();
+    };
+
+    obnovitPenalti();
   </script>
 
   <script>
