@@ -267,6 +267,22 @@
 
     /* ===== Кнопки языков ===== */
     .yazyki { margin-top: 15px; }
+    #muzyka-knopka { margin-top: 10px; font-size: 20px; padding: 4px 14px; border-radius: 20px; cursor: pointer;
+      border: 2px solid white; background: rgba(255, 255, 255, 0.2); }
+    /* большая надпись GAME OVER поверх поля */
+    .gameover {
+      position: absolute; inset: 0; display: none;
+      align-items: center; justify-content: center; flex-direction: column;
+      background: rgba(0, 0, 0, 0.75); z-index: 5;
+      color: #ff1744; font-size: 46px; font-weight: 900; letter-spacing: 3px;
+      font-family: "Courier New", monospace; text-shadow: 0 0 10px #ff1744, 3px 3px 0 #000;
+      animation: migat 0.8s infinite alternate;          /* мигает */
+    }
+    .gameover small { font-size: 18px; color: white; text-shadow: none; letter-spacing: 1px; margin-top: 8px; }
+    @keyframes migat {
+      from { transform: scale(1);    opacity: 1; }
+      to   { transform: scale(1.08); opacity: 0.75; }
+    }
     #zvuk-knopka {
       margin-top: 10px; font-size: 22px; padding: 4px 14px; border-radius: 20px; cursor: pointer;
       border: 2px solid white; background: rgba(255, 255, 255, 0.2);
@@ -431,6 +447,8 @@
     </div>
     <!-- кнопка звука: включить / выключить -->
     <button id="zvuk-knopka" onclick="pereklyuchitZvuk()">🔊</button>
+    <!-- кнопка музыки: фоновая мелодия -->
+    <button id="muzyka-knopka" onclick="pereklyuchitMuzyku()">🎵 ▶️</button>
   </header>
 
   <!-- main = главная часть сайта -->
@@ -863,6 +881,7 @@
         <div id="vorota"></div>
         <div id="vratar">🧤</div>
         <div id="myach">⚽</div>
+        <div class="gameover" id="pen-gameover">GAME OVER<small>😢</small></div>
       </div>
       <!-- три кнопки удара -->
       <div class="udary">
@@ -881,6 +900,7 @@
       <p id="lov-info"></p>
       <div id="lov-pole">
         <div id="lov-vratar">🧤</div>
+        <div class="gameover" id="lov-gameover">GAME OVER<small>😢</small></div>
         <!-- сюда JavaScript будет добавлять падающие мячи -->
       </div>
       <!-- кнопки для телефона: держи палец на кнопке -->
@@ -1931,6 +1951,8 @@
     // все тексты игры на текущем языке
     function obnovitPenalti() {
       let ya = yazyk;
+      // GAME OVER видно, только когда проиграл
+      document.getElementById("pen-gameover").style.display = (sostoyanie === "proigrysh") ? "flex" : "none";
       let nomerNaEkrane = (sostoyanie === "igra") ? udarNomer + 1 : udarNomer;
       document.getElementById("pen-info").textContent = penInfoTekst[ya](uroven, nomerNaEkrane, goly);
 
@@ -2137,6 +2159,7 @@
     // все тексты игры на текущем языке
     function obnovitLovlyu() {
       let ya = yazyk;
+      document.getElementById("lov-gameover").style.display = (lovSostoyanie === "proigrysh") ? "flex" : "none";
       let serdtsa = "❤️".repeat(Math.max(lovZhizni, 0)) || "—";
       document.getElementById("lov-info").textContent =
         lovInfoTekst[ya](lovUroven, lovOchki, nuzhnoPoimat, serdtsa, lovRekord);
@@ -2266,14 +2289,62 @@
         [523, 523, 523, 659, 784, 1047].forEach(function (f, i) { nota(f, i * 0.14, 0.3, "square", 0.12); });
         nota(2500, 1.0, 0.6, "sine", 0.08);
         shum(0.3, 1.5, 0.1);
-      } else if (kakoi === "proigrysh") {     // проигрыш — грустные ноты вниз
-        [392, 349, 311, 262].forEach(function (f, i) { nota(f, i * 0.2, 0.3, "triangle", 0.25); });
+      } else if (kakoi === "proigrysh") {     // 🎶 музыка GAME OVER — грустная мелодия вниз
+        let melodiya = [523, 494, 466, 440, 392, 370, 349, 330];
+        melodiya.forEach(function (f, i) { nota(f, i * 0.18, 0.22, "square", 0.09); });
+        nota(262, 1.5, 0.9, "square", 0.1);                 // долгая последняя нота
+        nota(131, 1.5, 0.9, "triangle", 0.3);               // и бас под ней
+        [196, 175, 165, 131].forEach(function (f, i) { nota(f, i * 0.36, 0.34, "triangle", 0.25); });
       }
+    }
+
+    // ===== ФОНОВАЯ МУЗЫКА (своя мелодия, 0 = пауза) =====
+    // каждая цифра — частота ноты; одна клетка = 1/8 такта
+    let melodiyaFon = [
+      659, 784, 880, 784,  659, 587, 523, 587,   659, 784, 880, 1047, 988, 880, 784, 0,
+      880, 784, 659, 587,  523, 587, 659, 523,   587, 659, 587, 523,  494, 523, 587, 0
+    ];
+    let basFon = [ 131, 131, 196, 196,  110, 110, 175, 196 ];   // бас: одна нота на 4 клетки
+    let muzykaVkl = false;
+    let muzykaTaimer = null;
+    let shagMuzyki = 0;          // какая клетка мелодии сейчас
+    let vremyaNoty = 0;          // когда играть следующую ноту
+    let dlinaKletki = 0.17;      // секунд на одну клетку (темп)
+
+    function zapustitMuzyku() {
+      if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      vremyaNoty = audio.currentTime + 0.1;
+      // каждые 50 мс заранее ставим ноты на ближайшие 0.3 секунды
+      muzykaTaimer = setInterval(function () {
+        while (vremyaNoty < audio.currentTime + 0.3) {
+          let otsyuda = vremyaNoty - audio.currentTime;
+          let f = melodiyaFon[shagMuzyki % melodiyaFon.length];
+          if (f) nota(f, otsyuda, dlinaKletki * 0.9, "triangle", 0.06);
+          if (shagMuzyki % 4 === 0) {
+            nota(basFon[(shagMuzyki / 4) % basFon.length], otsyuda, dlinaKletki * 3.5, "sine", 0.12);
+          }
+          shagMuzyki = shagMuzyki + 1;
+          vremyaNoty = vremyaNoty + dlinaKletki;
+        }
+      }, 50);
+    }
+
+    function ostanovitMuzyku() {
+      clearInterval(muzykaTaimer);
+      muzykaTaimer = null;
+    }
+
+    function pereklyuchitMuzyku() {
+      muzykaVkl = !muzykaVkl;
+      try { if (muzykaVkl) zapustitMuzyku(); else ostanovitMuzyku(); } catch (e) {}
+      document.getElementById("muzyka-knopka").textContent = muzykaVkl ? "🎵 ⏸️" : "🎵 ▶️";
     }
 
     // кнопка 🔊 / 🔇
     function pereklyuchitZvuk() {
       zvukVkl = !zvukVkl;
+      if (!zvukVkl && muzykaVkl) pereklyuchitMuzyku();   // тишина — значит и музыку выключаем
       try { localStorage.setItem("zvuk", zvukVkl ? "on" : "off"); } catch (e) {}
       pokazatKnopkuZvuka();
       if (zvukVkl) zvuk("verno");             // проверочный звук
