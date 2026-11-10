@@ -1492,33 +1492,115 @@
   </script>
 
   <script>
-    // ===== ВИКТОРИНА «УГАДАЙ ФУТБОЛИСТА» =====
-    // voprosy = массив вопросов. У каждого: подсказка и правильный ответ
+    // ===== ВИКТОРИНА «УГАДАЙ ФУТБОЛИСТА» (на 4 языках) =====
+
+    // новые слова для словаря перевода
+    Object.assign(slovar, {
+      "🎮 Угадай футболиста": { en: "🎮 Guess the footballer", uz: "🎮 Футболчини топ", ky: "🎮 Футболчуну тап" },
+      "Дальше ➡️": { en: "Next ➡️", uz: "Кейинги ➡️", ky: "Кийинки ➡️" },
+      "Узнать результат 🏆": { en: "See the result 🏆", uz: "Натижани кўриш 🏆", ky: "Жыйынтыкты көрүү 🏆" },
+      "🔄 Сыграть ещё раз": { en: "🔄 Play again", uz: "🔄 Яна ўйнаш", ky: "🔄 Дагы ойноо" },
+      "✅ Правильно! ГОООЛ! ⚽": { en: "✅ Correct! GOOOAL! ⚽", uz: "✅ Тўғри! ГООЛ! ⚽", ky: "✅ Туура! ГООЛ! ⚽" },
+      "❌ Не угадал. Правильный ответ:": { en: "❌ Wrong. The correct answer:", uz: "❌ Топмадинг. Тўғри жавоб:", ky: "❌ Таппадың. Туура жооп:" },
+      "МАДРИДИСТ": { en: "MADRIDISTA", uz: "МАДРИДИСТ", ky: "МАДРИДИСТ" },
+      "Фан-клуб Мустафо": { en: "Mustafo Fan Club", uz: "Мустафо фан-клуби", ky: "Мустафонун фан-клубу" },
+      "Фото:": { en: "Photo:", uz: "Сурат:", ky: "Сүрөт:" }
+    });
+
+    // voprosy = массив вопросов. У каждой подсказки — 4 языка
     let voprosy = [
-      { podskazka: "🧤 Вратарь из СССР. Его прозвали «Чёрный паук».", otvet: "Лев Яшин" },
-      { podskazka: "🧤 Вратарь «Баварии», который играет ногами почти как полевой игрок.", otvet: "Мануэль Нойер" },
-      { podskazka: "🧤 Итальянский вратарь, чемпион мира 2006, легенда «Ювентуса».", otvet: "Джанлуиджи Буффон" },
-      { podskazka: "🛡️ Его прозвище «Кайзер». Чемпион мира и как игрок, и как тренер.", otvet: "Франц Беккенбауэр" },
-      { podskazka: "🛡️ Больше 20 сезонов играл только за «Милан» и 5 раз выигрывал главный кубок Европы.", otvet: "Паоло Мальдини" },
-      { podskazka: "🛡️ Капитан «Милана». Его номер 6 в клубе больше никто не носит.", otvet: "Франко Барези" },
-      { podskazka: "🎯 В финале чемпионата мира 1998 забил два гола головой.", otvet: "Зинедин Зидан" },
-      { podskazka: "🎯 Забил победный гол в финале чемпионата мира 2010.", otvet: "Андрес Иньеста" },
-      { podskazka: "🎯 Мастер «тики-таки», потом стал тренером «Барселоны».", otvet: "Хави" },
-      { podskazka: "⚡ Единственный футболист, который трижды стал чемпионом мира.", otvet: "Пеле" },
-      { podskazka: "⚡ Прозвище «Феномен». Лучший бомбардир чемпионата мира 2002.", otvet: "Роналдо" },
-      { podskazka: "⚡ В его честь назван знаменитый финт-поворот.", otvet: "Йохан Кройф" }
+      { otvet: "Лев Яшин", podskazka: {
+          ru: "🧤 Вратарь из СССР. Его прозвали «Чёрный паук».",
+          en: "🧤 A goalkeeper from the USSR. He was nicknamed the “Black Spider”.",
+          uz: "🧤 СССР дарвозабони. Уни «Қора ўргимчак» деб аташган.",
+          ky: "🧤 СССРдин дарбазачысы. Аны «Кара жөргөмүш» деп аташкан." } },
+      { otvet: "Мануэль Нойер", podskazka: {
+          ru: "🧤 Вратарь «Баварии», который играет ногами почти как полевой игрок.",
+          en: "🧤 Bayern goalkeeper who plays with his feet almost like an outfield player.",
+          uz: "🧤 «Бавария» дарвозабони, оёқ билан деярли майдон ўйинчисидек ўйнайди.",
+          ky: "🧤 «Бавариянын» дарбазачысы, бут менен дээрлик талаа оюнчусундай ойнойт." } },
+      { otvet: "Джанлуиджи Буффон", podskazka: {
+          ru: "🧤 Итальянский вратарь, чемпион мира 2006, легенда «Ювентуса».",
+          en: "🧤 Italian goalkeeper, 2006 world champion, a Juventus legend.",
+          uz: "🧤 Италиялик дарвозабон, 2006 йилги жаҳон чемпиони, «Ювентус» афсонаси.",
+          ky: "🧤 Италиялык дарбазачы, 2006-жылдагы дүйнө чемпиону, «Ювентустун» легендасы." } },
+      { otvet: "Франц Беккенбауэр", podskazka: {
+          ru: "🛡️ Его прозвище «Кайзер». Чемпион мира и как игрок, и как тренер.",
+          en: "🛡️ Nicknamed “Der Kaiser”. World champion both as a player and as a coach.",
+          uz: "🛡️ Лақаби «Кайзер». Ҳам ўйинчи, ҳам мураббий сифатида жаҳон чемпиони.",
+          ky: "🛡️ Лакабы «Кайзер». Оюнчу катары да, машыктыруучу катары да дүйнө чемпиону." } },
+      { otvet: "Паоло Мальдини", podskazka: {
+          ru: "🛡️ Больше 20 сезонов играл только за «Милан» и 5 раз выигрывал главный кубок Европы.",
+          en: "🛡️ Played more than 20 seasons only for Milan and won Europe’s top cup 5 times.",
+          uz: "🛡️ 20 мавсумдан кўпроқ фақат «Милан»да ўйнаган ва Европанинг бош кубогини 5 марта ютган.",
+          ky: "🛡️ 20 сезондон ашык бир гана «Миланда» ойноп, Европанын башкы кубогун 5 жолу утуп алган." } },
+      { otvet: "Франко Барези", podskazka: {
+          ru: "🛡️ Капитан «Милана». Его номер 6 в клубе больше никто не носит.",
+          en: "🛡️ Milan captain. Nobody at the club wears his number 6 anymore.",
+          uz: "🛡️ «Милан» сардори. Клубда унинг 6-рақамини бошқа ҳеч ким киймайди.",
+          ky: "🛡️ «Миландын» капитаны. Клубда анын 6-номерин башка эч ким кийбейт." } },
+      { otvet: "Зинедин Зидан", podskazka: {
+          ru: "🎯 В финале чемпионата мира 1998 забил два гола головой.",
+          en: "🎯 Scored two headers in the 1998 World Cup final.",
+          uz: "🎯 1998 йилги жаҳон чемпионати финалида бош билан икки гол урган.",
+          ky: "🎯 1998-жылдагы дүйнө чемпионатынын финалында баш менен эки гол киргизген." } },
+      { otvet: "Андрес Иньеста", podskazka: {
+          ru: "🎯 Забил победный гол в финале чемпионата мира 2010.",
+          en: "🎯 Scored the winning goal in the 2010 World Cup final.",
+          uz: "🎯 2010 йилги жаҳон чемпионати финалида ғалаба голини урган.",
+          ky: "🎯 2010-жылдагы дүйнө чемпионатынын финалында жеңиш голун киргизген." } },
+      { otvet: "Хави", podskazka: {
+          ru: "🎯 Мастер «тики-таки», потом стал тренером «Барселоны».",
+          en: "🎯 Master of “tiki-taka”, later became Barcelona’s coach.",
+          uz: "🎯 «Тики-така» устаси, кейин «Барселона» мураббийи бўлган.",
+          ky: "🎯 «Тики-таканын» устаты, кийин «Барселонанын» машыктыруучусу болгон." } },
+      { otvet: "Пеле", podskazka: {
+          ru: "⚡ Единственный футболист, который трижды стал чемпионом мира.",
+          en: "⚡ The only footballer to become world champion three times.",
+          uz: "⚡ Уч марта жаҳон чемпиони бўлган ягона футболчи.",
+          ky: "⚡ Үч жолу дүйнө чемпиону болгон жалгыз футболчу." } },
+      { otvet: "Роналдо", podskazka: {
+          ru: "⚡ Прозвище «Феномен». Лучший бомбардир чемпионата мира 2002.",
+          en: "⚡ Nicknamed “The Phenomenon”. Top scorer of the 2002 World Cup.",
+          uz: "⚡ Лақаби «Феномен». 2002 йилги жаҳон чемпионатининг энг яхши тўпурари.",
+          ky: "⚡ Лакабы «Феномен». 2002-жылдагы дүйнө чемпионатынын эң мыкты бомбардири." } },
+      { otvet: "Йохан Кройф", podskazka: {
+          ru: "⚡ В его честь назван знаменитый финт-поворот.",
+          en: "⚡ A famous turning feint is named after him.",
+          uz: "⚡ Машҳур бурилиш финти унинг номи билан аталган.",
+          ky: "⚡ Атактуу бурулуш финти анын аты менен аталган." } }
     ];
 
-    let poryadok = [];   // в каком порядке пойдут вопросы
-    let nomer = 0;       // какой вопрос сейчас (0 = первый)
-    let ochki = 0;       // сколько правильных ответов
+    // фразы, где порядок слов в языках разный, — делаем функциями
+    let schetTekst = {
+      ru: function (n, N, o) { return "Вопрос " + n + " из " + N + " · Очки: " + o; },
+      en: function (n, N, o) { return "Question " + n + " of " + N + " · Points: " + o; },
+      uz: function (n, N, o) { return "Савол " + n + " / " + N + " · Очколар: " + o; },
+      ky: function (n, N, o) { return "Суроо " + n + " / " + N + " · Упайлар: " + o; }
+    };
+    let itogTekst = {
+      ru: function (o, N) { return "🏆 Игра окончена! Ты набрал " + o + " из " + N + ". "; },
+      en: function (o, N) { return "🏆 Game over! You scored " + o + " of " + N + ". "; },
+      uz: function (o, N) { return "🏆 Ўйин тугади! Сен " + N + " тадан " + o + " та тўпладинг. "; },
+      ky: function (o, N) { return "🏆 Оюн бүттү! Сен " + N + " упайдан " + o + " упай алдың. "; }
+    };
+    let otzyv = {
+      vse:    { ru: "Ты настоящий знаток футбола! 🌟", en: "You're a real football expert! 🌟", uz: "Сен ҳақиқий футбол билимдонисан! 🌟", ky: "Сен чыныгы футбол билерменисиң! 🌟" },
+      horosho:{ ru: "Отличный результат! 💪", en: "Great result! 💪", uz: "Аъло натижа! 💪", ky: "Мыкты жыйынтык! 💪" },
+      eshe:   { ru: "Попробуй ещё раз, у тебя получится! 🙂", en: "Try again, you can do it! 🙂", uz: "Яна уриниб кўр, сенда албатта чиқади! 🙂", ky: "Дагы аракет кыл, сенде сөзсүз чыгат! 🙂" }
+    };
 
-    // peremeshat = перемешать массив (как перетасовать карты)
+    let poryadok = [];     // порядок вопросов
+    let nomer = 0;         // какой вопрос сейчас
+    let ochki = 0;         // сколько правильных ответов
+    let otvecheno = false; // ответил ли на текущий вопрос
+    let vybralVerno = false;
+    let konec = false;     // игра закончена?
+
     function peremeshat(massiv) {
       let kopiya = massiv.slice();
       for (let i = kopiya.length - 1; i > 0; i--) {
-        // Math.random() даёт случайное число от 0 до 1
-        let j = Math.floor(Math.random() * (i + 1));
+        let j = Math.floor(Math.random() * (i + 1));   // Math.random() — случайное число
         let vremenno = kopiya[i]; kopiya[i] = kopiya[j]; kopiya[j] = vremenno;
       }
       return kopiya;
@@ -1526,75 +1608,108 @@
 
     function nachatViktorinu() {
       poryadok = peremeshat(voprosy);
-      nomer = 0;
-      ochki = 0;
+      nomer = 0; ochki = 0; konec = false;
       pokazatVopros();
     }
 
     function pokazatVopros() {
+      otvecheno = false;
       let vopros = poryadok[nomer];
-      document.getElementById("viktorina-schet").textContent =
-        "Вопрос " + (nomer + 1) + " из " + poryadok.length + " · Очки: " + ochki;
-      document.getElementById("viktorina-podskazka").textContent = vopros.podskazka;
-      document.getElementById("viktorina-otvet").textContent = "";
-      document.getElementById("viktorina-dalee").style.display = "none";
-
-      // 4 варианта: правильный + 3 случайных неправильных
+      // 4 варианта: правильный + 3 случайных
       let drugie = voprosy.map(function (v) { return v.otvet; })
                           .filter(function (imya) { return imya !== vopros.otvet; });
       let varianty = peremeshat([vopros.otvet].concat(peremeshat(drugie).slice(0, 3)));
-
       let mesto = document.getElementById("viktorina-varianty");
       mesto.innerHTML = "";
       varianty.forEach(function (imya) {
         let knopka = document.createElement("button");
-        knopka.textContent = imya;
-        knopka.onclick = function () { proverit(knopka, imya, vopros.otvet); };
+        knopka.dataset.imya = imya;   // имя по-русски запоминаем, на экране — перевод
+        knopka.onclick = function () { proverit(knopka); };
         mesto.appendChild(knopka);
       });
+      obnovitTeksty();
     }
 
-    function proverit(knopka, vybor, pravilno) {
-      let vse = document.querySelectorAll("#viktorina-varianty button");
-      vse.forEach(function (k) {
-        k.disabled = true;                                  // больше нажимать нельзя
-        if (k.textContent === pravilno) k.classList.add("verno");   // правильный — зелёным
+    function proverit(knopka) {
+      if (otvecheno) return;
+      otvecheno = true;
+      let pravilno = poryadok[nomer].otvet;
+      vybralVerno = (knopka.dataset.imya === pravilno);
+      if (vybralVerno) ochki = ochki + 1;
+      document.querySelectorAll("#viktorina-varianty button").forEach(function (k) {
+        k.disabled = true;
+        if (k.dataset.imya === pravilno) k.classList.add("verno");
       });
-      if (vybor === pravilno) {
-        ochki = ochki + 1;
-        document.getElementById("viktorina-otvet").textContent = "✅ Правильно! ГОООЛ! ⚽";
-      } else {
-        knopka.classList.add("neverno");
-        document.getElementById("viktorina-otvet").textContent = "❌ Не угадал. Правильный ответ: " + pravilno;
-      }
-      document.getElementById("viktorina-schet").textContent =
-        "Вопрос " + (nomer + 1) + " из " + poryadok.length + " · Очки: " + ochki;
-
-      let dalee = document.getElementById("viktorina-dalee");
-      dalee.textContent = (nomer + 1 < poryadok.length) ? "Дальше ➡️" : "Узнать результат 🏆";
-      dalee.style.display = "inline-block";
+      if (!vybralVerno) knopka.classList.add("neverno");
+      obnovitTeksty();
     }
 
     function sleduyushiy() {
+      if (konec) { nachatViktorinu(); return; }
       nomer = nomer + 1;
       if (nomer < poryadok.length) {
         pokazatVopros();
       } else {
-        // конец игры
-        let itog = "🏆 Игра окончена! Ты набрал " + ochki + " из " + poryadok.length + ". ";
-        if (ochki === poryadok.length) itog += "Ты настоящий знаток футбола! 🌟";
-        else if (ochki >= 8) itog += "Отличный результат! 💪";
-        else itog += "Попробуй ещё раз, у тебя получится! 🙂";
-        document.getElementById("viktorina-podskazka").textContent = itog;
+        konec = true;
         document.getElementById("viktorina-varianty").innerHTML = "";
-        document.getElementById("viktorina-otvet").textContent = "";
-        let dalee = document.getElementById("viktorina-dalee");
-        dalee.textContent = "🔄 Сыграть ещё раз";
-        dalee.onclick = function () { dalee.onclick = sleduyushiy; nachatViktorinu(); };
+        obnovitTeksty();
       }
     }
 
-    nachatViktorinu();   // запускаем игру при открытии сайта
+    // все тексты викторины на текущем языке (вызывается и при смене языка)
+    function obnovitTeksty() {
+      let ya = yazyk;
+      let N = poryadok.length;
+      let podskazka = document.getElementById("viktorina-podskazka");
+      let otvet = document.getElementById("viktorina-otvet");
+      let dalee = document.getElementById("viktorina-dalee");
+
+      if (konec) {
+        let kakoi = (ochki === N) ? "vse" : (ochki >= 8 ? "horosho" : "eshe");
+        document.getElementById("viktorina-schet").textContent = schetTekst[ya](N, N, ochki);
+        podskazka.textContent = itogTekst[ya](ochki, N) + otzyv[kakoi][ya];
+        otvet.textContent = "";
+        dalee.textContent = t("🔄 Сыграть ещё раз");
+        dalee.style.display = "inline-block";
+        return;
+      }
+      let vopros = poryadok[nomer];
+      document.getElementById("viktorina-schet").textContent = schetTekst[ya](nomer + 1, N, ochki);
+      podskazka.textContent = vopros.podskazka[ya];
+      document.querySelectorAll("#viktorina-varianty button").forEach(function (k) {
+        k.textContent = t(k.dataset.imya);
+      });
+      if (otvecheno) {
+        otvet.textContent = vybralVerno
+          ? t("✅ Правильно! ГОООЛ! ⚽")
+          : t("❌ Не угадал. Правильный ответ:") + " " + t(vopros.otvet);
+        dalee.textContent = (nomer + 1 < N) ? t("Дальше ➡️") : t("Узнать результат 🏆");
+        dalee.style.display = "inline-block";
+      } else {
+        otvet.textContent = "";
+        dalee.style.display = "none";
+      }
+    }
+
+    // подписи авторов фото: «Фото:» переводим, имя автора оставляем
+    function perevestiPodpisi() {
+      document.querySelectorAll(".avtor-foto").forEach(function (p) {
+        if (!p.dataset.orig) p.dataset.orig = p.textContent;
+        let tekst = p.dataset.orig;
+        if (tekst.indexOf("Фото:") === 0) p.textContent = t("Фото:") + tekst.slice(5);
+      });
+    }
+
+    // при смене языка — переводим и викторину, и подписи фото
+    let perevodDoViktoriny = perevesti;
+    perevesti = function (novyYazyk) {
+      perevodDoViktoriny(novyYazyk);
+      if (poryadok.length) obnovitTeksty();
+      perevestiPodpisi();
+    };
+
+    nachatViktorinu();
+    perevesti(yazyk);   // сразу применяем выбранный язык
   </script>
 
   <script>
