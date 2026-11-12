@@ -85,73 +85,83 @@
     #xabar { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #263238; color: #fff;
              padding: 10px 16px; border-radius: 10px; display: none; z-index: 9; max-width: 90%; text-align: center; }
     footer { text-align: center; color: #a5d6a7; font-size: 13px; margin-top: 16px; }
+    .tillar { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .tillar button { font-size: 13px; padding: 5px 10px; background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.3); }
+    .tillar button.faol { background: #ffd54f; color: #3e2723; border-color: #ffd54f; }
   </style>
 </head>
 <body>
   <header>
-    <h1>⚽ Футбол менежер</h1>
-    <p>Афсоналардан жамоа йиғ ва чемпион бўл! · Ясаган: Мустафо</p>
+    <!-- 🌐 Тил тугмалари: босилса, бутун ўйин шу тилга ўтади -->
+    <div class="tillar" id="tillar">
+      <button data-til="uz">🇺🇿 Ўзб</button>
+      <button data-til="ru">🇷🇺 Рус</button>
+      <button data-til="en">🇬🇧 Eng</button>
+      <button data-til="ky">🇰🇬 Кыр</button>
+    </div>
+    <h1 data-t="h1"></h1>
+    <p data-t="sub"></p>
   </header>
 
   <main>
     <!-- 1) Ҳолат: пул, ўйинчилар сони, жамоа кучи -->
     <div class="karta">
       <div class="holat">
-        <div>💰 Пул <b id="pul">115</b> млн</div>
-        <div>👥 Ўйинчилар <b id="soni">0/11</b></div>
-        <div>💪 Жамоа кучи <b id="kuch">—</b></div>
-        <div>💎 Олмос <b id="olmos" class="olmos">0</b></div>
+        <div><span data-t="pulL"></span> <b id="pul">115</b> <span data-t="mln"></span></div>
+        <div><span data-t="soniL"></span> <b id="soni">0/11</b></div>
+        <div><span data-t="kuchL"></span> <b id="kuch">—</b></div>
+        <div><span data-t="olmosL"></span> <b id="olmos" class="olmos">0</b></div>
       </div>
       <div class="menyu" id="menyu">
-        <button data-b="menejer" class="faol">🏟️ Менежер</button>
-        <button data-b="draft">🎲 Драфт</button>
-        <button data-b="vazifalar">✅ Вазифалар</button>
-        <button data-b="kvest">🧩 Квест</button>
-        <button data-b="dokon">🛍️ Дўкон</button>
+        <button data-b="menejer" class="faol" data-t="m_menejer"></button>
+        <button data-b="draft" data-t="m_draft"></button>
+        <button data-b="vazifalar" data-t="m_vaz"></button>
+        <button data-b="kvest" data-t="m_kvest"></button>
+        <button data-b="dokon" data-t="m_dokon"></button>
       </div>
     </div>
 
     <!-- ===== КЛУБ НОМЛАРИ ===== -->
     <div class="karta">
-      <h2>🏷️ Клубим ва рақиблар</h2>
-      <label>Менинг клубим номи <b style="color:#ff8a80">*</b></label>
-      <input type="text" id="klub-nomi" maxlength="30" placeholder="Масалан: Мустафо ФК"
+      <h2 data-t="klubH"></h2>
+      <label><span data-t="klubLabel"></span> <b style="color:#ff8a80">*</b></label>
+      <input type="text" id="klub-nomi" maxlength="30" data-tp="klubPh"
              style="width:100%;box-sizing:border-box;font-size:17px;padding:8px 10px;border-radius:10px;border:2px solid #ffd54f;margin:4px 0 10px">
       <details>
-        <summary style="cursor:pointer">🆚 Рақиб клублар номларини ўзгартириш</summary>
+        <summary style="cursor:pointer" data-t="raqibSum"></summary>
         <div id="raqib-nomlari" style="margin-top:8px"></div>
       </details>
-      <p style="text-align:center;margin:10px 0 0"><button id="klub-saqla">💾 Сақлаш</button></p>
+      <p style="text-align:center;margin:10px 0 0"><button id="klub-saqla" data-t="saqlaBtn"></button></p>
     </div>
 
     <div id="b-menejer">
 
     <!-- 2) Майдон (4-3-3) -->
     <div class="karta">
-      <h2>🏟️ Менинг жамоам (4-3-3)</h2>
+      <h2 data-t="jamoamH"></h2>
       <div class="maydon" id="maydon"></div>
     </div>
 
     <!-- 3) Трансфер бозори -->
     <div class="karta" id="bozor-karta">
-      <h2>🛒 Трансфер бозори</h2>
+      <h2 data-t="bozorH"></h2>
       <div class="tablar" id="tablar"></div>
       <div class="royxat" id="royxat"></div>
-      <p style="font-size:13px;color:#c8e6c9">Ўйинчини босиб сотиб ол, яна боссанг — сотасан. Керак: 1 дарвозабон, 4 ҳимоячи, 3 ярим ҳимоячи, 3 ҳужумчи.</p>
+      <p style="font-size:13px;color:#c8e6c9" data-t="bozorIzoh"></p>
     </div>
 
     <!-- 4) Мавсум -->
     <div class="karta">
-      <h2>🏆 Мавсум</h2>
-      <p id="mavsum-matn">Аввал 11 та ўйинчини йиғ, кейин мавсумни бошла.</p>
-      <button id="boshla-tugma" disabled>▶️ Мавсумни бошлаш</button>
+      <h2 data-t="mavsumH"></h2>
+      <p id="mavsum-matn"></p>
+      <button id="boshla-tugma" disabled data-t="boshlaBtn"></button>
       <div id="mavsum" class="yashirin">
         <table id="jadval"></table>
         <div class="hisob" id="hisob"></div>
         <div id="sharh" class="sharh-quti"></div>
         <p style="text-align:center">
-          <button id="oyna-tugma">⚽ Кейинги ўйин</button>
-          <button id="qayta-tugma" class="oddiy yashirin">🔄 Янги мавсум</button>
+          <button id="oyna-tugma" data-t="keyingiOyin"></button>
+          <button id="qayta-tugma" class="oddiy yashirin" data-t="yangiMavsum"></button>
         </p>
         <div class="kubok" id="kubok"></div>
       </div>
@@ -161,26 +171,25 @@
     <!-- ===== ДРАФТ ===== -->
     <div id="b-draft" class="yashirin">
       <div class="karta">
-        <h2>🎲 Драфт</h2>
-        <p>Ҳар бир жой учун 3 та тасодифий афсона чиқади — биттасини танлайсан. Пул керак эмас!
-           Жамоа йиғилгач, 5 та ўйин ўйнайсан. Ҳар ғалаба учун <b class="olmos">+500 💎</b>.</p>
-        <p>Кириш нархи: <b class="olmos">1000 💎</b></p>
-        <button id="draft-boshla">🎲 Драфтни бошлаш (1000 💎)</button>
+        <h2 data-t="draftH"></h2>
+        <p data-t="draftIzoh"></p>
+        <p data-t="draftNarx"></p>
+        <button id="draft-boshla" data-t="draftBoshla"></button>
         <div id="draft-tanlov" class="yashirin">
           <h3 id="draft-sarlavha"></h3>
           <div class="royxat" id="draft-variantlar"></div>
         </div>
       </div>
       <div class="karta">
-        <h2>🏟️ Драфт жамоам <span id="draft-kuch"></span></h2>
+        <h2><span data-t="draftJamoaH"></span> <span id="draft-kuch"></span></h2>
         <div class="maydon" id="draft-maydon"></div>
       </div>
       <div class="karta yashirin" id="draft-mavsum">
-        <h2>🏆 Драфт ўйинлари</h2>
+        <h2 data-t="draftOyinH"></h2>
         <table id="draft-jadval"></table>
         <div class="hisob" id="draft-hisob"></div>
         <div id="draft-sharh" class="sharh-quti"></div>
-        <p style="text-align:center"><button id="draft-oyna">⚽ Кейинги ўйин</button></p>
+        <p style="text-align:center"><button id="draft-oyna" data-t="keyingiOyin"></button></p>
         <div class="kubok" id="draft-kubok"></div>
       </div>
     </div>
@@ -188,8 +197,8 @@
     <!-- ===== КУНЛИК ВАЗИФАЛАР ===== -->
     <div id="b-vazifalar" class="yashirin">
       <div class="karta">
-        <h2>✅ Бугунги вазифалар</h2>
-        <p style="font-size:13px;color:#c8e6c9">Ҳар куни 3 та янги вазифа. Бажарсанг, олмосни ол!</p>
+        <h2 data-t="vazH"></h2>
+        <p style="font-size:13px;color:#c8e6c9" data-t="vazIzoh"></p>
         <div id="vazifa-royxat"></div>
       </div>
     </div>
@@ -197,15 +206,15 @@
     <!-- ===== КВЕСТ ===== -->
     <div id="b-kvest" class="yashirin">
       <div class="karta">
-        <h2>🧩 Футбол квести</h2>
-        <p>10 та тасодифий савол. Ҳар тўғри жавоб — <b class="olmos">300 💎</b>, ҳаммаси тўғри бўлса — <b class="olmos">3000 💎</b>!</p>
-        <button id="kvest-boshla">🧩 Квестни бошлаш</button>
+        <h2 data-t="kvestH"></h2>
+        <p data-t="kvestIzoh"></p>
+        <button id="kvest-boshla"></button>
         <div id="kvest-quti" class="yashirin">
           <p id="kvest-raqam"></p>
           <div class="savol" id="kvest-savol"></div>
           <div class="javoblar" id="kvest-javoblar"></div>
           <p class="kubok" id="kvest-natija"></p>
-          <p style="text-align:center"><button id="kvest-keyingi" class="yashirin">Кейинги ➡️</button></p>
+          <p style="text-align:center"><button id="kvest-keyingi" class="yashirin"></button></p>
         </div>
       </div>
     </div>
@@ -213,66 +222,275 @@
     <!-- ===== ДЎКОН ===== -->
     <div id="b-dokon" class="yashirin">
       <div class="karta">
-        <h2>🛍️ Дўкон</h2>
-        <div class="mahsulot"><span>💰 <b>+5 млн</b> трансфер пули (доимий)</span><button data-narx="1000" data-m="pul">1000 💎</button></div>
-        <div class="mahsulot"><span>💰 <b>+15 млн</b> трансфер пули (доимий)</span><button data-narx="2500" data-m="pul15">2500 💎</button></div>
-        <p style="font-size:13px;color:#c8e6c9">Олмосни квест, вазифалар ва драфтдаги ғалабалардан тўплайсан.</p>
+        <h2 data-t="dokonH"></h2>
+        <div class="mahsulot"><span data-t="dokon1"></span><button data-narx="1000" data-m="pul">1000 💎</button></div>
+        <div class="mahsulot"><span data-t="dokon2"></span><button data-narx="2500" data-m="pul15">2500 💎</button></div>
+        <p style="font-size:13px;color:#c8e6c9" data-t="dokonIzoh"></p>
       </div>
     </div>
   </main>
   <div id="xabar"></div>
 
-  <footer>Ўйиндаги кучлар ва нархлар ўйин учун ўйлаб топилган.</footer>
+  <footer data-t="footer"></footer>
 
   <script>
+    // ===== 0) ТИЛЛАР (i18n) =====
+    // Ҳар бир матн 4 тилда: uz — ўзбекча, ru — русча, en — инглизча, ky — қирғизча.
+    // Матн ичидаги {0}, {1} — ўрнига кейин рақам ёки ном қўйиладиган «бўш жой».
+    const L = {
+      uz: {
+        title: "Футбол менежер — Мустафо", h1: "⚽ Футбол менежер",
+        sub: "Афсоналардан жамоа йиғ ва чемпион бўл! · Ясаган: Мустафо",
+        pulL: "💰 Пул", mln: "млн", soniL: "👥 Ўйинчилар", kuchL: "💪 Жамоа кучи", olmosL: "💎 Олмос",
+        m_menejer: "🏟️ Менежер", m_draft: "🎲 Драфт", m_vaz: "✅ Вазифалар", m_kvest: "🧩 Квест", m_dokon: "🛍️ Дўкон",
+        klubH: "🏷️ Клубим ва рақиблар", klubLabel: "Менинг клубим номи", klubPh: "Масалан: Мустафо ФК",
+        raqibSum: "🆚 Рақиб клублар номларини ўзгартириш", saqlaBtn: "💾 Сақлаш",
+        jamoamH: "🏟️ Менинг жамоам (4-3-3)", bozorH: "🛒 Трансфер бозори",
+        bozorIzoh: "Ўйинчини босиб сотиб ол, яна боссанг — сотасан. Керак: 1 дарвозабон, 4 ҳимоячи, 3 ярим ҳимоячи, 3 ҳужумчи.",
+        mavsumH: "🏆 Мавсум", boshlaBtn: "▶️ Мавсумни бошлаш", keyingiOyin: "⚽ Кейинги ўйин", yangiMavsum: "🔄 Янги мавсум",
+        draftH: "🎲 Драфт",
+        draftIzoh: "Ҳар бир жой учун 3 та тасодифий афсона чиқади — биттасини танлайсан. Пул керак эмас! Жамоа йиғилгач, 5 та ўйин ўйнайсан. Ҳар ғалаба учун <b class=\"olmos\">+500 💎</b>.",
+        draftNarx: "Кириш нархи: <b class=\"olmos\">1000 💎</b>", draftBoshla: "🎲 Драфтни бошлаш (1000 💎)",
+        draftJamoaH: "🏟️ Драфт жамоам", draftOyinH: "🏆 Драфт ўйинлари",
+        vazH: "✅ Бугунги вазифалар", vazIzoh: "Ҳар куни 3 та янги вазифа. Бажарсанг, олмосни ол!",
+        kvestH: "🧩 Футбол квести",
+        kvestIzoh: "10 та тасодифий савол. Ҳар тўғри жавоб — <b class=\"olmos\">300 💎</b>, ҳаммаси тўғри бўлса — <b class=\"olmos\">3000 💎</b>!",
+        kvestBoshla: "🧩 Квестни бошлаш", yanaKvest: "🔄 Яна квест", keyingi: "Кейинги ➡️", natijaBtn: "Натижа 🏆",
+        dokonH: "🛍️ Дўкон", dokon1: "💰 <b>+5 млн</b> трансфер пули (доимий)", dokon2: "💰 <b>+15 млн</b> трансфер пули (доимий)",
+        dokonIzoh: "Олмосни квест, вазифалар ва драфтдаги ғалабалардан тўплайсан.",
+        footer: "Ўйиндаги кучлар ва нархлар ўйин учун ўйлаб топилган.",
+        poz: { "Д": "🧤 Дарвозабон", "Ҳ": "🛡️ Ҳимоячи", "Я": "🎯 Ярим ҳимоячи", "Ҳу": "⚡ Ҳужумчи" },
+        qisqa: { "Д": "Д", "Ҳ": "Ҳ", "Я": "Я", "Ҳу": "Ҳу" },
+        olmosPlus: "💎 +{0} олмос!",
+        transferYopiq: "Мавсум давомида трансфер ёпиқ. Янги мавсумда ўзгартирасан.",
+        joyQolmadi: "{0}: жой қолмади ({1} та). Аввал биттасини сот.",
+        pulYetmaydi: "Пул етмайди! 💸 Арзонроқ ўйинчи танла ёки биттасини сот.",
+        mavsumKetyapti: "Мавсум кетяпти! Ҳар бир рақиб билан ўйна.",
+        jamoaTayyor: "Жамоа тайёр! 💪 Мавсумни бошлашинг мумкин.",
+        avvalYig: "Аввал 11 та ўйинчини йиғ, кейин мавсумни бошла.",
+        bosh: "бўш", klubYoz: "🏷️ Аввал клубингнинг номини ёз ва «Сақлаш»ни бос!",
+        raqib: "Рақиб", kuchi: "Кучи", natija: "Натижа", ochko: "Очколар",
+        chempion: "🏆 <b>ЧЕМПИОН!</b> Сен ҳақиқий менежерсан! 🎉",
+        yaxshi: "🥈 Яхши мавсум! Кейинги сафар чемпион бўласан 💪",
+        ogir: "😕 Мавсум оғир бўлди. Жамоани кучайтириб, яна уриниб кўр!",
+        oyinBoshlandi: "🎙️ Ўйин бошланди! <b>{0}</b> — {1}", draftOyini: "🎙️ Драфт ўйини: <b>{0}</b> — {1}",
+        gol: "⚽ {0}' ГООЛ! <b>{1}</b> тўпни дарвозага киритди!", golQisqa: "⚽ {0}' ГООЛ! <b>{1}</b>!",
+        raqibGol: "😬 {0}' {1} гол урди.", tugadi: "🏁 Ўйин тугади!",
+        galaba: "🎉 ҒАЛАБА!", durang: "🤝 Дуранг.", maglub: "😞 Мағлубият.",
+        vaz: ["⚽ 2 та ўйинда ғалаба қозон", "🥅 Жами 5 та гол ур", "🧩 1 та квестни тугат"], olindi: "✅ Олинди",
+        savolN: "Савол {0} / 10 · ✅ {1}", alo: "🏆 АЪЛО! Ҳаммаси тўғри!", kvestTugadi: "🧩 Квест тугади!",
+        togriJ: "Тўғри жавоблар: {0} / 10 · Мукофот: <b class='olmos'>{1} 💎</b>",
+        olmosYetmaydi: "💎 Олмос етмайди! Квест ва вазифаларни бажар.", pulOshdi: "✅ Трансфер пули ошди! Энди: {0} млн",
+        draftDavom: "Драфт давом этяпти — танлашни тугат!", draftOlmos: "💎 Драфт учун 1000 олмос керак. Квест ўйна!",
+        tanla: "Танла: {0} ({1}/11)", tanlash: "👆 Танлаш",
+        draftTugadi: "Драфт тугади! Ғалабалар: {0} / 5 · Ютуқ: <b class='olmos'>{1} 💎</b>",
+        raqibN: "{0}-рақиб (💪{1})", klubShart: "🏷️ Клуб номи ёзилиши шарт!", saqlandi: "✅ Сақланди! Клубинг: {0}"
+      },
+      ru: {
+        title: "Футбольный менеджер — Мустафо", h1: "⚽ Футбольный менеджер",
+        sub: "Собери команду из легенд и стань чемпионом! · Автор: Мустафо",
+        pulL: "💰 Деньги", mln: "млн", soniL: "👥 Игроки", kuchL: "💪 Сила команды", olmosL: "💎 Алмазы",
+        m_menejer: "🏟️ Менеджер", m_draft: "🎲 Драфт", m_vaz: "✅ Задания", m_kvest: "🧩 Квест", m_dokon: "🛍️ Магазин",
+        klubH: "🏷️ Мой клуб и соперники", klubLabel: "Название моего клуба", klubPh: "Например: Мустафо ФК",
+        raqibSum: "🆚 Изменить названия клубов-соперников", saqlaBtn: "💾 Сохранить",
+        jamoamH: "🏟️ Моя команда (4-3-3)", bozorH: "🛒 Трансферный рынок",
+        bozorIzoh: "Нажми на игрока, чтобы купить, нажми ещё раз — продашь. Нужно: 1 вратарь, 4 защитника, 3 полузащитника, 3 нападающих.",
+        mavsumH: "🏆 Сезон", boshlaBtn: "▶️ Начать сезон", keyingiOyin: "⚽ Следующий матч", yangiMavsum: "🔄 Новый сезон",
+        draftH: "🎲 Драфт",
+        draftIzoh: "На каждую позицию выпадают 3 случайные легенды — выбираешь одну. Деньги не нужны! Когда команда собрана, играешь 5 матчей. За каждую победу <b class=\"olmos\">+500 💎</b>.",
+        draftNarx: "Цена входа: <b class=\"olmos\">1000 💎</b>", draftBoshla: "🎲 Начать драфт (1000 💎)",
+        draftJamoaH: "🏟️ Моя драфт-команда", draftOyinH: "🏆 Матчи драфта",
+        vazH: "✅ Задания на сегодня", vazIzoh: "Каждый день 3 новых задания. Выполни — получи алмазы!",
+        kvestH: "🧩 Футбольный квест",
+        kvestIzoh: "10 случайных вопросов. За каждый верный ответ — <b class=\"olmos\">300 💎</b>, если все верные — <b class=\"olmos\">3000 💎</b>!",
+        kvestBoshla: "🧩 Начать квест", yanaKvest: "🔄 Ещё квест", keyingi: "Дальше ➡️", natijaBtn: "Итог 🏆",
+        dokonH: "🛍️ Магазин", dokon1: "💰 <b>+5 млн</b> на трансферы (навсегда)", dokon2: "💰 <b>+15 млн</b> на трансферы (навсегда)",
+        dokonIzoh: "Алмазы собираешь за квесты, задания и победы в драфте.",
+        footer: "Сила и цены игроков придуманы для игры.",
+        poz: { "Д": "🧤 Вратарь", "Ҳ": "🛡️ Защитник", "Я": "🎯 Полузащитник", "Ҳу": "⚡ Нападающий" },
+        qisqa: { "Д": "ВР", "Ҳ": "ЗЩ", "Я": "ПЗ", "Ҳу": "НП" },
+        olmosPlus: "💎 +{0} алмазов!",
+        transferYopiq: "Во время сезона трансферы закрыты. Изменишь состав в новом сезоне.",
+        joyQolmadi: "{0}: мест нет ({1}). Сначала продай одного.",
+        pulYetmaydi: "Не хватает денег! 💸 Выбери игрока подешевле или продай кого-нибудь.",
+        mavsumKetyapti: "Сезон идёт! Сыграй с каждым соперником.",
+        jamoaTayyor: "Команда готова! 💪 Можно начинать сезон.",
+        avvalYig: "Сначала собери 11 игроков, потом начинай сезон.",
+        bosh: "пусто", klubYoz: "🏷️ Сначала напиши название клуба и нажми «Сохранить»!",
+        raqib: "Соперник", kuchi: "Сила", natija: "Счёт", ochko: "Очки",
+        chempion: "🏆 <b>ЧЕМПИОН!</b> Ты настоящий менеджер! 🎉",
+        yaxshi: "🥈 Хороший сезон! В следующий раз станешь чемпионом 💪",
+        ogir: "😕 Сезон был тяжёлым. Усиль команду и попробуй ещё раз!",
+        oyinBoshlandi: "🎙️ Матч начался! <b>{0}</b> — {1}", draftOyini: "🎙️ Матч драфта: <b>{0}</b> — {1}",
+        gol: "⚽ {0}' ГОООЛ! <b>{1}</b> забивает!", golQisqa: "⚽ {0}' ГОООЛ! <b>{1}</b>!",
+        raqibGol: "😬 {0}' {1} забивает гол.", tugadi: "🏁 Матч окончен!",
+        galaba: "🎉 ПОБЕДА!", durang: "🤝 Ничья.", maglub: "😞 Поражение.",
+        vaz: ["⚽ Выиграй 2 матча", "🥅 Забей всего 5 голов", "🧩 Пройди 1 квест"], olindi: "✅ Получено",
+        savolN: "Вопрос {0} / 10 · ✅ {1}", alo: "🏆 ОТЛИЧНО! Всё верно!", kvestTugadi: "🧩 Квест окончен!",
+        togriJ: "Верных ответов: {0} / 10 · Награда: <b class='olmos'>{1} 💎</b>",
+        olmosYetmaydi: "💎 Не хватает алмазов! Проходи квесты и задания.", pulOshdi: "✅ Трансферный бюджет вырос! Теперь: {0} млн",
+        draftDavom: "Драфт идёт — закончи выбор!", draftOlmos: "💎 Для драфта нужно 1000 алмазов. Пройди квест!",
+        tanla: "Выбери: {0} ({1}/11)", tanlash: "👆 Выбрать",
+        draftTugadi: "Драфт окончен! Побед: {0} / 5 · Выигрыш: <b class='olmos'>{1} 💎</b>",
+        raqibN: "Соперник {0} (💪{1})", klubShart: "🏷️ Название клуба обязательно!", saqlandi: "✅ Сохранено! Твой клуб: {0}"
+      },
+      en: {
+        title: "Football Manager — Mustafo", h1: "⚽ Football Manager",
+        sub: "Build a team of legends and become champion! · Made by Mustafo",
+        pulL: "💰 Money", mln: "M", soniL: "👥 Players", kuchL: "💪 Team rating", olmosL: "💎 Diamonds",
+        m_menejer: "🏟️ Manager", m_draft: "🎲 Draft", m_vaz: "✅ Tasks", m_kvest: "🧩 Quest", m_dokon: "🛍️ Shop",
+        klubH: "🏷️ My club and rivals", klubLabel: "My club's name", klubPh: "For example: Mustafo FC",
+        raqibSum: "🆚 Change rival club names", saqlaBtn: "💾 Save",
+        jamoamH: "🏟️ My team (4-3-3)", bozorH: "🛒 Transfer market",
+        bozorIzoh: "Tap a player to buy, tap again to sell. You need: 1 goalkeeper, 4 defenders, 3 midfielders, 3 forwards.",
+        mavsumH: "🏆 Season", boshlaBtn: "▶️ Start season", keyingiOyin: "⚽ Next match", yangiMavsum: "🔄 New season",
+        draftH: "🎲 Draft",
+        draftIzoh: "For each position you get 3 random legends — pick one. No money needed! Once the team is ready, you play 5 matches. Every win gives <b class=\"olmos\">+500 💎</b>.",
+        draftNarx: "Entry price: <b class=\"olmos\">1000 💎</b>", draftBoshla: "🎲 Start draft (1000 💎)",
+        draftJamoaH: "🏟️ My draft team", draftOyinH: "🏆 Draft matches",
+        vazH: "✅ Today's tasks", vazIzoh: "3 new tasks every day. Finish them and collect diamonds!",
+        kvestH: "🧩 Football quest",
+        kvestIzoh: "10 random questions. Each correct answer — <b class=\"olmos\">300 💎</b>, all correct — <b class=\"olmos\">3000 💎</b>!",
+        kvestBoshla: "🧩 Start quest", yanaKvest: "🔄 Another quest", keyingi: "Next ➡️", natijaBtn: "Result 🏆",
+        dokonH: "🛍️ Shop", dokon1: "💰 <b>+5 M</b> transfer money (forever)", dokon2: "💰 <b>+15 M</b> transfer money (forever)",
+        dokonIzoh: "You earn diamonds from quests, tasks and draft wins.",
+        footer: "Player ratings and prices are made up for the game.",
+        poz: { "Д": "🧤 Goalkeeper", "Ҳ": "🛡️ Defender", "Я": "🎯 Midfielder", "Ҳу": "⚡ Forward" },
+        qisqa: { "Д": "GK", "Ҳ": "DF", "Я": "MF", "Ҳу": "FW" },
+        olmosPlus: "💎 +{0} diamonds!",
+        transferYopiq: "Transfers are closed during the season. You can change the team next season.",
+        joyQolmadi: "{0}: no places left ({1}). Sell one first.",
+        pulYetmaydi: "Not enough money! 💸 Pick a cheaper player or sell someone.",
+        mavsumKetyapti: "The season is on! Play every rival.",
+        jamoaTayyor: "Team is ready! 💪 You can start the season.",
+        avvalYig: "First pick 11 players, then start the season.",
+        bosh: "empty", klubYoz: "🏷️ First write your club's name and press «Save»!",
+        raqib: "Rival", kuchi: "Rating", natija: "Score", ochko: "Points",
+        chempion: "🏆 <b>CHAMPION!</b> You are a real manager! 🎉",
+        yaxshi: "🥈 Good season! Next time you'll be champion 💪",
+        ogir: "😕 A tough season. Make your team stronger and try again!",
+        oyinBoshlandi: "🎙️ Kick-off! <b>{0}</b> — {1}", draftOyini: "🎙️ Draft match: <b>{0}</b> — {1}",
+        gol: "⚽ {0}' GOOOAL! <b>{1}</b> scores!", golQisqa: "⚽ {0}' GOOOAL! <b>{1}</b>!",
+        raqibGol: "😬 {0}' {1} scored.", tugadi: "🏁 Full time!",
+        galaba: "🎉 WIN!", durang: "🤝 Draw.", maglub: "😞 Defeat.",
+        vaz: ["⚽ Win 2 matches", "🥅 Score 5 goals in total", "🧩 Finish 1 quest"], olindi: "✅ Claimed",
+        savolN: "Question {0} / 10 · ✅ {1}", alo: "🏆 EXCELLENT! All correct!", kvestTugadi: "🧩 Quest finished!",
+        togriJ: "Correct answers: {0} / 10 · Reward: <b class='olmos'>{1} 💎</b>",
+        olmosYetmaydi: "💎 Not enough diamonds! Do quests and tasks.", pulOshdi: "✅ Transfer budget increased! Now: {0} M",
+        draftDavom: "The draft is on — finish picking!", draftOlmos: "💎 The draft needs 1000 diamonds. Play a quest!",
+        tanla: "Pick: {0} ({1}/11)", tanlash: "👆 Pick",
+        draftTugadi: "Draft finished! Wins: {0} / 5 · Prize: <b class='olmos'>{1} 💎</b>",
+        raqibN: "Rival {0} (💪{1})", klubShart: "🏷️ The club name is required!", saqlandi: "✅ Saved! Your club: {0}"
+      },
+      ky: {
+        title: "Футбол менеджер — Мустафо", h1: "⚽ Футбол менеджер",
+        sub: "Легендалардан команда түзүп, чемпион бол! · Жасаган: Мустафо",
+        pulL: "💰 Акча", mln: "млн", soniL: "👥 Оюнчулар", kuchL: "💪 Команданын күчү", olmosL: "💎 Алмаз",
+        m_menejer: "🏟️ Менеджер", m_draft: "🎲 Драфт", m_vaz: "✅ Тапшырмалар", m_kvest: "🧩 Квест", m_dokon: "🛍️ Дүкөн",
+        klubH: "🏷️ Менин клубум жана атаандаштар", klubLabel: "Менин клубумдун аты", klubPh: "Мисалы: Мустафо ФК",
+        raqibSum: "🆚 Атаандаш клубдардын аттарын өзгөртүү", saqlaBtn: "💾 Сактоо",
+        jamoamH: "🏟️ Менин командам (4-3-3)", bozorH: "🛒 Трансфер базары",
+        bozorIzoh: "Оюнчуну басып сатып ал, кайра бассаң — сатасың. Керек: 1 дарбазачы, 4 коргоочу, 3 жарым коргоочу, 3 чабуулчу.",
+        mavsumH: "🏆 Сезон", boshlaBtn: "▶️ Сезонду баштоо", keyingiOyin: "⚽ Кийинки оюн", yangiMavsum: "🔄 Жаңы сезон",
+        draftH: "🎲 Драфт",
+        draftIzoh: "Ар бир орунга 3 кокус легенда чыгат — бирөөнү тандайсың. Акча керек эмес! Команда толгондо 5 оюн ойнойсуң. Ар бир жеңиш үчүн <b class=\"olmos\">+500 💎</b>.",
+        draftNarx: "Кирүү баасы: <b class=\"olmos\">1000 💎</b>", draftBoshla: "🎲 Драфтты баштоо (1000 💎)",
+        draftJamoaH: "🏟️ Менин драфт командам", draftOyinH: "🏆 Драфт оюндары",
+        vazH: "✅ Бүгүнкү тапшырмалар", vazIzoh: "Күн сайын 3 жаңы тапшырма. Аткарсаң, алмаз ал!",
+        kvestH: "🧩 Футбол квести",
+        kvestIzoh: "10 кокус суроо. Ар бир туура жооп — <b class=\"olmos\">300 💎</b>, баары туура болсо — <b class=\"olmos\">3000 💎</b>!",
+        kvestBoshla: "🧩 Квестти баштоо", yanaKvest: "🔄 Дагы квест", keyingi: "Кийинки ➡️", natijaBtn: "Жыйынтык 🏆",
+        dokonH: "🛍️ Дүкөн", dokon1: "💰 <b>+5 млн</b> трансфер акчасы (түбөлүк)", dokon2: "💰 <b>+15 млн</b> трансфер акчасы (түбөлүк)",
+        dokonIzoh: "Алмазды квесттен, тапшырмалардан жана драфттагы жеңиштерден топтойсуң.",
+        footer: "Оюнчулардын күчү жана баалары оюн үчүн ойлоп табылган.",
+        poz: { "Д": "🧤 Дарбазачы", "Ҳ": "🛡️ Коргоочу", "Я": "🎯 Жарым коргоочу", "Ҳу": "⚡ Чабуулчу" },
+        qisqa: { "Д": "Д", "Ҳ": "К", "Я": "Ж", "Ҳу": "Ч" },
+        olmosPlus: "💎 +{0} алмаз!",
+        transferYopiq: "Сезон учурунда трансфер жабык. Жаңы сезондо өзгөртөсүң.",
+        joyQolmadi: "{0}: орун калган жок ({1}). Адегенде бирөөнү сат.",
+        pulYetmaydi: "Акча жетпейт! 💸 Арзаныраак оюнчуну танда же бирөөнү сат.",
+        mavsumKetyapti: "Сезон жүрүп жатат! Ар бир атаандаш менен ойно.",
+        jamoaTayyor: "Команда даяр! 💪 Сезонду баштасаң болот.",
+        avvalYig: "Адегенде 11 оюнчу чогулт, анан сезонду башта.",
+        bosh: "бош", klubYoz: "🏷️ Адегенде клубуңдун атын жазып, «Сактоо» баскычын бас!",
+        raqib: "Атаандаш", kuchi: "Күчү", natija: "Эсеп", ochko: "Упайлар",
+        chempion: "🏆 <b>ЧЕМПИОН!</b> Сен чыныгы менеджерсиң! 🎉",
+        yaxshi: "🥈 Жакшы сезон! Кийинки жолу чемпион болосуң 💪",
+        ogir: "😕 Сезон оор болду. Команданы күчөтүп, дагы аракет кыл!",
+        oyinBoshlandi: "🎙️ Оюн башталды! <b>{0}</b> — {1}", draftOyini: "🎙️ Драфт оюну: <b>{0}</b> — {1}",
+        gol: "⚽ {0}' ГОООЛ! <b>{1}</b> топту дарбазага киргизди!", golQisqa: "⚽ {0}' ГОООЛ! <b>{1}</b>!",
+        raqibGol: "😬 {0}' {1} гол киргизди.", tugadi: "🏁 Оюн бүттү!",
+        galaba: "🎉 ЖЕҢИШ!", durang: "🤝 Тең чыгуу.", maglub: "😞 Жеңилүү.",
+        vaz: ["⚽ 2 оюнда жең", "🥅 Бардыгы 5 гол киргиз", "🧩 1 квестти бүтүр"], olindi: "✅ Алынды",
+        savolN: "Суроо {0} / 10 · ✅ {1}", alo: "🏆 ЭҢ СОНУН! Баары туура!", kvestTugadi: "🧩 Квест бүттү!",
+        togriJ: "Туура жооптор: {0} / 10 · Сыйлык: <b class='olmos'>{1} 💎</b>",
+        olmosYetmaydi: "💎 Алмаз жетпейт! Квест жана тапшырмаларды аткар.", pulOshdi: "✅ Трансфер акчасы көбөйдү! Азыр: {0} млн",
+        draftDavom: "Драфт жүрүп жатат — тандоону бүтүр!", draftOlmos: "💎 Драфт үчүн 1000 алмаз керек. Квест ойно!",
+        tanla: "Танда: {0} ({1}/11)", tanlash: "👆 Тандоо",
+        draftTugadi: "Драфт бүттү! Жеңиштер: {0} / 5 · Утуш: <b class='olmos'>{1} 💎</b>",
+        raqibN: "{0}-атаандаш (💪{1})", klubShart: "🏷️ Клубдун аты жазылышы шарт!", saqlandi: "✅ Сакталды! Клубуң: {0}"
+      }
+    };
+    let til = "uz";
+    try { const t0 = localStorage.getItem("menejer_til"); if (L[t0]) til = t0; } catch (e) {}
+    // t("kalit", a, b) — ҳозирги тилдаги матнни олиб, {0} ўрнига a, {1} ўрнига b қўяди
+    function t(kalit, ...q) {
+      let m = L[til][kalit] ?? L.uz[kalit] ?? kalit;
+      if (typeof m === "string") q.forEach((x, i) => { m = m.split("{" + i + "}").join(x); });
+      return m;
+    }
+
     // ===== 1) ЎЙИНЧИЛАР БАЗАСИ =====
+    // ism — ўйиндаги «калит» (ўзгармайди), en — инглизча ёзилиши (рус/қирғизча кирилл ёзуви ўзбекча билан бир хил)
     // poz: Д — дарвозабон, Ҳ — ҳимоячи, Я — ярим ҳимоячи, Ҳу — ҳужумчи
-    // kuch — ўйиндаги куч (0–99), narx — миллион ҳисобида
     const oyinchilar = [
-      { ism: "Лев Яшин", poz: "Д", kuch: 92, narx: 14 },
-      { ism: "Жанлуиджи Буффон", poz: "Д", kuch: 90, narx: 12 },
-      { ism: "Мануэль Нойер", poz: "Д", kuch: 89, narx: 11 },
-      { ism: "Икер Касильяс", poz: "Д", kuch: 87, narx: 9 },
-      { ism: "Петр Чех", poz: "Д", kuch: 85, narx: 7 },
+      { ism: "Лев Яшин", en: "Lev Yashin", poz: "Д", kuch: 92, narx: 14 },
+      { ism: "Жанлуиджи Буффон", en: "Gianluigi Buffon", poz: "Д", kuch: 90, narx: 12 },
+      { ism: "Мануэль Нойер", en: "Manuel Neuer", poz: "Д", kuch: 89, narx: 11 },
+      { ism: "Икер Касильяс", en: "Iker Casillas", poz: "Д", kuch: 87, narx: 9 },
+      { ism: "Петр Чех", en: "Petr Čech", poz: "Д", kuch: 85, narx: 7 },
 
-      { ism: "Франц Беккенбауэр", poz: "Ҳ", kuch: 93, narx: 15 },
-      { ism: "Паоло Мальдини", poz: "Ҳ", kuch: 92, narx: 14 },
-      { ism: "Франко Барези", poz: "Ҳ", kuch: 90, narx: 12 },
-      { ism: "Серхио Рамос", poz: "Ҳ", kuch: 89, narx: 11 },
-      { ism: "Роберто Карлос", poz: "Ҳ", kuch: 88, narx: 10 },
-      { ism: "Кафу", poz: "Ҳ", kuch: 88, narx: 10 },
-      { ism: "Фабио Каннаваро", poz: "Ҳ", kuch: 88, narx: 10 },
-      { ism: "Карлес Пуйоль", poz: "Ҳ", kuch: 86, narx: 8 },
+      { ism: "Франц Беккенбауэр", en: "Franz Beckenbauer", poz: "Ҳ", kuch: 93, narx: 15 },
+      { ism: "Паоло Мальдини", en: "Paolo Maldini", poz: "Ҳ", kuch: 92, narx: 14 },
+      { ism: "Франко Барези", en: "Franco Baresi", poz: "Ҳ", kuch: 90, narx: 12 },
+      { ism: "Серхио Рамос", en: "Sergio Ramos", poz: "Ҳ", kuch: 89, narx: 11 },
+      { ism: "Роберто Карлос", en: "Roberto Carlos", poz: "Ҳ", kuch: 88, narx: 10 },
+      { ism: "Кафу", en: "Cafu", poz: "Ҳ", kuch: 88, narx: 10 },
+      { ism: "Фабио Каннаваро", en: "Fabio Cannavaro", poz: "Ҳ", kuch: 88, narx: 10 },
+      { ism: "Карлес Пуйоль", en: "Carles Puyol", poz: "Ҳ", kuch: 86, narx: 8 },
 
-      { ism: "Зинедин Зидан", poz: "Я", kuch: 94, narx: 16 },
-      { ism: "Андрес Иньеста", poz: "Я", kuch: 91, narx: 13 },
-      { ism: "Хави", poz: "Я", kuch: 90, narx: 12 },
-      { ism: "Лука Модрич", poz: "Я", kuch: 89, narx: 11 },
-      { ism: "Андреа Пирло", poz: "Я", kuch: 88, narx: 10 },
-      { ism: "Стивен Джеррард", poz: "Я", kuch: 87, narx: 9 },
-      { ism: "Франк Лэмпард", poz: "Я", kuch: 86, narx: 8 },
+      { ism: "Зинедин Зидан", en: "Zinedine Zidane", poz: "Я", kuch: 94, narx: 16 },
+      { ism: "Андрес Иньеста", en: "Andrés Iniesta", poz: "Я", kuch: 91, narx: 13 },
+      { ism: "Хави", en: "Xavi", poz: "Я", kuch: 90, narx: 12 },
+      { ism: "Лука Модрич", en: "Luka Modrić", poz: "Я", kuch: 89, narx: 11 },
+      { ism: "Андреа Пирло", en: "Andrea Pirlo", poz: "Я", kuch: 88, narx: 10 },
+      { ism: "Стивен Джеррард", en: "Steven Gerrard", poz: "Я", kuch: 87, narx: 9 },
+      { ism: "Франк Лэмпард", en: "Frank Lampard", poz: "Я", kuch: 86, narx: 8 },
 
-      { ism: "Пеле", poz: "Ҳу", kuch: 96, narx: 18 },
-      { ism: "Диего Марадона", poz: "Ҳу", kuch: 95, narx: 17 },
-      { ism: "Роналдо (Феномен)", poz: "Ҳу", kuch: 94, narx: 16 },
-      { ism: "Йохан Кройф", poz: "Ҳу", kuch: 93, narx: 15 },
-      { ism: "Марко ван Бастен", poz: "Ҳу", kuch: 91, narx: 13 },
-      { ism: "Тьерри Анри", poz: "Ҳу", kuch: 89, narx: 11 },
-      { ism: "Эйсебио", poz: "Ҳу", kuch: 88, narx: 10 }
+      { ism: "Пеле", en: "Pelé", poz: "Ҳу", kuch: 96, narx: 18 },
+      { ism: "Диего Марадона", en: "Diego Maradona", poz: "Ҳу", kuch: 95, narx: 17 },
+      { ism: "Роналдо (Феномен)", en: "Ronaldo (Phenomenon)", poz: "Ҳу", kuch: 94, narx: 16 },
+      { ism: "Йохан Кройф", en: "Johan Cruyff", poz: "Ҳу", kuch: 93, narx: 15 },
+      { ism: "Марко ван Бастен", en: "Marco van Basten", poz: "Ҳу", kuch: 91, narx: 13 },
+      { ism: "Тьерри Анри", en: "Thierry Henry", poz: "Ҳу", kuch: 89, narx: 11 },
+      { ism: "Эйсебио", en: "Eusébio", poz: "Ҳу", kuch: 88, narx: 10 }
     ];
-    const kerak = { "Д": 1, "Ҳ": 4, "Я": 3, "Ҳу": 3 };      // 4-3-3 схемаси
-    const pozNomi = { "Д": "🧤 Дарвозабон", "Ҳ": "🛡️ Ҳимоячи", "Я": "🎯 Ярим ҳимоячи", "Ҳу": "⚡ Ҳужумчи" };
+    const nomi = (o) => (til === "en" ? o.en : o.ism);          // ўйинчи номи — ҳозирги тилда
+    const kerak = { "Д": 1, "Ҳ": 4, "Я": 3, "Ҳу": 3 };          // 4-3-3 схемаси
+    const pozNomi = (p) => L[til].poz[p];
     const BOSHLANGICH_PUL = 115;
-    const budjet = () => BOSHLANGICH_PUL + qoshimchaPul;   // дўкондан олинган пул ҳам қўшилади
+    const budjet = () => BOSHLANGICH_PUL + qoshimchaPul;       // дўкондан олинган пул ҳам қўшилади
 
-    // ===== 2) РАҚИБЛАР — номларини ўйинчи ўзгартира олади, кучлари ўйин учун ўйлаб топилган =====
+    // ===== 2) РАҚИБЛАР =====
+    // asl — асл номи (кирилл ва лотинда); maxsus — ўйинчи ўзи ёзган ном (бўлмаса — "")
     const raqiblar = [
-      { nom: "🇳🇱 Аякс", kuch: 82 },
-      { nom: "🇵🇹 Порту", kuch: 85 },
-      { nom: "🇩🇪 Боруссия Дортмунд", kuch: 88 },
-      { nom: "🇪🇸 Барселона", kuch: 90 },
-      { nom: "🇩🇪 Бавария", kuch: 92 }
+      { asl: ["🇳🇱 Аякс", "🇳🇱 Ajax"], kuch: 82, maxsus: "" },
+      { asl: ["🇵🇹 Порту", "🇵🇹 Porto"], kuch: 85, maxsus: "" },
+      { asl: ["🇩🇪 Боруссия Дортмунд", "🇩🇪 Borussia Dortmund"], kuch: 88, maxsus: "" },
+      { asl: ["🇪🇸 Барселона", "🇪🇸 Barcelona"], kuch: 90, maxsus: "" },
+      { asl: ["🇩🇪 Бавария", "🇩🇪 Bayern"], kuch: 92, maxsus: "" }
     ];
+    const rNomi = (r) => r.maxsus || r.asl[til === "en" ? 1 : 0];
     let klubNomi = "";     // ўз клубингнинг номи (ёзилиши шарт)
 
     // ===== 3) ҲОЛАТ (localStorage'да сақланади) =====
@@ -292,21 +510,22 @@
       kunlik = s.kunlik || {};
       draft = s.draft || draft;
       klubNomi = s.klubNomi || "";
-      (s.raqibNomlari || []).forEach((n, i) => { if (n && raqiblar[i]) raqiblar[i].nom = n; });
+      // эски сақланган номлар асл номга тенг бўлса — «махсус» эмас, тилга қараб алмашаверади
+      (s.raqibNomlari || []).forEach((n, i) => { if (n && raqiblar[i] && !raqiblar[i].asl.includes(n)) raqiblar[i].maxsus = n; });
     } catch (e) {}
     function saqla() {
       try { localStorage.setItem("menejer", JSON.stringify({ jamoa, natijalar, mavsumBoshlandi, olmos, qoshimchaPul, kunlik, draft,
-        klubNomi, raqibNomlari: raqiblar.map((r) => r.nom) })); } catch (e) {}
+        klubNomi, raqibNomlari: raqiblar.map((r) => r.maxsus) })); } catch (e) {}
     }
     function xabar(m) {
       const x = document.getElementById("xabar"); x.innerHTML = m; x.style.display = "block";
       clearTimeout(xabar.t); xabar.t = setTimeout(() => { x.style.display = "none"; }, 3000);
     }
-    function olmosQosh(n) { olmos += n; saqla(); chizish(); xabar("💎 +" + n + " олмос!"); }
+    function olmosQosh(n) { olmos += n; saqla(); chizish(); xabar(t("olmosPlus", n)); }
 
     const $ = (id) => document.getElementById(id);
     const topish = (ism) => oyinchilar.find((o) => o.ism === ism);
-    const jamoadagilar = () => jamoa.map(topish);
+    const jamoadagilar = () => jamoa.map(topish).filter(Boolean);
     const sarflangan = () => jamoadagilar().reduce((s, o) => s + o.narx, 0);
     const pozdagilar = (poz) => jamoadagilar().filter((o) => o.poz === poz);
     function jamoaKuchi() {
@@ -316,13 +535,13 @@
 
     // ===== 4) СОТИБ ОЛИШ / СОТИШ =====
     function bosildi(ism) {
-      if (mavsumBoshlandi) { alert("Мавсум давомида трансфер ёпиқ. Янги мавсумда ўзгартирасан."); return; }
+      if (mavsumBoshlandi) { alert(t("transferYopiq")); return; }
       const o = topish(ism);
       if (jamoa.includes(ism)) {                         // сотамиз
         jamoa = jamoa.filter((x) => x !== ism);
       } else {                                           // сотиб оламиз
-        if (pozdagilar(o.poz).length >= kerak[o.poz]) { alert(pozNomi[o.poz] + ": жой қолмади (" + kerak[o.poz] + " та). Аввал биттасини сот."); return; }
-        if (sarflangan() + o.narx > budjet()) { alert("Пул етмайди! 💸 Арзонроқ ўйинчи танла ёки биттасини сот."); return; }
+        if (pozdagilar(o.poz).length >= kerak[o.poz]) { alert(t("joyQolmadi", pozNomi(o.poz), kerak[o.poz])); return; }
+        if (sarflangan() + o.narx > budjet()) { alert(t("pulYetmaydi")); return; }
         jamoa.push(ism);
       }
       saqla(); chizish();
@@ -340,7 +559,7 @@
       $("tablar").innerHTML = "";
       Object.keys(kerak).forEach((poz) => {
         const b = document.createElement("button");
-        b.textContent = pozNomi[poz] + " (" + pozdagilar(poz).length + "/" + kerak[poz] + ")";
+        b.textContent = pozNomi(poz) + " (" + pozdagilar(poz).length + "/" + kerak[poz] + ")";
         if (poz === tanlanganPoz) b.className = "faol";
         b.onclick = () => { tanlanganPoz = poz; chizish(); };
         $("tablar").appendChild(b);
@@ -351,9 +570,9 @@
       oyinchilar.filter((o) => o.poz === tanlanganPoz).forEach((o) => {
         const d = document.createElement("div");
         d.className = "oyinchi" + (jamoa.includes(o.ism) ? " olingan" : "");
-        d.innerHTML = '<span class="reyting">' + o.kuch + '</span> <span class="poz">' + o.poz + '</span>' +
-                      '<div class="ism">' + o.ism + '</div>' +
-                      '<div class="narx">💰 ' + o.narx + ' млн ' + (jamoa.includes(o.ism) ? "✅" : "") + '</div>';
+        d.innerHTML = '<span class="reyting">' + o.kuch + '</span> <span class="poz">' + L[til].qisqa[o.poz] + '</span>' +
+                      '<div class="ism">' + nomi(o) + '</div>' +
+                      '<div class="narx">💰 ' + o.narx + ' ' + t("mln") + ' ' + (jamoa.includes(o.ism) ? "✅" : "") + '</div>';
         d.onclick = () => bosildi(o.ism);
         $("royxat").appendChild(d);
       });
@@ -364,9 +583,8 @@
       $("boshla-tugma").disabled = jamoa.length !== 11 || mavsumBoshlandi;
       $("boshla-tugma").classList.toggle("yashirin", mavsumBoshlandi);
       $("mavsum").classList.toggle("yashirin", !mavsumBoshlandi);
-      $("mavsum-matn").textContent = mavsumBoshlandi
-        ? "Мавсум кетяпти! Ҳар бир рақиб билан ўйна."
-        : (jamoa.length === 11 ? "Жамоа тайёр! 💪 Мавсумни бошлашинг мумкин." : "Аввал 11 та ўйинчини йиғ, кейин мавсумни бошла.");
+      $("mavsum-matn").textContent = mavsumBoshlandi ? t("mavsumKetyapti")
+        : (jamoa.length === 11 ? t("jamoaTayyor") : t("avvalYig"));
       if (mavsumBoshlandi) jadvalChiz();
     }
 
@@ -385,8 +603,8 @@
           const o = bor[i];
           const n = document.createElement("div");
           n.className = "nuqta"; n.style.left = x + "%"; n.style.top = y + "%";
-          n.innerHTML = o ? '<div class="doira">' + o.kuch + '</div><small>' + o.ism.split(" ").slice(-1)[0] + '</small>'
-                          : '<div class="doira bosh">' + poz + '</div><small>бўш</small>';
+          n.innerHTML = o ? '<div class="doira">' + o.kuch + '</div><small>' + nomi(o).split(" ").slice(-1)[0] + '</small>'
+                          : '<div class="doira bosh">' + L[til].qisqa[poz] + '</div><small>' + t("bosh") + '</small>';
           joy.appendChild(n);
         });
       });
@@ -396,7 +614,7 @@
     // клуб номи ёзилмаган бўлса — ўйин бошланмайди
     function klubBormi() {
       if (klubNomi) return true;
-      xabar("🏷️ Аввал клубингнинг номини ёз ва «Сақлаш»ни бос!");
+      xabar(t("klubYoz"));
       $("klub-nomi").focus(); $("klub-nomi").scrollIntoView({ behavior: "smooth", block: "center" });
       return false;
     }
@@ -407,36 +625,33 @@
       saqla(); chizish();
     };
 
+    function sinf(n) { return n.men > n.raqib ? "galaba" : (n.men === n.raqib ? "durang" : "maglub"); }
     function jadvalChiz() {
-      let h = "<tr><th>Рақиб</th><th>Кучи</th><th>Натижа</th></tr>";
+      let h = "<tr><th>" + t("raqib") + "</th><th>" + t("kuchi") + "</th><th>" + t("natija") + "</th></tr>";
       raqiblar.forEach((r, i) => {
         const n = natijalar[i];
-        let natija = "—";
-        if (n) {
-          const sinf = n.men > n.raqib ? "galaba" : (n.men === n.raqib ? "durang" : "maglub");
-          natija = '<span class="' + sinf + '">' + n.men + " : " + n.raqib + "</span>";
-        }
-        h += "<tr><td>" + r.nom + "</td><td>" + r.kuch + "</td><td>" + natija + "</td></tr>";
+        const natija = n ? '<span class="' + sinf(n) + '">' + n.men + " : " + n.raqib + "</span>" : "—";
+        h += "<tr><td>" + rNomi(r) + "</td><td>" + r.kuch + "</td><td>" + natija + "</td></tr>";
       });
       const ochko = natijalar.reduce((s, n) => s + (n.men > n.raqib ? 3 : n.men === n.raqib ? 1 : 0), 0);
-      h += "<tr><td><b>Очколар</b></td><td></td><td><b>" + ochko + " / " + raqiblar.length * 3 + "</b></td></tr>";
+      h += "<tr><td><b>" + t("ochko") + "</b></td><td></td><td><b>" + ochko + " / " + raqiblar.length * 3 + "</b></td></tr>";
       $("jadval").innerHTML = h;
       const tugadi = natijalar.length >= raqiblar.length;
       $("oyna-tugma").classList.toggle("yashirin", tugadi);
       $("qayta-tugma").classList.toggle("yashirin", !tugadi);
-      if (tugadi) $("kubok").innerHTML = kubokMatni(ochko);
+      $("kubok").innerHTML = tugadi ? kubokMatni(ochko) : "";
     }
 
     function kubokMatni(ochko) {
-      if (ochko >= 13) return "🏆 <b>ЧЕМПИОН!</b> Сен ҳақиқий менежерсан! 🎉";
-      if (ochko >= 9) return "🥈 Яхши мавсум! Кейинги сафар чемпион бўласан 💪";
-      return "😕 Мавсум оғир бўлди. Жамоани кучайтириб, яна уриниб кўр!";
+      if (ochko >= 13) return t("chempion");
+      if (ochko >= 9) return t("yaxshi");
+      return t("ogir");
     }
 
     // Пуассон тақсимоти — футболда голлар сонини табиий қилади
     function golSoni(ortacha) {
-      let L = Math.exp(-ortacha), k = 0, p = 1;
-      do { k++; p *= Math.random(); } while (p > L);
+      let P = Math.exp(-ortacha), k = 0, p = 1;
+      do { k++; p *= Math.random(); } while (p > P);
       return k - 1;
     }
 
@@ -444,9 +659,10 @@
     function golUrdi(royxatJamoa) {
       const vazn = { "Ҳу": 5, "Я": 3, "Ҳ": 1, "Д": 0 };
       const royxat = [];
-      (royxatJamoa || jamoadagilar()).forEach((o) => { for (let i = 0; i < vazn[o.poz]; i++) royxat.push(o.ism); });
-      return royxat[Math.floor(Math.random() * royxat.length)];
+      (royxatJamoa || jamoadagilar()).forEach((o) => { for (let i = 0; i < vazn[o.poz]; i++) royxat.push(o); });
+      return nomi(royxat[Math.floor(Math.random() * royxat.length)]);
     }
+    const yakun = (men, raqib) => (men > raqib ? t("galaba") : men === raqib ? t("durang") : t("maglub"));
 
     $("oyna-tugma").onclick = () => {
       const i = natijalar.length;
@@ -464,19 +680,19 @@
 
       // жонли шарҳ: ҳар бир воқеа 0.8 сониядан кейин чиқади
       $("oyna-tugma").disabled = true;
-      $("sharh").innerHTML = "🎙️ Ўйин бошланди! <b>" + klubNomi + "</b> — " + r.nom + "<br>";
+      $("sharh").innerHTML = t("oyinBoshlandi", klubNomi, rNomi(r)) + "<br>";
       let a = 0, b = 0;
       $("hisob").textContent = "0 : 0";
       voqealar.forEach((v, k) => {
         setTimeout(() => {
-          if (v.biz) { a++; $("sharh").innerHTML += "⚽ " + v.daq + "' ГООЛ! <b>" + v.kim + "</b> тўпни дарвозага киритди!<br>"; }
-          else { b++; $("sharh").innerHTML += "😬 " + v.daq + "' " + r.nom + " гол урди.<br>"; }
+          if (v.biz) { a++; $("sharh").innerHTML += t("gol", v.daq, v.kim) + "<br>"; }
+          else { b++; $("sharh").innerHTML += t("raqibGol", v.daq, rNomi(r)) + "<br>"; }
           $("hisob").textContent = a + " : " + b;
           $("sharh").scrollTop = 99999;
         }, 800 * (k + 1));
       });
       setTimeout(() => {
-        $("sharh").innerHTML += "🏁 Ўйин тугади! " + (men > raqib ? "🎉 ҒАЛАБА!" : men === raqib ? "🤝 Дуранг." : "😞 Мағлубият.") + "<br>";
+        $("sharh").innerHTML += t("tugadi") + " " + yakun(men, raqib) + "<br>";
         $("sharh").scrollTop = 99999;
         natijalar.push({ men, raqib });
         kunlikYoz(men, raqib);
@@ -515,9 +731,9 @@
       }
     }
     const vazifalar = [
-      { matn: "⚽ 2 та ўйинда ғалаба қозон", kalit: "galaba", kerak: 2, sovga: 500 },
-      { matn: "🥅 Жами 5 та гол ур", kalit: "gol", kerak: 5, sovga: 500 },
-      { matn: "🧩 1 та квестни тугат", kalit: "kvest", kerak: 1, sovga: 1000 }
+      { kalit: "galaba", kerak: 2, sovga: 500 },
+      { kalit: "gol", kerak: 5, sovga: 500 },
+      { kalit: "kvest", kerak: 1, sovga: 1000 }
     ];
     function kunlikYoz(men, raqib) {
       kunlikTekshir();
@@ -532,193 +748,204 @@
         const bor = Math.min(kunlik[v.kalit], v.kerak);
         const quti = document.createElement("div");
         quti.className = "vazifa";
-        quti.innerHTML = '<div style="flex:1"><b>' + v.matn + '</b> — ' + bor + "/" + v.kerak +
+        quti.innerHTML = '<div style="flex:1"><b>' + L[til].vaz[i] + '</b> — ' + bor + "/" + v.kerak +
           '<div class="chiziqcha"><div style="width:' + (bor / v.kerak * 100) + '%"></div></div></div>';
-        const t = document.createElement("button");
-        if (kunlik.olindi[i]) { t.textContent = "✅ Олинди"; t.disabled = true; }
-        else { t.textContent = "+" + v.sovga + " 💎"; t.disabled = bor < v.kerak; }
-        t.onclick = () => { kunlik.olindi[i] = true; olmosQosh(v.sovga); vazifalarChiz(); };
-        quti.appendChild(t);
+        const tg = document.createElement("button");
+        if (kunlik.olindi[i]) { tg.textContent = t("olindi"); tg.disabled = true; }
+        else { tg.textContent = "+" + v.sovga + " 💎"; tg.disabled = bor < v.kerak; }
+        tg.onclick = () => { kunlik.olindi[i] = true; olmosQosh(v.sovga); vazifalarChiz(); };
+        quti.appendChild(tg);
         joy.appendChild(quti);
       });
     }
 
     // ===================== 9) КВЕСТ (футбол саволлари) =====================
-    // [савол, тўғри жавоб, 3 та нотўғри]
+    // Ҳар бир савол 4 тилда: { uz: [савол, тўғри жавоб, [3 та нотўғри]], ru: [...], en: [...], ky: [...] }
     const savollar = [
-      ["2022 йилги жаҳон чемпионатида ким чемпион бўлди?", "Аргентина", ["Франция", "Бразилия", "Хорватия"]],
-      ["2018 йилги жаҳон чемпионатида ким чемпион бўлди?", "Франция", ["Хорватия", "Германия", "Бельгия"]],
-      ["2014 йилги жаҳон чемпионатида ким чемпион бўлди?", "Германия", ["Аргентина", "Бразилия", "Нидерландия"]],
-      ["2010 йилги жаҳон чемпионатида ким чемпион бўлди?", "Испания", ["Нидерландия", "Германия", "Италия"]],
-      ["Жаҳон чемпионатини энг кўп ютган давлат қайси?", "Бразилия", ["Германия", "Италия", "Аргентина"]],
-      ["Пеле неча марта жаҳон чемпиони бўлган?", "3 марта", ["1 марта", "2 марта", "4 марта"]],
-      ["Биринчи жаҳон чемпионати (1930) қайси давлатда бўлган?", "Уругвай", ["Бразилия", "Италия", "Англия"]],
-      ["2022 йилги жаҳон чемпионати қайси давлатда ўтган?", "Қатар", ["Россия", "Бразилия", "АҚШ"]],
-      ["2026 йилги жаҳон чемпионатини қайси давлатлар бирга ўтказди?", "АҚШ, Канада ва Мексика", ["Испания ва Португалия", "Саудия Арабистони", "Англия ва Шотландия"]],
-      ["Ўзбекистон терма жамоаси биринчи марта қайси жаҳон чемпионатига йўлланма олди?", "2026 йил", ["2018 йил", "2022 йил", "2014 йил"]],
-      ["Жаҳон чемпионати неча йилда бир марта ўтказилади?", "4 йилда", ["2 йилда", "3 йилда", "5 йилда"]],
-      ["Футбол жамоасидан майдонда бир вақтда нечта ўйинчи бўлади?", "11 та", ["10 та", "9 та", "12 та"]],
-      ["Футбол ўйинининг асосий вақти неча дақиқа?", "90 дақиқа", ["80 дақиқа", "100 дақиқа", "60 дақиқа"]],
-      ["Пенальти дарвозадан неча метр узоқликдан тепилади?", "11 метр", ["9 метр", "12 метр", "16 метр"]],
-      ["Битта ўйинда иккита сариқ карточка олса, нима бўлади?", "Қизил карточка — майдондан чиқарилади", ["Ҳеч нарса", "Пенальти берилади", "Жарима тўлайди"]],
-      ["Дарвозабон тўпни қўл билан фақат қаерда ушлай олади?", "Ўзининг жарима майдонида", ["Бутун майдонда", "Марказий доирада", "Ҳеч қаерда"]],
-      ["8 марта «Олтин тўп» олган футболчи ким?", "Лионель Месси", ["Криштиану Роналду", "Пеле", "Зинедин Зидан"]],
-      ["Криштиану Роналду қайси давлат футболчиси?", "Португалия", ["Испания", "Бразилия", "Италия"]],
-      ["Лионель Месси футболни қайси клуб академиясида ўрганган?", "Барселона", ["Реал Мадрид", "Манчестер Юнайтед", "ПСЖ"]],
-      ["Эрлинг Холанд қайси давлат футболчиси?", "Норвегия", ["Швеция", "Дания", "Германия"]],
-      ["Муҳаммад Салоҳ қайси давлат футболчиси?", "Миср", ["Марокаш", "Жазоир", "Тунис"]],
-      ["Лука Модрич қайси давлат футболчиси?", "Хорватия", ["Сербия", "Словения", "Босния"]],
-      ["Йохан Кройф қайси давлат футболчиси?", "Нидерландия", ["Бельгия", "Германия", "Дания"]],
-      ["Лев Яшинни қандай лақаб билан аташган?", "Қора ўргимчак", ["Темир девор", "Олтин қўл", "Кекса бургут"]],
-      ["«Феномен» лақабли бразилиялик ҳужумчи ким?", "Роналдо", ["Роналдиньо", "Ромарио", "Кака"]],
-      ["Марадонанинг машҳур «Худо қўли» голи қайси жаҳон чемпионатида урилган?", "1986 йил", ["1982 йил", "1990 йил", "1994 йил"]],
-      ["«Сантьяго Бернабеу» қайси клубнинг стадиони?", "Реал Мадрид", ["Барселона", "Атлетико Мадрид", "Севилья"]],
-      ["«Камп Ноу» қайси клубнинг стадиони?", "Барселона", ["Реал Мадрид", "Валенсия", "Бетис"]],
-      ["«Олд Траффорд» қайси клубнинг стадиони?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]],
-      ["«Анфилд» қайси клубнинг стадиони?", "Ливерпуль", ["Эвертон", "Манчестер Сити", "Тоттенхэм"]],
-      ["«Бавария» клуби қайси шаҳарда?", "Мюнхен", ["Берлин", "Дортмунд", "Гамбург"]],
-      ["«Ювентус» клубини қандай лақаб билан аташади?", "Кекса синьора", ["Қизил шайтонлар", "Тўпчилар", "Сарғишлар"]],
-      ["Евро-2016 чемпионатида ким ғолиб бўлди?", "Португалия", ["Франция", "Германия", "Испания"]],
-      ["Евро-2024 чемпионатида ким ғолиб бўлди?", "Испания", ["Англия", "Франция", "Германия"]],
-      ["Евро-2020 (2021 йилда ўтган) чемпионатида ким ғолиб бўлди?", "Италия", ["Англия", "Испания", "Дания"]],
-      ["Килиан Мбаппе 2018 йилда қайси терма жамоа билан жаҳон чемпиони бўлди?", "Франция", ["Бельгия", "Португалия", "Испания"]],
-      ["Зинедин Зидан қайси давлат терма жамоасида ўйнаган?", "Франция", ["Алжир", "Испания", "Италия"]],
-      ["Паоло Мальдини бутун карьерасини қайси клубда ўтказган?", "Милан", ["Интер", "Ювентус", "Рома"]],
-      ["Франц Беккенбауэрни қандай лақаб билан аташган?", "Кайзер", ["Барон", "Дюк", "Шоҳ"]],
-      ["Футболда «хет-трик» нима дегани?", "Бир ўйинда 3 та гол уриш", ["3 та сариқ карточка", "3 та пенальти", "3 марта ғалаба"]],
-      ["Лионель Месси қайси давлат футболчиси?", "Аргентина", ["Испания", "Уругвай", "Бразилия"]],
-      ["Неймар қайси давлат футболчиси?", "Бразилия", ["Аргентина", "Португалия", "Колумбия"]],
-      ["Роберт Левандовски қайси давлат футболчиси?", "Польша", ["Чехия", "Украина", "Германия"]],
-      ["Кевин Де Брёйне қайси давлат футболчиси?", "Бельгия", ["Нидерландия", "Дания", "Франция"]],
-      ["Гарри Кейн қайси давлат футболчиси?", "Англия", ["Шотландия", "Ирландия", "Уэльс"]],
-      ["Вирджил ван Дейк қайси давлат футболчиси?", "Нидерландия", ["Бельгия", "Германия", "Англия"]],
-      ["Златан Ибрагимович қайси давлат терма жамоасида ўйнаган?", "Швеция", ["Норвегия", "Босния", "Дания"]],
-      ["Дидье Дрогба қайси давлат терма жамоасида ўйнаган?", "Кот-д'Ивуар", ["Гана", "Нигерия", "Камерун"]],
-      ["Самуэль Это'о қайси давлат терма жамоасида ўйнаган?", "Камерун", ["Сенегал", "Гана", "Кот-д'Ивуар"]],
-      ["Андрей Шевченко қайси давлат терма жамоасида ўйнаган?", "Украина", ["Россия", "Беларусь", "Грузия"]],
-      ["Луис Суарес қайси давлат терма жамоасида ўйнаган?", "Уругвай", ["Аргентина", "Чили", "Парагвай"]],
-      ["2018 йилда «Олтин тўп»ни ким олди?", "Лука Модрич", ["Криштиану Роналду", "Лионель Месси", "Килиан Мбаппе"]],
-      ["2022 йилда «Олтин тўп»ни ким олди?", "Карим Бензема", ["Роберт Левандовски", "Лионель Месси", "Садио Мане"]],
-      ["Криштиану Роналду неча марта «Олтин тўп» олган?", "5 марта", ["3 марта", "4 марта", "7 марта"]],
-      ["«Арсенал» тарихидаги энг кўп гол урган футболчи ким?", "Тьерри Анри", ["Ян Райт", "Деннис Бергкамп", "Робин ван Перси"]],
-      ["Премьер-лига қайси давлатнинг чемпионати?", "Англия", ["Испания", "Италия", "Германия"]],
-      ["Ла Лига қайси давлатнинг чемпионати?", "Испания", ["Португалия", "Италия", "Франция"]],
-      ["Серия А қайси давлатнинг чемпионати?", "Италия", ["Испания", "Бразилия", "Франция"]],
-      ["Бундеслига қайси давлатнинг чемпионати?", "Германия", ["Австрия", "Нидерландия", "Швейцария"]],
-      ["«Эль-Класико» қайси икки клуб ўйини?", "Реал Мадрид ва Барселона", ["Милан ва Интер", "Ливерпуль ва Эвертон", "Бавария ва Боруссия"]],
-      ["«Альянц Арена» қайси клубнинг стадиони?", "Бавария", ["Боруссия Дортмунд", "Ювентус", "Интер"]],
-      ["«Сигнал Идуна Парк» қайси клубнинг стадиони?", "Боруссия Дортмунд", ["Бавария", "Шальке", "Байер"]],
-      ["Машҳур «Маракана» стадиони қайси шаҳарда?", "Рио-де-Жанейро", ["Буэнос-Айрес", "Сан-Паулу", "Мадрид"]],
-      ["«Уэмбли» стадиони қайси шаҳарда?", "Лондон", ["Манчестер", "Ливерпуль", "Бирмингем"]],
-      ["Катталар футболида қайси ўлчамдаги тўп ишлатилади?", "5-ўлчам", ["3-ўлчам", "4-ўлчам", "6-ўлчам"]],
-      ["Футбол ўйинини ким бошқаради?", "Ҳакам", ["Мураббий", "Капитан", "Дарвозабон"]],
-      ["Футболдаги VAR нима?", "Видео ёрдамчи ҳакам", ["Янги тўп тури", "Жарима тури", "Турнир номи"]],
-      ["Тўп ҳимоячига тегиб, ўз дарвоза чизиғидан чиқиб кетса, нима тайинланади?", "Бурчак тўпи (корнер)", ["Пенальти", "Аут", "Эркин зарба"]],
-      ["Қўшимча вақт (экстра тайм) жами неча дақиқа?", "30 дақиқа", ["10 дақиқа", "20 дақиқа", "45 дақиқа"]],
-      ["Ҳозирги қоидада жамоа ўйинда (асосий вақтда) нечта алмаштириш қила олади?", "5 та", ["3 та", "4 та", "6 та"]],
-      ["Футбол дарвозасининг кенглиги қанча?", "7,32 метр", ["5 метр", "6 метр", "9 метр"]],
-      ["Футбол дарвозасининг баландлиги қанча?", "2,44 метр", ["2 метр", "2,8 метр", "3 метр"]],
-      ["2006 йилги жаҳон чемпионатида ким чемпион бўлди?", "Италия", ["Франция", "Германия", "Бразилия"]],
-      ["2002 йилги жаҳон чемпионатида ким чемпион бўлди?", "Бразилия", ["Германия", "Туркия", "Жанубий Корея"]],
-      ["1998 йилги жаҳон чемпионатида ким чемпион бўлди?", "Франция", ["Бразилия", "Хорватия", "Нидерландия"]],
-      ["1986 йилги жаҳон чемпионатида ким чемпион бўлди?", "Аргентина", ["Германия", "Бразилия", "Италия"]],
-      ["2014 йилги жаҳон чемпионати финалида ғалаба голини ким урди?", "Марио Гётце", ["Томас Мюллер", "Мирослав Клозе", "Месут Озил"]],
-      ["2010 йилги жаҳон чемпионати финалида ғалаба голини ким урди?", "Андрес Иньеста", ["Давид Вилья", "Фернандо Торрес", "Хави"]],
-      ["2022 йилги жаҳон чемпионати финалида хет-трик урган футболчи ким?", "Килиан Мбаппе", ["Лионель Месси", "Хулиан Альварес", "Анхель Ди Мария"]],
-      ["Жаҳон чемпионатлари тарихида энг кўп гол урган футболчи ким?", "Мирослав Клозе", ["Пеле", "Роналдо", "Лионель Месси"]],
-      ["Евро-2004 чемпионатида ким ғолиб бўлди?", "Греция", ["Португалия", "Чехия", "Нидерландия"]],
-      ["Евро-2008 ва Евро-2012 да кетма-кет ким ғолиб бўлди?", "Испания", ["Германия", "Италия", "Франция"]],
-      ["2024 йилги Копа Америка кубогини ким ютди?", "Аргентина", ["Колумбия", "Бразилия", "Уругвай"]],
-      ["2024 йилда ўтган Осиё кубогини (Осиё-2023) ким ютди?", "Қатар", ["Иордания", "Япония", "Жанубий Корея"]],
-      ["Чемпионлар лигасини энг кўп ютган клуб қайси?", "Реал Мадрид", ["Милан", "Бавария", "Ливерпуль"]],
-      ["2025 йилда Чемпионлар лигасини ким ютди?", "ПСЖ", ["Интер", "Барселона", "Арсенал"]],
-      ["«Манчестер Сити» биринчи марта Чемпионлар лигасини қайси йили ютди?", "2023 йил", ["2019 йил", "2021 йил", "2012 йил"]],
-      ["Сэр Алекс Фергюсон қайси клубда узоқ йиллар мураббий бўлган?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]],
-      ["Жозе Моуриньо ўзини қандай лақаб билан атаган?", "Махсус одам", ["Профессор", "Кайзер", "Генерал"]],
-      ["Пеленинг асл исми нима?", "Эдсон Арантис ду Насименту", ["Рональдо Луис Назарио", "Рикардо Изексон", "Жоао Пауло"]],
-      ["Диего Марадона Италияда қайси клубда машҳур бўлган?", "Наполи", ["Ювентус", "Милан", "Рома"]],
-      ["Криштиану Роналдунинг машҳур рақами қайси?", "7", ["9", "10", "11"]],
-      ["2022 йилги жаҳон чемпионатида ярим финалга чиққан биринчи Африка давлати қайси?", "Марокаш", ["Сенегал", "Камерун", "Гана"]],
-      ["Хорватия 2018 йилги жаҳон чемпионатида нечанчи ўринни олди?", "2-ўрин", ["1-ўрин", "3-ўрин", "4-ўрин"]],
-      ["Ўзбекистон чемпионатини энг кўп ютган клуб қайси?", "Пахтакор", ["Бунёдкор", "Насаф", "Навбаҳор"]],
-      ["«Пахтакор» клуби қайси шаҳардан?", "Тошкент", ["Самарқанд", "Наманган", "Қарши"]],
-      ["Ўзбекистон терма жамоасининг лақаби нима?", "Оқ бўрилар", ["Кўк бургутлар", "Олтин шерлар", "Тоғ барслари"]],
-      ["Абдукодир Хусанов 2025 йилда қайси клубга ўтди?", "Манчестер Сити", ["Ливерпуль", "Реал Мадрид", "Бавария"]],
-      ["Футзалда (зал футболида) майдонда ҳар жамоадан нечта ўйинчи бўлади?", "5 та", ["6 та", "7 та", "11 та"]],
-      ["«Олтин тўп» маросимида энг яхши дарвозабонга қайси афсона номидаги мукофот берилади?", "Лев Яшин", ["Жанлуиджи Буффон", "Олливер Кан", "Петр Чех"]],
-      // ⭐ Мустафонинг ўз саволи
-      ["Бу ўйинни ясаган Мустафонинг севимли клуби қайси?", "Реал Мадрид", ["Барселона", "Милан", "Бавария"]]
+      {"uz": ["2022 йилги жаҳон чемпионатида ким чемпион бўлди?", "Аргентина", ["Франция", "Бразилия", "Хорватия"]], "ru": ["Кто стал чемпионом мира 2022 года?", "Аргентина", ["Франция", "Бразилия", "Хорватия"]], "en": ["Who won the 2022 World Cup?", "Argentina", ["France", "Brazil", "Croatia"]], "ky": ["2022-жылдагы дүйнө чемпионатында ким чемпион болду?", "Аргентина", ["Франция", "Бразилия", "Хорватия"]]},
+      {"uz": ["2018 йилги жаҳон чемпионатида ким чемпион бўлди?", "Франция", ["Хорватия", "Германия", "Бельгия"]], "ru": ["Кто стал чемпионом мира 2018 года?", "Франция", ["Хорватия", "Германия", "Бельгия"]], "en": ["Who won the 2018 World Cup?", "France", ["Croatia", "Germany", "Belgium"]], "ky": ["2018-жылдагы дүйнө чемпионатында ким чемпион болду?", "Франция", ["Хорватия", "Германия", "Бельгия"]]},
+      {"uz": ["2014 йилги жаҳон чемпионатида ким чемпион бўлди?", "Германия", ["Аргентина", "Бразилия", "Нидерландия"]], "ru": ["Кто стал чемпионом мира 2014 года?", "Германия", ["Аргентина", "Бразилия", "Нидерланды"]], "en": ["Who won the 2014 World Cup?", "Germany", ["Argentina", "Brazil", "Netherlands"]], "ky": ["2014-жылдагы дүйнө чемпионатында ким чемпион болду?", "Германия", ["Аргентина", "Бразилия", "Нидерланд"]]},
+      {"uz": ["2010 йилги жаҳон чемпионатида ким чемпион бўлди?", "Испания", ["Нидерландия", "Германия", "Италия"]], "ru": ["Кто стал чемпионом мира 2010 года?", "Испания", ["Нидерланды", "Германия", "Италия"]], "en": ["Who won the 2010 World Cup?", "Spain", ["Netherlands", "Germany", "Italy"]], "ky": ["2010-жылдагы дүйнө чемпионатында ким чемпион болду?", "Испания", ["Нидерланд", "Германия", "Италия"]]},
+      {"uz": ["Жаҳон чемпионатини энг кўп ютган давлат қайси?", "Бразилия", ["Германия", "Италия", "Аргентина"]], "ru": ["Какая страна чаще всех выигрывала чемпионат мира?", "Бразилия", ["Германия", "Италия", "Аргентина"]], "en": ["Which country has won the most World Cups?", "Brazil", ["Germany", "Italy", "Argentina"]], "ky": ["Дүйнө чемпионатын эң көп жеңген өлкө кайсы?", "Бразилия", ["Германия", "Италия", "Аргентина"]]},
+      {"uz": ["Пеле неча марта жаҳон чемпиони бўлган?", "3 марта", ["1 марта", "2 марта", "4 марта"]], "ru": ["Сколько раз Пеле становился чемпионом мира?", "3 раза", ["1 раз", "2 раза", "4 раза"]], "en": ["How many times did Pelé win the World Cup?", "3 times", ["1 time", "2 times", "4 times"]], "ky": ["Пеле канча жолу дүйнө чемпиону болгон?", "3 жолу", ["1 жолу", "2 жолу", "4 жолу"]]},
+      {"uz": ["Биринчи жаҳон чемпионати (1930) қайси давлатда бўлган?", "Уругвай", ["Бразилия", "Италия", "Англия"]], "ru": ["В какой стране прошёл первый чемпионат мира (1930)?", "Уругвай", ["Бразилия", "Италия", "Англия"]], "en": ["Where was the first World Cup (1930) held?", "Uruguay", ["Brazil", "Italy", "England"]], "ky": ["Биринчи дүйнө чемпионаты (1930) кайсы өлкөдө өткөн?", "Уругвай", ["Бразилия", "Италия", "Англия"]]},
+      {"uz": ["2022 йилги жаҳон чемпионати қайси давлатда ўтган?", "Қатар", ["Россия", "Бразилия", "АҚШ"]], "ru": ["В какой стране прошёл чемпионат мира 2022 года?", "Катар", ["Россия", "Бразилия", "США"]], "en": ["Where was the 2022 World Cup held?", "Qatar", ["Russia", "Brazil", "USA"]], "ky": ["2022-жылдагы дүйнө чемпионаты кайсы өлкөдө өткөн?", "Катар", ["Россия", "Бразилия", "АКШ"]]},
+      {"uz": ["2026 йилги жаҳон чемпионатини қайси давлатлар бирга ўтказди?", "АҚШ, Канада ва Мексика", ["Испания ва Португалия", "Саудия Арабистони", "Англия ва Шотландия"]], "ru": ["Какие страны вместе провели чемпионат мира 2026 года?", "США, Канада и Мексика", ["Испания и Португалия", "Саудовская Аравия", "Англия и Шотландия"]], "en": ["Which countries hosted the 2026 World Cup together?", "USA, Canada and Mexico", ["Spain and Portugal", "Saudi Arabia", "England and Scotland"]], "ky": ["2026-жылдагы дүйнө чемпионатын кайсы өлкөлөр чогуу өткөрдү?", "АКШ, Канада жана Мексика", ["Испания жана Португалия", "Сауд Арабиясы", "Англия жана Шотландия"]]},
+      {"uz": ["Ўзбекистон терма жамоаси биринчи марта қайси жаҳон чемпионатига йўлланма олди?", "2026 йил", ["2018 йил", "2022 йил", "2014 йил"]], "ru": ["На какой чемпионат мира сборная Узбекистана впервые получила путёвку?", "2026 год", ["2018 год", "2022 год", "2014 год"]], "en": ["For which World Cup did Uzbekistan qualify for the first time?", "2026", ["2018", "2022", "2014"]], "ky": ["Өзбекстан курама командасы биринчи жолу кайсы дүйнө чемпионатына жолдомо алды?", "2026-жыл", ["2018-жыл", "2022-жыл", "2014-жыл"]]},
+      {"uz": ["Жаҳон чемпионати неча йилда бир марта ўтказилади?", "4 йилда", ["2 йилда", "3 йилда", "5 йилда"]], "ru": ["Как часто проводится чемпионат мира?", "Раз в 4 года", ["Раз в 2 года", "Раз в 3 года", "Раз в 5 лет"]], "en": ["How often is the World Cup held?", "Every 4 years", ["Every 2 years", "Every 3 years", "Every 5 years"]], "ky": ["Дүйнө чемпионаты канча жылда бир өткөрүлөт?", "4 жылда", ["2 жылда", "3 жылда", "5 жылда"]]},
+      {"uz": ["Футбол жамоасидан майдонда бир вақтда нечта ўйинчи бўлади?", "11 та", ["10 та", "9 та", "12 та"]], "ru": ["Сколько игроков одной команды одновременно на поле?", "11", ["10", "9", "12"]], "en": ["How many players does one team have on the pitch?", "11", ["10", "9", "12"]], "ky": ["Бир командадан талаада бир убакта канча оюнчу болот?", "11", ["10", "9", "12"]]},
+      {"uz": ["Футбол ўйинининг асосий вақти неча дақиқа?", "90 дақиқа", ["80 дақиқа", "100 дақиқа", "60 дақиқа"]], "ru": ["Сколько минут длится основное время футбольного матча?", "90 минут", ["80 минут", "100 минут", "60 минут"]], "en": ["How long is the regular time of a football match?", "90 minutes", ["80 minutes", "100 minutes", "60 minutes"]], "ky": ["Футбол оюнунун негизги убактысы канча мүнөт?", "90 мүнөт", ["80 мүнөт", "100 мүнөт", "60 мүнөт"]]},
+      {"uz": ["Пенальти дарвозадан неча метр узоқликдан тепилади?", "11 метр", ["9 метр", "12 метр", "16 метр"]], "ru": ["С какого расстояния бьют пенальти?", "11 метров", ["9 метров", "12 метров", "16 метров"]], "en": ["From how far is a penalty kick taken?", "11 metres", ["9 metres", "12 metres", "16 metres"]], "ky": ["Пенальти дарбазадан канча метрден тебилет?", "11 метр", ["9 метр", "12 метр", "16 метр"]]},
+      {"uz": ["Битта ўйинда иккита сариқ карточка олса, нима бўлади?", "Қизил карточка — майдондан чиқарилади", ["Ҳеч нарса", "Пенальти берилади", "Жарима тўлайди"]], "ru": ["Что будет, если игрок получит две жёлтые карточки в одном матче?", "Красная карточка — удаление", ["Ничего", "Назначат пенальти", "Заплатит штраф"]], "en": ["What happens if a player gets two yellow cards in one match?", "Red card — sent off", ["Nothing", "A penalty is given", "He pays a fine"]], "ky": ["Бир оюнда эки сары карточка алса, эмне болот?", "Кызыл карточка — талаадан чыгарылат", ["Эч нерсе", "Пенальти берилет", "Айып төлөйт"]]},
+      {"uz": ["Дарвозабон тўпни қўл билан фақат қаерда ушлай олади?", "Ўзининг жарима майдонида", ["Бутун майдонда", "Марказий доирада", "Ҳеч қаерда"]], "ru": ["Где вратарь может брать мяч руками?", "В своей штрафной площади", ["На всём поле", "В центральном круге", "Нигде"]], "en": ["Where can the goalkeeper hold the ball with his hands?", "In his own penalty area", ["Anywhere on the pitch", "In the centre circle", "Nowhere"]], "ky": ["Дарбазачы топту кол менен кайда гана кармай алат?", "Өзүнүн айып аянтында", ["Бүт талаада", "Борбордук тегеректе", "Эч жерде"]]},
+      {"uz": ["8 марта «Олтин тўп» олган футболчи ким?", "Лионель Месси", ["Криштиану Роналду", "Пеле", "Зинедин Зидан"]], "ru": ["Кто из футболистов 8 раз получал «Золотой мяч»?", "Лионель Месси", ["Криштиану Роналду", "Пеле", "Зинедин Зидан"]], "en": ["Which player has won the Ballon d'Or 8 times?", "Lionel Messi", ["Cristiano Ronaldo", "Pelé", "Zinedine Zidane"]], "ky": ["«Алтын топту» 8 жолу алган футболчу ким?", "Лионель Месси", ["Криштиану Роналду", "Пеле", "Зинедин Зидан"]]},
+      {"uz": ["Криштиану Роналду қайси давлат футболчиси?", "Португалия", ["Испания", "Бразилия", "Италия"]], "ru": ["За какую страну играет Криштиану Роналду?", "Португалия", ["Испания", "Бразилия", "Италия"]], "en": ["Which country does Cristiano Ronaldo play for?", "Portugal", ["Spain", "Brazil", "Italy"]], "ky": ["Криштиану Роналду кайсы өлкөнүн футболчусу?", "Португалия", ["Испания", "Бразилия", "Италия"]]},
+      {"uz": ["Лионель Месси футболни қайси клуб академиясида ўрганган?", "Барселона", ["Реал Мадрид", "Манчестер Юнайтед", "ПСЖ"]], "ru": ["В академии какого клуба вырос Лионель Месси?", "Барселона", ["Реал Мадрид", "Манчестер Юнайтед", "ПСЖ"]], "en": ["In which club's academy did Lionel Messi grow up?", "Barcelona", ["Real Madrid", "Manchester United", "PSG"]], "ky": ["Лионель Месси кайсы клубдун академиясында чоңойгон?", "Барселона", ["Реал Мадрид", "Манчестер Юнайтед", "ПСЖ"]]},
+      {"uz": ["Эрлинг Холанд қайси давлат футболчиси?", "Норвегия", ["Швеция", "Дания", "Германия"]], "ru": ["За какую страну играет Эрлинг Холанд?", "Норвегия", ["Швеция", "Дания", "Германия"]], "en": ["Which country does Erling Haaland play for?", "Norway", ["Sweden", "Denmark", "Germany"]], "ky": ["Эрлинг Холанд кайсы өлкөнүн футболчусу?", "Норвегия", ["Швеция", "Дания", "Германия"]]},
+      {"uz": ["Муҳаммад Салоҳ қайси давлат футболчиси?", "Миср", ["Марокаш", "Жазоир", "Тунис"]], "ru": ["За какую страну играет Мохамед Салах?", "Египет", ["Марокко", "Алжир", "Тунис"]], "en": ["Which country does Mohamed Salah play for?", "Egypt", ["Morocco", "Algeria", "Tunisia"]], "ky": ["Мухаммед Салах кайсы өлкөнүн футболчусу?", "Египет", ["Марокко", "Алжир", "Тунис"]]},
+      {"uz": ["Лука Модрич қайси давлат футболчиси?", "Хорватия", ["Сербия", "Словения", "Босния"]], "ru": ["За какую страну играет Лука Модрич?", "Хорватия", ["Сербия", "Словения", "Босния"]], "en": ["Which country does Luka Modrić play for?", "Croatia", ["Serbia", "Slovenia", "Bosnia"]], "ky": ["Лука Модрич кайсы өлкөнүн футболчусу?", "Хорватия", ["Сербия", "Словения", "Босния"]]},
+      {"uz": ["Йохан Кройф қайси давлат футболчиси?", "Нидерландия", ["Бельгия", "Германия", "Дания"]], "ru": ["За какую страну играл Йохан Кройф?", "Нидерланды", ["Бельгия", "Германия", "Дания"]], "en": ["Which country did Johan Cruyff play for?", "Netherlands", ["Belgium", "Germany", "Denmark"]], "ky": ["Йохан Кройф кайсы өлкөнүн футболчусу болгон?", "Нидерланд", ["Бельгия", "Германия", "Дания"]]},
+      {"uz": ["Лев Яшинни қандай лақаб билан аташган?", "Қора ўргимчак", ["Темир девор", "Олтин қўл", "Кекса бургут"]], "ru": ["Как называли Льва Яшина?", "Чёрный паук", ["Железная стена", "Золотые руки", "Старый орёл"]], "en": ["What was Lev Yashin's nickname?", "The Black Spider", ["The Iron Wall", "Golden Hands", "The Old Eagle"]], "ky": ["Лев Яшинди кандай лакап менен аташкан?", "Кара жөргөмүш", ["Темир дубал", "Алтын кол", "Кары бүркүт"]]},
+      {"uz": ["«Феномен» лақабли бразилиялик ҳужумчи ким?", "Роналдо", ["Роналдиньо", "Ромарио", "Кака"]], "ru": ["Какого бразильского нападающего звали «Феномен»?", "Роналдо", ["Роналдиньо", "Ромарио", "Кака"]], "en": ["Which Brazilian striker was called \"The Phenomenon\"?", "Ronaldo", ["Ronaldinho", "Romário", "Kaká"]], "ky": ["«Феномен» лакаптуу бразилиялык чабуулчу ким?", "Роналдо", ["Роналдиньо", "Ромарио", "Кака"]]},
+      {"uz": ["Марадонанинг машҳур «Худо қўли» голи қайси жаҳон чемпионатида урилган?", "1986 йил", ["1982 йил", "1990 йил", "1994 йил"]], "ru": ["На каком чемпионате мира Марадона забил гол «рукой Бога»?", "1986 год", ["1982 год", "1990 год", "1994 год"]], "en": ["At which World Cup did Maradona score the \"Hand of God\" goal?", "1986", ["1982", "1990", "1994"]], "ky": ["Марадонанын «Кудайдын колу» голу кайсы дүйнө чемпионатында урулган?", "1986-жыл", ["1982-жыл", "1990-жыл", "1994-жыл"]]},
+      {"uz": ["«Сантьяго Бернабеу» қайси клубнинг стадиони?", "Реал Мадрид", ["Барселона", "Атлетико Мадрид", "Севилья"]], "ru": ["Чей стадион «Сантьяго Бернабеу»?", "Реал Мадрид", ["Барселона", "Атлетико Мадрид", "Севилья"]], "en": ["Whose stadium is the Santiago Bernabéu?", "Real Madrid", ["Barcelona", "Atlético Madrid", "Sevilla"]], "ky": ["«Сантьяго Бернабеу» кайсы клубдун стадиону?", "Реал Мадрид", ["Барселона", "Атлетико Мадрид", "Севилья"]]},
+      {"uz": ["«Камп Ноу» қайси клубнинг стадиони?", "Барселона", ["Реал Мадрид", "Валенсия", "Бетис"]], "ru": ["Чей стадион «Камп Ноу»?", "Барселона", ["Реал Мадрид", "Валенсия", "Бетис"]], "en": ["Whose stadium is the Camp Nou?", "Barcelona", ["Real Madrid", "Valencia", "Betis"]], "ky": ["«Камп Ноу» кайсы клубдун стадиону?", "Барселона", ["Реал Мадрид", "Валенсия", "Бетис"]]},
+      {"uz": ["«Олд Траффорд» қайси клубнинг стадиони?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]], "ru": ["Чей стадион «Олд Траффорд»?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]], "en": ["Whose stadium is Old Trafford?", "Manchester United", ["Liverpool", "Chelsea", "Arsenal"]], "ky": ["«Олд Траффорд» кайсы клубдун стадиону?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]]},
+      {"uz": ["«Анфилд» қайси клубнинг стадиони?", "Ливерпуль", ["Эвертон", "Манчестер Сити", "Тоттенхэм"]], "ru": ["Чей стадион «Энфилд»?", "Ливерпуль", ["Эвертон", "Манчестер Сити", "Тоттенхэм"]], "en": ["Whose stadium is Anfield?", "Liverpool", ["Everton", "Manchester City", "Tottenham"]], "ky": ["«Энфилд» кайсы клубдун стадиону?", "Ливерпуль", ["Эвертон", "Манчестер Сити", "Тоттенхэм"]]},
+      {"uz": ["«Бавария» клуби қайси шаҳарда?", "Мюнхен", ["Берлин", "Дортмунд", "Гамбург"]], "ru": ["В каком городе находится клуб «Бавария»?", "Мюнхен", ["Берлин", "Дортмунд", "Гамбург"]], "en": ["In which city is Bayern?", "Munich", ["Berlin", "Dortmund", "Hamburg"]], "ky": ["«Бавария» клубу кайсы шаарда?", "Мюнхен", ["Берлин", "Дортмунд", "Гамбург"]]},
+      {"uz": ["«Ювентус» клубини қандай лақаб билан аташади?", "Кекса синьора", ["Қизил шайтонлар", "Тўпчилар", "Сарғишлар"]], "ru": ["Как называют клуб «Ювентус»?", "Старая синьора", ["Красные дьяволы", "Канониры", "Жёлто-синие"]], "en": ["What is Juventus' nickname?", "The Old Lady", ["The Red Devils", "The Gunners", "The Yellows"]], "ky": ["«Ювентус» клубун кандай лакап менен аташат?", "Кары синьора", ["Кызыл шайтандар", "Замбирекчилер", "Сары-көктөр"]]},
+      {"uz": ["Евро-2016 чемпионатида ким ғолиб бўлди?", "Португалия", ["Франция", "Германия", "Испания"]], "ru": ["Кто выиграл Евро-2016?", "Португалия", ["Франция", "Германия", "Испания"]], "en": ["Who won Euro 2016?", "Portugal", ["France", "Germany", "Spain"]], "ky": ["Евро-2016 чемпионатын ким жеңди?", "Португалия", ["Франция", "Германия", "Испания"]]},
+      {"uz": ["Евро-2024 чемпионатида ким ғолиб бўлди?", "Испания", ["Англия", "Франция", "Германия"]], "ru": ["Кто выиграл Евро-2024?", "Испания", ["Англия", "Франция", "Германия"]], "en": ["Who won Euro 2024?", "Spain", ["England", "France", "Germany"]], "ky": ["Евро-2024 чемпионатын ким жеңди?", "Испания", ["Англия", "Франция", "Германия"]]},
+      {"uz": ["Евро-2020 (2021 йилда ўтган) чемпионатида ким ғолиб бўлди?", "Италия", ["Англия", "Испания", "Дания"]], "ru": ["Кто выиграл Евро-2020 (прошёл в 2021 году)?", "Италия", ["Англия", "Испания", "Дания"]], "en": ["Who won Euro 2020 (played in 2021)?", "Italy", ["England", "Spain", "Denmark"]], "ky": ["Евро-2020 (2021-жылы өткөн) чемпионатын ким жеңди?", "Италия", ["Англия", "Испания", "Дания"]]},
+      {"uz": ["Килиан Мбаппе 2018 йилда қайси терма жамоа билан жаҳон чемпиони бўлди?", "Франция", ["Бельгия", "Португалия", "Испания"]], "ru": ["С какой сборной Килиан Мбаппе стал чемпионом мира в 2018 году?", "Франция", ["Бельгия", "Португалия", "Испания"]], "en": ["With which national team did Kylian Mbappé win the 2018 World Cup?", "France", ["Belgium", "Portugal", "Spain"]], "ky": ["Килиан Мбаппе 2018-жылы кайсы курама менен дүйнө чемпиону болгон?", "Франция", ["Бельгия", "Португалия", "Испания"]]},
+      {"uz": ["Зинедин Зидан қайси давлат терма жамоасида ўйнаган?", "Франция", ["Алжир", "Испания", "Италия"]], "ru": ["За какую сборную играл Зинедин Зидан?", "Франция", ["Алжир", "Испания", "Италия"]], "en": ["Which national team did Zinedine Zidane play for?", "France", ["Algeria", "Spain", "Italy"]], "ky": ["Зинедин Зидан кайсы өлкөнүн курамасында ойногон?", "Франция", ["Алжир", "Испания", "Италия"]]},
+      {"uz": ["Паоло Мальдини бутун карьерасини қайси клубда ўтказган?", "Милан", ["Интер", "Ювентус", "Рома"]], "ru": ["В каком клубе Паоло Мальдини провёл всю карьеру?", "Милан", ["Интер", "Ювентус", "Рома"]], "en": ["At which club did Paolo Maldini spend his whole career?", "AC Milan", ["Inter", "Juventus", "Roma"]], "ky": ["Паоло Мальдини бүт карьерасын кайсы клубда өткөргөн?", "Милан", ["Интер", "Ювентус", "Рома"]]},
+      {"uz": ["Франц Беккенбауэрни қандай лақаб билан аташган?", "Кайзер", ["Барон", "Дюк", "Шоҳ"]], "ru": ["Как называли Франца Беккенбауэра?", "Кайзер", ["Барон", "Герцог", "Король"]], "en": ["What was Franz Beckenbauer's nickname?", "Der Kaiser", ["The Baron", "The Duke", "The King"]], "ky": ["Франц Беккенбауэрди кандай лакап менен аташкан?", "Кайзер", ["Барон", "Герцог", "Падыша"]]},
+      {"uz": ["Футболда «хет-трик» нима дегани?", "Бир ўйинда 3 та гол уриш", ["3 та сариқ карточка", "3 та пенальти", "3 марта ғалаба"]], "ru": ["Что такое «хет-трик» в футболе?", "3 гола в одном матче", ["3 жёлтые карточки", "3 пенальти", "3 победы подряд"]], "en": ["What is a \"hat-trick\" in football?", "3 goals in one match", ["3 yellow cards", "3 penalties", "3 wins in a row"]], "ky": ["Футболдо «хет-трик» деген эмне?", "Бир оюнда 3 гол уруу", ["3 сары карточка", "3 пенальти", "Катары менен 3 жеңиш"]]},
+      {"uz": ["Лионель Месси қайси давлат футболчиси?", "Аргентина", ["Испания", "Уругвай", "Бразилия"]], "ru": ["За какую страну играет Лионель Месси?", "Аргентина", ["Испания", "Уругвай", "Бразилия"]], "en": ["Which country does Lionel Messi play for?", "Argentina", ["Spain", "Uruguay", "Brazil"]], "ky": ["Лионель Месси кайсы өлкөнүн футболчусу?", "Аргентина", ["Испания", "Уругвай", "Бразилия"]]},
+      {"uz": ["Неймар қайси давлат футболчиси?", "Бразилия", ["Аргентина", "Португалия", "Колумбия"]], "ru": ["За какую страну играет Неймар?", "Бразилия", ["Аргентина", "Португалия", "Колумбия"]], "en": ["Which country does Neymar play for?", "Brazil", ["Argentina", "Portugal", "Colombia"]], "ky": ["Неймар кайсы өлкөнүн футболчусу?", "Бразилия", ["Аргентина", "Португалия", "Колумбия"]]},
+      {"uz": ["Роберт Левандовски қайси давлат футболчиси?", "Польша", ["Чехия", "Украина", "Германия"]], "ru": ["За какую страну играет Роберт Левандовски?", "Польша", ["Чехия", "Украина", "Германия"]], "en": ["Which country does Robert Lewandowski play for?", "Poland", ["Czech Republic", "Ukraine", "Germany"]], "ky": ["Роберт Левандовски кайсы өлкөнүн футболчусу?", "Польша", ["Чехия", "Украина", "Германия"]]},
+      {"uz": ["Кевин Де Брёйне қайси давлат футболчиси?", "Бельгия", ["Нидерландия", "Дания", "Франция"]], "ru": ["За какую страну играет Кевин Де Брёйне?", "Бельгия", ["Нидерланды", "Дания", "Франция"]], "en": ["Which country does Kevin De Bruyne play for?", "Belgium", ["Netherlands", "Denmark", "France"]], "ky": ["Кевин Де Брёйне кайсы өлкөнүн футболчусу?", "Бельгия", ["Нидерланд", "Дания", "Франция"]]},
+      {"uz": ["Гарри Кейн қайси давлат футболчиси?", "Англия", ["Шотландия", "Ирландия", "Уэльс"]], "ru": ["За какую страну играет Гарри Кейн?", "Англия", ["Шотландия", "Ирландия", "Уэльс"]], "en": ["Which country does Harry Kane play for?", "England", ["Scotland", "Ireland", "Wales"]], "ky": ["Гарри Кейн кайсы өлкөнүн футболчусу?", "Англия", ["Шотландия", "Ирландия", "Уэльс"]]},
+      {"uz": ["Вирджил ван Дейк қайси давлат футболчиси?", "Нидерландия", ["Бельгия", "Германия", "Англия"]], "ru": ["За какую страну играет Вирджил ван Дейк?", "Нидерланды", ["Бельгия", "Германия", "Англия"]], "en": ["Which country does Virgil van Dijk play for?", "Netherlands", ["Belgium", "Germany", "England"]], "ky": ["Вирджил ван Дейк кайсы өлкөнүн футболчусу?", "Нидерланд", ["Бельгия", "Германия", "Англия"]]},
+      {"uz": ["Златан Ибрагимович қайси давлат терма жамоасида ўйнаган?", "Швеция", ["Норвегия", "Босния", "Дания"]], "ru": ["За какую сборную играл Златан Ибрагимович?", "Швеция", ["Норвегия", "Босния", "Дания"]], "en": ["Which national team did Zlatan Ibrahimović play for?", "Sweden", ["Norway", "Bosnia", "Denmark"]], "ky": ["Златан Ибрагимович кайсы өлкөнүн курамасында ойногон?", "Швеция", ["Норвегия", "Босния", "Дания"]]},
+      {"uz": ["Дидье Дрогба қайси давлат терма жамоасида ўйнаган?", "Кот-д'Ивуар", ["Гана", "Нигерия", "Камерун"]], "ru": ["За какую сборную играл Дидье Дрогба?", "Кот-д'Ивуар", ["Гана", "Нигерия", "Камерун"]], "en": ["Which national team did Didier Drogba play for?", "Ivory Coast", ["Ghana", "Nigeria", "Cameroon"]], "ky": ["Дидье Дрогба кайсы өлкөнүн курамасында ойногон?", "Кот-д'Ивуар", ["Гана", "Нигерия", "Камерун"]]},
+      {"uz": ["Самуэль Это'о қайси давлат терма жамоасида ўйнаган?", "Камерун", ["Сенегал", "Гана", "Кот-д'Ивуар"]], "ru": ["За какую сборную играл Самюэль Это'о?", "Камерун", ["Сенегал", "Гана", "Кот-д'Ивуар"]], "en": ["Which national team did Samuel Eto'o play for?", "Cameroon", ["Senegal", "Ghana", "Ivory Coast"]], "ky": ["Самуэль Это'о кайсы өлкөнүн курамасында ойногон?", "Камерун", ["Сенегал", "Гана", "Кот-д'Ивуар"]]},
+      {"uz": ["Андрей Шевченко қайси давлат терма жамоасида ўйнаган?", "Украина", ["Россия", "Беларусь", "Грузия"]], "ru": ["За какую сборную играл Андрей Шевченко?", "Украина", ["Россия", "Беларусь", "Грузия"]], "en": ["Which national team did Andriy Shevchenko play for?", "Ukraine", ["Russia", "Belarus", "Georgia"]], "ky": ["Андрей Шевченко кайсы өлкөнүн курамасында ойногон?", "Украина", ["Россия", "Беларусь", "Грузия"]]},
+      {"uz": ["Луис Суарес қайси давлат терма жамоасида ўйнаган?", "Уругвай", ["Аргентина", "Чили", "Парагвай"]], "ru": ["За какую сборную играл Луис Суарес?", "Уругвай", ["Аргентина", "Чили", "Парагвай"]], "en": ["Which national team did Luis Suárez play for?", "Uruguay", ["Argentina", "Chile", "Paraguay"]], "ky": ["Луис Суарес кайсы өлкөнүн курамасында ойногон?", "Уругвай", ["Аргентина", "Чили", "Парагвай"]]},
+      {"uz": ["2018 йилда «Олтин тўп»ни ким олди?", "Лука Модрич", ["Криштиану Роналду", "Лионель Месси", "Килиан Мбаппе"]], "ru": ["Кто получил «Золотой мяч» в 2018 году?", "Лука Модрич", ["Криштиану Роналду", "Лионель Месси", "Килиан Мбаппе"]], "en": ["Who won the Ballon d'Or in 2018?", "Luka Modrić", ["Cristiano Ronaldo", "Lionel Messi", "Kylian Mbappé"]], "ky": ["2018-жылы «Алтын топту» ким алды?", "Лука Модрич", ["Криштиану Роналду", "Лионель Месси", "Килиан Мбаппе"]]},
+      {"uz": ["2022 йилда «Олтин тўп»ни ким олди?", "Карим Бензема", ["Роберт Левандовски", "Лионель Месси", "Садио Мане"]], "ru": ["Кто получил «Золотой мяч» в 2022 году?", "Карим Бензема", ["Роберт Левандовски", "Лионель Месси", "Садио Мане"]], "en": ["Who won the Ballon d'Or in 2022?", "Karim Benzema", ["Robert Lewandowski", "Lionel Messi", "Sadio Mané"]], "ky": ["2022-жылы «Алтын топту» ким алды?", "Карим Бензема", ["Роберт Левандовски", "Лионель Месси", "Садио Мане"]]},
+      {"uz": ["Криштиану Роналду неча марта «Олтин тўп» олган?", "5 марта", ["3 марта", "4 марта", "7 марта"]], "ru": ["Сколько раз Криштиану Роналду получал «Золотой мяч»?", "5 раз", ["3 раза", "4 раза", "7 раз"]], "en": ["How many times has Cristiano Ronaldo won the Ballon d'Or?", "5 times", ["3 times", "4 times", "7 times"]], "ky": ["Криштиану Роналду «Алтын топту» канча жолу алган?", "5 жолу", ["3 жолу", "4 жолу", "7 жолу"]]},
+      {"uz": ["«Арсенал» тарихидаги энг кўп гол урган футболчи ким?", "Тьерри Анри", ["Ян Райт", "Деннис Бергкамп", "Робин ван Перси"]], "ru": ["Кто лучший бомбардир в истории «Арсенала»?", "Тьерри Анри", ["Иан Райт", "Деннис Бергкамп", "Робин ван Перси"]], "en": ["Who is Arsenal's all-time top scorer?", "Thierry Henry", ["Ian Wright", "Dennis Bergkamp", "Robin van Persie"]], "ky": ["«Арсеналдын» тарыхындагы эң көп гол урган футболчу ким?", "Тьерри Анри", ["Иан Райт", "Деннис Бергкамп", "Робин ван Перси"]]},
+      {"uz": ["Премьер-лига қайси давлатнинг чемпионати?", "Англия", ["Испания", "Италия", "Германия"]], "ru": ["Премьер-лига — чемпионат какой страны?", "Англия", ["Испания", "Италия", "Германия"]], "en": ["The Premier League is the league of which country?", "England", ["Spain", "Italy", "Germany"]], "ky": ["Премьер-лига кайсы өлкөнүн чемпионаты?", "Англия", ["Испания", "Италия", "Германия"]]},
+      {"uz": ["Ла Лига қайси давлатнинг чемпионати?", "Испания", ["Португалия", "Италия", "Франция"]], "ru": ["Ла Лига — чемпионат какой страны?", "Испания", ["Португалия", "Италия", "Франция"]], "en": ["La Liga is the league of which country?", "Spain", ["Portugal", "Italy", "France"]], "ky": ["Ла Лига кайсы өлкөнүн чемпионаты?", "Испания", ["Португалия", "Италия", "Франция"]]},
+      {"uz": ["Серия А қайси давлатнинг чемпионати?", "Италия", ["Испания", "Бразилия", "Франция"]], "ru": ["Серия А — чемпионат какой страны?", "Италия", ["Испания", "Бразилия", "Франция"]], "en": ["Serie A is the league of which country?", "Italy", ["Spain", "Brazil", "France"]], "ky": ["Серия А кайсы өлкөнүн чемпионаты?", "Италия", ["Испания", "Бразилия", "Франция"]]},
+      {"uz": ["Бундеслига қайси давлатнинг чемпионати?", "Германия", ["Австрия", "Нидерландия", "Швейцария"]], "ru": ["Бундеслига — чемпионат какой страны?", "Германия", ["Австрия", "Нидерланды", "Швейцария"]], "en": ["The Bundesliga is the league of which country?", "Germany", ["Austria", "Netherlands", "Switzerland"]], "ky": ["Бундеслига кайсы өлкөнүн чемпионаты?", "Германия", ["Австрия", "Нидерланд", "Швейцария"]]},
+      {"uz": ["«Эль-Класико» қайси икки клуб ўйини?", "Реал Мадрид ва Барселона", ["Милан ва Интер", "Ливерпуль ва Эвертон", "Бавария ва Боруссия"]], "ru": ["«Эль-Класико» — матч каких двух клубов?", "Реал Мадрид и Барселона", ["Милан и Интер", "Ливерпуль и Эвертон", "Бавария и Боруссия"]], "en": ["\"El Clásico\" is a match between which two clubs?", "Real Madrid and Barcelona", ["Milan and Inter", "Liverpool and Everton", "Bayern and Dortmund"]], "ky": ["«Эль-Класико» кайсы эки клубдун оюну?", "Реал Мадрид жана Барселона", ["Милан жана Интер", "Ливерпуль жана Эвертон", "Бавария жана Боруссия"]]},
+      {"uz": ["«Альянц Арена» қайси клубнинг стадиони?", "Бавария", ["Боруссия Дортмунд", "Ювентус", "Интер"]], "ru": ["Чей стадион «Альянц Арена»?", "Бавария", ["Боруссия Дортмунд", "Ювентус", "Интер"]], "en": ["Whose stadium is the Allianz Arena?", "Bayern", ["Borussia Dortmund", "Juventus", "Inter"]], "ky": ["«Альянц Арена» кайсы клубдун стадиону?", "Бавария", ["Боруссия Дортмунд", "Ювентус", "Интер"]]},
+      {"uz": ["«Сигнал Идуна Парк» қайси клубнинг стадиони?", "Боруссия Дортмунд", ["Бавария", "Шальке", "Байер"]], "ru": ["Чей стадион «Сигнал Идуна Парк»?", "Боруссия Дортмунд", ["Бавария", "Шальке", "Байер"]], "en": ["Whose stadium is the Signal Iduna Park?", "Borussia Dortmund", ["Bayern", "Schalke", "Leverkusen"]], "ky": ["«Сигнал Идуна Парк» кайсы клубдун стадиону?", "Боруссия Дортмунд", ["Бавария", "Шальке", "Байер"]]},
+      {"uz": ["Машҳур «Маракана» стадиони қайси шаҳарда?", "Рио-де-Жанейро", ["Буэнос-Айрес", "Сан-Паулу", "Мадрид"]], "ru": ["В каком городе знаменитый стадион «Маракана»?", "Рио-де-Жанейро", ["Буэнос-Айрес", "Сан-Паулу", "Мадрид"]], "en": ["In which city is the famous Maracanã stadium?", "Rio de Janeiro", ["Buenos Aires", "São Paulo", "Madrid"]], "ky": ["Атактуу «Маракана» стадиону кайсы шаарда?", "Рио-де-Жанейро", ["Буэнос-Айрес", "Сан-Паулу", "Мадрид"]]},
+      {"uz": ["«Уэмбли» стадиони қайси шаҳарда?", "Лондон", ["Манчестер", "Ливерпуль", "Бирмингем"]], "ru": ["В каком городе стадион «Уэмбли»?", "Лондон", ["Манчестер", "Ливерпуль", "Бирмингем"]], "en": ["In which city is Wembley Stadium?", "London", ["Manchester", "Liverpool", "Birmingham"]], "ky": ["«Уэмбли» стадиону кайсы шаарда?", "Лондон", ["Манчестер", "Ливерпуль", "Бирмингем"]]},
+      {"uz": ["Катталар футболида қайси ўлчамдаги тўп ишлатилади?", "5-ўлчам", ["3-ўлчам", "4-ўлчам", "6-ўлчам"]], "ru": ["Мяч какого размера используют во взрослом футболе?", "Размер 5", ["Размер 3", "Размер 4", "Размер 6"]], "en": ["What ball size is used in adult football?", "Size 5", ["Size 3", "Size 4", "Size 6"]], "ky": ["Чоңдордун футболунда кайсы өлчөмдөгү топ колдонулат?", "5-өлчөм", ["3-өлчөм", "4-өлчөм", "6-өлчөм"]]},
+      {"uz": ["Футбол ўйинини ким бошқаради?", "Ҳакам", ["Мураббий", "Капитан", "Дарвозабон"]], "ru": ["Кто управляет футбольным матчем?", "Судья", ["Тренер", "Капитан", "Вратарь"]], "en": ["Who is in charge of a football match?", "The referee", ["The coach", "The captain", "The goalkeeper"]], "ky": ["Футбол оюнун ким башкарат?", "Калыс", ["Машыктыруучу", "Капитан", "Дарбазачы"]]},
+      {"uz": ["Футболдаги VAR нима?", "Видео ёрдамчи ҳакам", ["Янги тўп тури", "Жарима тури", "Турнир номи"]], "ru": ["Что такое VAR в футболе?", "Видеопомощник судьи", ["Новый вид мяча", "Вид штрафа", "Название турнира"]], "en": ["What is VAR in football?", "Video Assistant Referee", ["A new type of ball", "A type of foul", "A tournament name"]], "ky": ["Футболдогу VAR деген эмне?", "Видео жардамчы калыс", ["Жаңы топтун түрү", "Айыптын түрү", "Турнирдин аты"]]},
+      {"uz": ["Тўп ҳимоячига тегиб, ўз дарвоза чизиғидан чиқиб кетса, нима тайинланади?", "Бурчак тўпи (корнер)", ["Пенальти", "Аут", "Эркин зарба"]], "ru": ["Мяч ушёл за свою лицевую линию от защитника. Что назначат?", "Угловой удар", ["Пенальти", "Аут", "Штрафной удар"]], "en": ["The ball goes over a team's own goal line off a defender. What is given?", "A corner kick", ["A penalty", "A throw-in", "A free kick"]], "ky": ["Топ коргоочуга тийип, өз дарбаза сызыгынан чыгып кетсе, эмне берилет?", "Бурчтук сокку (корнер)", ["Пенальти", "Аут", "Эркин сокку"]]},
+      {"uz": ["Қўшимча вақт (экстра тайм) жами неча дақиқа?", "30 дақиқа", ["10 дақиқа", "20 дақиқа", "45 дақиқа"]], "ru": ["Сколько всего минут длится дополнительное время?", "30 минут", ["10 минут", "20 минут", "45 минут"]], "en": ["How long is extra time in total?", "30 minutes", ["10 minutes", "20 minutes", "45 minutes"]], "ky": ["Кошумча убакыт бардыгы канча мүнөт?", "30 мүнөт", ["10 мүнөт", "20 мүнөт", "45 мүнөт"]]},
+      {"uz": ["Ҳозирги қоидада жамоа ўйинда (асосий вақтда) нечта алмаштириш қила олади?", "5 та", ["3 та", "4 та", "6 та"]], "ru": ["Сколько замен может сделать команда за основное время по нынешним правилам?", "5", ["3", "4", "6"]], "en": ["How many substitutions can a team make in regular time under current rules?", "5", ["3", "4", "6"]], "ky": ["Азыркы эреже боюнча команда негизги убакытта канча алмаштыруу жасай алат?", "5", ["3", "4", "6"]]},
+      {"uz": ["Футбол дарвозасининг кенглиги қанча?", "7,32 метр", ["5 метр", "6 метр", "9 метр"]], "ru": ["Какова ширина футбольных ворот?", "7,32 метра", ["5 метров", "6 метров", "9 метров"]], "en": ["How wide is a football goal?", "7.32 metres", ["5 metres", "6 metres", "9 metres"]], "ky": ["Футбол дарбазасынын туурасы канча?", "7,32 метр", ["5 метр", "6 метр", "9 метр"]]},
+      {"uz": ["Футбол дарвозасининг баландлиги қанча?", "2,44 метр", ["2 метр", "2,8 метр", "3 метр"]], "ru": ["Какова высота футбольных ворот?", "2,44 метра", ["2 метра", "2,8 метра", "3 метра"]], "en": ["How high is a football goal?", "2.44 metres", ["2 metres", "2.8 metres", "3 metres"]], "ky": ["Футбол дарбазасынын бийиктиги канча?", "2,44 метр", ["2 метр", "2,8 метр", "3 метр"]]},
+      {"uz": ["2006 йилги жаҳон чемпионатида ким чемпион бўлди?", "Италия", ["Франция", "Германия", "Бразилия"]], "ru": ["Кто стал чемпионом мира 2006 года?", "Италия", ["Франция", "Германия", "Бразилия"]], "en": ["Who won the 2006 World Cup?", "Italy", ["France", "Germany", "Brazil"]], "ky": ["2006-жылдагы дүйнө чемпионатында ким чемпион болду?", "Италия", ["Франция", "Германия", "Бразилия"]]},
+      {"uz": ["2002 йилги жаҳон чемпионатида ким чемпион бўлди?", "Бразилия", ["Германия", "Туркия", "Жанубий Корея"]], "ru": ["Кто стал чемпионом мира 2002 года?", "Бразилия", ["Германия", "Турция", "Южная Корея"]], "en": ["Who won the 2002 World Cup?", "Brazil", ["Germany", "Turkey", "South Korea"]], "ky": ["2002-жылдагы дүйнө чемпионатында ким чемпион болду?", "Бразилия", ["Германия", "Түркия", "Түштүк Корея"]]},
+      {"uz": ["1998 йилги жаҳон чемпионатида ким чемпион бўлди?", "Франция", ["Бразилия", "Хорватия", "Нидерландия"]], "ru": ["Кто стал чемпионом мира 1998 года?", "Франция", ["Бразилия", "Хорватия", "Нидерланды"]], "en": ["Who won the 1998 World Cup?", "France", ["Brazil", "Croatia", "Netherlands"]], "ky": ["1998-жылдагы дүйнө чемпионатында ким чемпион болду?", "Франция", ["Бразилия", "Хорватия", "Нидерланд"]]},
+      {"uz": ["1986 йилги жаҳон чемпионатида ким чемпион бўлди?", "Аргентина", ["Германия", "Бразилия", "Италия"]], "ru": ["Кто стал чемпионом мира 1986 года?", "Аргентина", ["Германия", "Бразилия", "Италия"]], "en": ["Who won the 1986 World Cup?", "Argentina", ["Germany", "Brazil", "Italy"]], "ky": ["1986-жылдагы дүйнө чемпионатында ким чемпион болду?", "Аргентина", ["Германия", "Бразилия", "Италия"]]},
+      {"uz": ["2014 йилги жаҳон чемпионати финалида ғалаба голини ким урди?", "Марио Гётце", ["Томас Мюллер", "Мирослав Клозе", "Месут Озил"]], "ru": ["Кто забил победный гол в финале чемпионата мира 2014 года?", "Марио Гётце", ["Томас Мюллер", "Мирослав Клозе", "Месут Озил"]], "en": ["Who scored the winning goal in the 2014 World Cup final?", "Mario Götze", ["Thomas Müller", "Miroslav Klose", "Mesut Özil"]], "ky": ["2014-жылдагы дүйнө чемпионатынын финалында жеңиш голун ким урду?", "Марио Гётце", ["Томас Мюллер", "Мирослав Клозе", "Месут Озил"]]},
+      {"uz": ["2010 йилги жаҳон чемпионати финалида ғалаба голини ким урди?", "Андрес Иньеста", ["Давид Вилья", "Фернандо Торрес", "Хави"]], "ru": ["Кто забил победный гол в финале чемпионата мира 2010 года?", "Андрес Иньеста", ["Давид Вилья", "Фернандо Торрес", "Хави"]], "en": ["Who scored the winning goal in the 2010 World Cup final?", "Andrés Iniesta", ["David Villa", "Fernando Torres", "Xavi"]], "ky": ["2010-жылдагы дүйнө чемпионатынын финалында жеңиш голун ким урду?", "Андрес Иньеста", ["Давид Вилья", "Фернандо Торрес", "Хави"]]},
+      {"uz": ["2022 йилги жаҳон чемпионати финалида хет-трик урган футболчи ким?", "Килиан Мбаппе", ["Лионель Месси", "Хулиан Альварес", "Анхель Ди Мария"]], "ru": ["Кто сделал хет-трик в финале чемпионата мира 2022 года?", "Килиан Мбаппе", ["Лионель Месси", "Хулиан Альварес", "Анхель Ди Мария"]], "en": ["Who scored a hat-trick in the 2022 World Cup final?", "Kylian Mbappé", ["Lionel Messi", "Julián Álvarez", "Ángel Di María"]], "ky": ["2022-жылдагы дүйнө чемпионатынын финалында хет-трик кылган футболчу ким?", "Килиан Мбаппе", ["Лионель Месси", "Хулиан Альварес", "Анхель Ди Мария"]]},
+      {"uz": ["Жаҳон чемпионатлари тарихида энг кўп гол урган футболчи ким?", "Мирослав Клозе", ["Пеле", "Роналдо", "Лионель Месси"]], "ru": ["Кто лучший бомбардир в истории чемпионатов мира?", "Мирослав Клозе", ["Пеле", "Роналдо", "Лионель Месси"]], "en": ["Who is the all-time top scorer in World Cup history?", "Miroslav Klose", ["Pelé", "Ronaldo", "Lionel Messi"]], "ky": ["Дүйнө чемпионаттарынын тарыхындагы эң көп гол урган футболчу ким?", "Мирослав Клозе", ["Пеле", "Роналдо", "Лионель Месси"]]},
+      {"uz": ["Евро-2004 чемпионатида ким ғолиб бўлди?", "Греция", ["Португалия", "Чехия", "Нидерландия"]], "ru": ["Кто выиграл Евро-2004?", "Греция", ["Португалия", "Чехия", "Нидерланды"]], "en": ["Who won Euro 2004?", "Greece", ["Portugal", "Czech Republic", "Netherlands"]], "ky": ["Евро-2004 чемпионатын ким жеңди?", "Греция", ["Португалия", "Чехия", "Нидерланд"]]},
+      {"uz": ["Евро-2008 ва Евро-2012 да кетма-кет ким ғолиб бўлди?", "Испания", ["Германия", "Италия", "Франция"]], "ru": ["Кто выиграл Евро-2008 и Евро-2012 подряд?", "Испания", ["Германия", "Италия", "Франция"]], "en": ["Who won Euro 2008 and Euro 2012 in a row?", "Spain", ["Germany", "Italy", "France"]], "ky": ["Евро-2008 жана Евро-2012ни катары менен ким жеңди?", "Испания", ["Германия", "Италия", "Франция"]]},
+      {"uz": ["2024 йилги Копа Америка кубогини ким ютди?", "Аргентина", ["Колумбия", "Бразилия", "Уругвай"]], "ru": ["Кто выиграл Кубок Америки 2024 года?", "Аргентина", ["Колумбия", "Бразилия", "Уругвай"]], "en": ["Who won the 2024 Copa América?", "Argentina", ["Colombia", "Brazil", "Uruguay"]], "ky": ["2024-жылдагы Копа Америка кубогун ким жеңди?", "Аргентина", ["Колумбия", "Бразилия", "Уругвай"]]},
+      {"uz": ["2024 йилда ўтган Осиё кубогини (Осиё-2023) ким ютди?", "Қатар", ["Иордания", "Япония", "Жанубий Корея"]], "ru": ["Кто выиграл Кубок Азии, прошедший в 2024 году (Азия-2023)?", "Катар", ["Иордания", "Япония", "Южная Корея"]], "en": ["Who won the Asian Cup played in 2024 (Asian Cup 2023)?", "Qatar", ["Jordan", "Japan", "South Korea"]], "ky": ["2024-жылы өткөн Азия кубогун (Азия-2023) ким жеңди?", "Катар", ["Иордания", "Япония", "Түштүк Корея"]]},
+      {"uz": ["Чемпионлар лигасини энг кўп ютган клуб қайси?", "Реал Мадрид", ["Милан", "Бавария", "Ливерпуль"]], "ru": ["Какой клуб чаще всех выигрывал Лигу чемпионов?", "Реал Мадрид", ["Милан", "Бавария", "Ливерпуль"]], "en": ["Which club has won the Champions League the most times?", "Real Madrid", ["AC Milan", "Bayern", "Liverpool"]], "ky": ["Чемпиондор лигасын эң көп жеңген клуб кайсы?", "Реал Мадрид", ["Милан", "Бавария", "Ливерпуль"]]},
+      {"uz": ["2025 йилда Чемпионлар лигасини ким ютди?", "ПСЖ", ["Интер", "Барселона", "Арсенал"]], "ru": ["Кто выиграл Лигу чемпионов в 2025 году?", "ПСЖ", ["Интер", "Барселона", "Арсенал"]], "en": ["Who won the Champions League in 2025?", "PSG", ["Inter", "Barcelona", "Arsenal"]], "ky": ["2025-жылы Чемпиондор лигасын ким жеңди?", "ПСЖ", ["Интер", "Барселона", "Арсенал"]]},
+      {"uz": ["«Манчестер Сити» биринчи марта Чемпионлар лигасини қайси йили ютди?", "2023 йил", ["2019 йил", "2021 йил", "2012 йил"]], "ru": ["В каком году «Манчестер Сити» впервые выиграл Лигу чемпионов?", "2023 год", ["2019 год", "2021 год", "2012 год"]], "en": ["In which year did Manchester City first win the Champions League?", "2023", ["2019", "2021", "2012"]], "ky": ["«Манчестер Сити» Чемпиондор лигасын биринчи жолу кайсы жылы жеңди?", "2023-жыл", ["2019-жыл", "2021-жыл", "2012-жыл"]]},
+      {"uz": ["Сэр Алекс Фергюсон қайси клубда узоқ йиллар мураббий бўлган?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]], "ru": ["Какой клуб много лет тренировал сэр Алекс Фергюсон?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]], "en": ["Which club did Sir Alex Ferguson coach for many years?", "Manchester United", ["Liverpool", "Chelsea", "Arsenal"]], "ky": ["Сэр Алекс Фергюсон кайсы клубда көп жыл машыктыруучу болгон?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]]},
+      {"uz": ["Жозе Моуриньо ўзини қандай лақаб билан атаган?", "Махсус одам", ["Профессор", "Кайзер", "Генерал"]], "ru": ["Как Жозе Моуринью назвал сам себя?", "Особенный", ["Профессор", "Кайзер", "Генерал"]], "en": ["What did José Mourinho call himself?", "The Special One", ["The Professor", "The Kaiser", "The General"]], "ky": ["Жозе Моуриньо өзүн кандай лакап менен атаган?", "Өзгөчө адам", ["Профессор", "Кайзер", "Генерал"]]},
+      {"uz": ["Пеленинг асл исми нима?", "Эдсон Арантис ду Насименту", ["Рональдо Луис Назарио", "Рикардо Изексон", "Жоао Пауло"]], "ru": ["Как настоящее имя Пеле?", "Эдсон Арантис ду Насименту", ["Роналдо Луис Назарио", "Рикардо Изексон", "Жоао Пауло"]], "en": ["What is Pelé's real name?", "Edson Arantes do Nascimento", ["Ronaldo Luís Nazário", "Ricardo Izecson", "João Paulo"]], "ky": ["Пеленин чыныгы аты эмне?", "Эдсон Арантис ду Насименту", ["Роналдо Луис Назарио", "Рикардо Изексон", "Жоао Пауло"]]},
+      {"uz": ["Диего Марадона Италияда қайси клубда машҳур бўлган?", "Наполи", ["Ювентус", "Милан", "Рома"]], "ru": ["В каком клубе Италии прославился Диего Марадона?", "Наполи", ["Ювентус", "Милан", "Рома"]], "en": ["At which Italian club did Diego Maradona become famous?", "Napoli", ["Juventus", "AC Milan", "Roma"]], "ky": ["Диего Марадона Италияда кайсы клубда атагы чыккан?", "Наполи", ["Ювентус", "Милан", "Рома"]]},
+      {"uz": ["Криштиану Роналдунинг машҳур рақами қайси?", "7", ["9", "10", "11"]], "ru": ["Какой знаменитый номер Криштиану Роналду?", "7", ["9", "10", "11"]], "en": ["What is Cristiano Ronaldo's famous shirt number?", "7", ["9", "10", "11"]], "ky": ["Криштиану Роналдунун атактуу номери кайсы?", "7", ["9", "10", "11"]]},
+      {"uz": ["2022 йилги жаҳон чемпионатида ярим финалга чиққан биринчи Африка давлати қайси?", "Марокаш", ["Сенегал", "Камерун", "Гана"]], "ru": ["Какая страна стала первой африканской командой в полуфинале чемпионата мира (2022)?", "Марокко", ["Сенегал", "Камерун", "Гана"]], "en": ["Which country became the first African team in a World Cup semi-final (2022)?", "Morocco", ["Senegal", "Cameroon", "Ghana"]], "ky": ["2022-жылдагы дүйнө чемпионатында жарым финалга чыккан биринчи Африка өлкөсү кайсы?", "Марокко", ["Сенегал", "Камерун", "Гана"]]},
+      {"uz": ["Хорватия 2018 йилги жаҳон чемпионатида нечанчи ўринни олди?", "2-ўрин", ["1-ўрин", "3-ўрин", "4-ўрин"]], "ru": ["Какое место заняла Хорватия на чемпионате мира 2018 года?", "2-е место", ["1-е место", "3-е место", "4-е место"]], "en": ["What place did Croatia finish at the 2018 World Cup?", "2nd place", ["1st place", "3rd place", "4th place"]], "ky": ["Хорватия 2018-жылдагы дүйнө чемпионатында нечинчи орунду алды?", "2-орун", ["1-орун", "3-орун", "4-орун"]]},
+      {"uz": ["Ўзбекистон чемпионатини энг кўп ютган клуб қайси?", "Пахтакор", ["Бунёдкор", "Насаф", "Навбаҳор"]], "ru": ["Какой клуб чаще всех выигрывал чемпионат Узбекистана?", "Пахтакор", ["Бунёдкор", "Насаф", "Навбахор"]], "en": ["Which club has won the Uzbekistan league the most times?", "Pakhtakor", ["Bunyodkor", "Nasaf", "Navbahor"]], "ky": ["Өзбекстан чемпионатын эң көп жеңген клуб кайсы?", "Пахтакор", ["Бунёдкор", "Насаф", "Навбахор"]]},
+      {"uz": ["«Пахтакор» клуби қайси шаҳардан?", "Тошкент", ["Самарқанд", "Наманган", "Қарши"]], "ru": ["Из какого города клуб «Пахтакор»?", "Ташкент", ["Самарканд", "Наманган", "Карши"]], "en": ["Which city is Pakhtakor from?", "Tashkent", ["Samarkand", "Namangan", "Karshi"]], "ky": ["«Пахтакор» клубу кайсы шаардан?", "Ташкент", ["Самарканд", "Наманган", "Карши"]]},
+      {"uz": ["Ўзбекистон терма жамоасининг лақаби нима?", "Оқ бўрилар", ["Кўк бургутлар", "Олтин шерлар", "Тоғ барслари"]], "ru": ["Как называют сборную Узбекистана?", "Белые волки", ["Синие орлы", "Золотые львы", "Горные барсы"]], "en": ["What is the nickname of the Uzbekistan national team?", "The White Wolves", ["The Blue Eagles", "The Golden Lions", "The Snow Leopards"]], "ky": ["Өзбекстан курама командасынын лакабы эмне?", "Ак бөрүлөр", ["Көк бүркүттөр", "Алтын арстандар", "Тоо илбирстери"]]},
+      {"uz": ["Абдукодир Хусанов 2025 йилда қайси клубга ўтди?", "Манчестер Сити", ["Ливерпуль", "Реал Мадрид", "Бавария"]], "ru": ["В какой клуб перешёл Абдукодир Хусанов в 2025 году?", "Манчестер Сити", ["Ливерпуль", "Реал Мадрид", "Бавария"]], "en": ["Which club did Abdukodir Khusanov join in 2025?", "Manchester City", ["Liverpool", "Real Madrid", "Bayern"]], "ky": ["Абдукодир Хусанов 2025-жылы кайсы клубга өттү?", "Манчестер Сити", ["Ливерпуль", "Реал Мадрид", "Бавария"]]},
+      {"uz": ["Футзалда (зал футболида) майдонда ҳар жамоадан нечта ўйинчи бўлади?", "5 та", ["6 та", "7 та", "11 та"]], "ru": ["Сколько игроков одной команды на поле в футзале?", "5", ["6", "7", "11"]], "en": ["How many players per team are on the court in futsal?", "5", ["6", "7", "11"]], "ky": ["Футзалда талаада ар бир командадан канча оюнчу болот?", "5", ["6", "7", "11"]]},
+      {"uz": ["«Олтин тўп» маросимида энг яхши дарвозабонга қайси афсона номидаги мукофот берилади?", "Лев Яшин", ["Жанлуиджи Буффон", "Олливер Кан", "Петр Чех"]], "ru": ["Приз лучшему вратарю на церемонии «Золотой мяч» назван в честь какой легенды?", "Лев Яшин", ["Джанлуиджи Буффон", "Оливер Кан", "Петр Чех"]], "en": ["The best goalkeeper award at the Ballon d'Or ceremony is named after which legend?", "Lev Yashin", ["Gianluigi Buffon", "Oliver Kahn", "Petr Čech"]], "ky": ["«Алтын топ» аземинде эң мыкты дарбазачыга кайсы легенданын атындагы сыйлык берилет?", "Лев Яшин", ["Жанлуижи Буффон", "Оливер Кан", "Петр Чех"]]},
+      {"uz": ["Бу ўйинни ясаган Мустафонинг севимли клуби қайси?", "Реал Мадрид", ["Барселона", "Милан", "Бавария"]], "ru": ["Какой любимый клуб у Мустафо, создателя этой игры?", "Реал Мадрид", ["Барселона", "Милан", "Бавария"]], "en": ["What is the favourite club of Mustafo, who made this game?", "Real Madrid", ["Barcelona", "AC Milan", "Bayern"]], "ky": ["Бул оюнду жасаган Мустафонун сүйүктүү клубу кайсы?", "Реал Мадрид", ["Барселона", "Милан", "Бавария"]]}
     ];
-    let kvest = null;   // { savollar: [...10], i, togri, javobBerildi }
+    // kvest: { tartib: [10 та савол рақами], i, togri, variant: [жавоблар тартиби], tanlandi: null|рақам }
+    // Саволларни матн эмас, РАҚАМ билан эслаймиз — шунда тил алмашса ҳам ўша савол ўша жойда қолади.
+    let kvest = null;
     function aralash(m) { const k = m.slice(); for (let i = k.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [k[i], k[j]] = [k[j], k[i]]; } return k; }
 
     $("kvest-boshla").onclick = () => {
-      kvest = { savollar: aralash(savollar).slice(0, 10), i: 0, togri: 0 };   // 101 тадан 10 таси тасодифий
+      const raqamlar = savollar.map((_, i) => i);
+      kvest = { tartib: aralash(raqamlar).slice(0, 10), i: 0, togri: 0, variant: aralash([0, 1, 2, 3]), tanlandi: null, tugadi: false };
       $("kvest-boshla").classList.add("yashirin");
       $("kvest-quti").classList.remove("yashirin");
       $("kvest-natija").textContent = "";
       savolKorsat();
     };
     function savolKorsat() {
-      const [savol, togri, notogri] = kvest.savollar[kvest.i];
-      $("kvest-raqam").textContent = "Савол " + (kvest.i + 1) + " / 10 · ✅ " + kvest.togri;
+      if (!kvest || kvest.tugadi) return;
+      const [savol, togri, notogri] = savollar[kvest.tartib[kvest.i]][til];
+      const javoblar = [togri].concat(notogri);                 // 0 — доим тўғри жавоб
+      $("kvest-raqam").textContent = t("savolN", kvest.i + 1, kvest.togri);
       $("kvest-savol").textContent = savol;
       $("kvest-javoblar").innerHTML = "";
-      $("kvest-keyingi").classList.add("yashirin");
-      aralash([togri].concat(notogri)).forEach((j) => {
+      const javobBerildi = kvest.tanlandi !== null;
+      $("kvest-keyingi").textContent = kvest.i < 9 ? t("keyingi") : t("natijaBtn");
+      $("kvest-keyingi").classList.toggle("yashirin", !javobBerildi);
+      kvest.variant.forEach((j) => {
         const b = document.createElement("button");
-        b.textContent = j;
+        b.textContent = javoblar[j];
+        if (javobBerildi) {
+          b.disabled = true;
+          if (j === 0) b.classList.add("togri");
+          if (j === kvest.tanlandi && j !== 0) b.classList.add("notogri");
+        }
         b.onclick = () => {
-          document.querySelectorAll("#kvest-javoblar button").forEach((x) => {
-            x.disabled = true;
-            if (x.textContent === togri) x.classList.add("togri");
-          });
-          if (j === togri) kvest.togri++; else b.classList.add("notogri");
-          $("kvest-raqam").textContent = "Савол " + (kvest.i + 1) + " / 10 · ✅ " + kvest.togri;
-          $("kvest-keyingi").textContent = kvest.i < 9 ? "Кейинги ➡️" : "Натижа 🏆";
-          $("kvest-keyingi").classList.remove("yashirin");
+          kvest.tanlandi = j;
+          if (j === 0) kvest.togri++;
+          savolKorsat();                                       // жавобни ранг билан қайта чизамиз
         };
         $("kvest-javoblar").appendChild(b);
       });
     }
     $("kvest-keyingi").onclick = () => {
-      if (kvest.i < 9) { kvest.i++; savolKorsat(); return; }
+      if (kvest.i < 9) { kvest.i++; kvest.tanlandi = null; kvest.variant = aralash([0, 1, 2, 3]); savolKorsat(); return; }
       // квест тугади
-      const sovga = kvest.togri * 300;
+      kvest.tugadi = true;
       $("kvest-savol").textContent = "";
       $("kvest-javoblar").innerHTML = "";
       $("kvest-keyingi").classList.add("yashirin");
       $("kvest-raqam").textContent = "";
-      $("kvest-natija").innerHTML = (kvest.togri === 10 ? "🏆 АЪЛО! Ҳаммаси тўғри!" : "🧩 Квест тугади!") +
-        "<br>Тўғри жавоблар: " + kvest.togri + " / 10 · Мукофот: <b class='olmos'>" + sovga + " 💎</b>";
+      kvestNatijaChiz();
       kunlikTekshir(); kunlik.kvest++;
       $("kvest-boshla").classList.remove("yashirin");
-      $("kvest-boshla").textContent = "🔄 Яна квест";
+      kvestTugmaChiz();
+      const sovga = kvest.togri * 300;
       if (sovga) olmosQosh(sovga); else { saqla(); chizish(); }
     };
+    function kvestNatijaChiz() {
+      if (!kvest || !kvest.tugadi) return;
+      $("kvest-natija").innerHTML = (kvest.togri === 10 ? t("alo") : t("kvestTugadi")) + "<br>" + t("togriJ", kvest.togri, kvest.togri * 300);
+    }
+    function kvestTugmaChiz() { $("kvest-boshla").textContent = kvest ? t("yanaKvest") : t("kvestBoshla"); }
 
     // ===================== 10) ДЎКОН =====================
     document.querySelectorAll("#b-dokon button[data-narx]").forEach((b) => {
       b.onclick = () => {
         const narx = Number(b.dataset.narx);
-        if (olmos < narx) { xabar("💎 Олмос етмайди! Квест ва вазифаларни бажар."); return; }
+        if (olmos < narx) { xabar(t("olmosYetmaydi")); return; }
         olmos -= narx;
         qoshimchaPul += (b.dataset.m === "pul15" ? 15 : 5);
         saqla(); chizish();
-        xabar("✅ Трансфер пули ошди! Энди: " + budjet() + " млн");
+        xabar(t("pulOshdi", budjet()));
       };
     });
 
     // ===================== 11) ДРАФТ =====================
     const tartib = ["Д", "Ҳ", "Ҳ", "Ҳ", "Ҳ", "Я", "Я", "Я", "Ҳу", "Ҳу", "Ҳу"];   // қайси жой қачон танланади
     let draftVariantlar = [];
-    const draftJamoa = () => draft.jamoa.map(topish);
+    const draftJamoa = () => draft.jamoa.map(topish).filter(Boolean);
     const draftKuchi = () => draft.jamoa.length ? Math.round(draftJamoa().reduce((s, o) => s + o.kuch, 0) / draft.jamoa.length) : 0;
 
     $("draft-boshla").onclick = () => {
       if (!klubBormi()) return;
-      if (draft.faol && draft.jamoa.length < 11) { xabar("Драфт давом этяпти — танлашни тугат!"); return; }
-      if (olmos < 1000) { xabar("💎 Драфт учун 1000 олмос керак. Квест ўйна!"); return; }
+      if (draft.faol && draft.jamoa.length < 11) { xabar(t("draftDavom")); return; }
+      if (olmos < 1000) { xabar(t("draftOlmos")); return; }
       olmos -= 1000;
       draft = { faol: true, jamoa: [], natijalar: [] };
       draftVariantlar = [];
@@ -737,12 +964,12 @@
           // шу позициядаги, ҳали олинмаган ўйинчилардан 3 та тасодифийси
           draftVariantlar = aralash(oyinchilar.filter((o) => o.poz === poz && !draft.jamoa.includes(o.ism))).slice(0, 3).map((o) => o.ism);
         }
-        $("draft-sarlavha").textContent = "Танла: " + pozNomi[poz] + " (" + (draft.jamoa.length + 1) + "/11)";
+        $("draft-sarlavha").textContent = t("tanla", pozNomi(poz), draft.jamoa.length + 1);
         $("draft-variantlar").innerHTML = "";
         draftVariantlar.map(topish).forEach((o) => {
           const d = document.createElement("div");
           d.className = "oyinchi";
-          d.innerHTML = '<span class="reyting">' + o.kuch + '</span> <span class="poz">' + o.poz + '</span><div class="ism">' + o.ism + '</div><div class="narx">👆 Танлаш</div>';
+          d.innerHTML = '<span class="reyting">' + o.kuch + '</span> <span class="poz">' + L[til].qisqa[o.poz] + '</span><div class="ism">' + nomi(o) + '</div><div class="narx">' + t("tanlash") + '</div>';
           d.onclick = () => { draft.jamoa.push(o.ism); draftVariantlar = []; saqla(); draftChiz(); };
           $("draft-variantlar").appendChild(d);
         });
@@ -750,18 +977,18 @@
       draftJadval();
     }
     function draftJadval() {
-      let h = "<tr><th>Рақиб</th><th>Кучи</th><th>Натижа</th></tr>";
+      let h = "<tr><th>" + t("raqib") + "</th><th>" + t("kuchi") + "</th><th>" + t("natija") + "</th></tr>";
       raqiblar.forEach((r, i) => {
         const n = draft.natijalar[i];
-        const nat = n ? '<span class="' + (n.men > n.raqib ? "galaba" : n.men === n.raqib ? "durang" : "maglub") + '">' + n.men + " : " + n.raqib + "</span>" : "—";
-        h += "<tr><td>" + r.nom + "</td><td>" + r.kuch + "</td><td>" + nat + "</td></tr>";
+        const nat = n ? '<span class="' + sinf(n) + '">' + n.men + " : " + n.raqib + "</span>" : "—";
+        h += "<tr><td>" + rNomi(r) + "</td><td>" + r.kuch + "</td><td>" + nat + "</td></tr>";
       });
       $("draft-jadval").innerHTML = h;
       const tugadi = draft.natijalar.length >= raqiblar.length;
       $("draft-oyna").classList.toggle("yashirin", tugadi || draft.jamoa.length < 11);
       if (tugadi) {
         const g = draft.natijalar.filter((n) => n.men > n.raqib).length;
-        $("draft-kubok").innerHTML = "Драфт тугади! Ғалабалар: " + g + " / 5 · Ютуқ: <b class='olmos'>" + g * 500 + " 💎</b>";
+        $("draft-kubok").innerHTML = t("draftTugadi", g, g * 500);
       } else $("draft-kubok").textContent = "";
     }
     $("draft-oyna").onclick = () => {
@@ -774,18 +1001,18 @@
       for (let g = 0; g < raqib; g++) voqealar.push({ daq: 1 + Math.floor(Math.random() * 90), biz: false });
       voqealar.sort((a, b) => a.daq - b.daq);
       $("draft-oyna").disabled = true;
-      $("draft-sharh").innerHTML = "🎙️ Драфт ўйини: <b>" + klubNomi + "</b> — " + r.nom + "<br>";
+      $("draft-sharh").innerHTML = t("draftOyini", klubNomi, rNomi(r)) + "<br>";
       $("draft-hisob").textContent = "0 : 0";
       let a = 0, b = 0;
       voqealar.forEach((v, k) => setTimeout(() => {
-        if (v.biz) { a++; $("draft-sharh").innerHTML += "⚽ " + v.daq + "' ГООЛ! <b>" + v.kim + "</b>!<br>"; }
-        else { b++; $("draft-sharh").innerHTML += "😬 " + v.daq + "' " + r.nom + " гол урди.<br>"; }
+        if (v.biz) { a++; $("draft-sharh").innerHTML += t("golQisqa", v.daq, v.kim) + "<br>"; }
+        else { b++; $("draft-sharh").innerHTML += t("raqibGol", v.daq, rNomi(r)) + "<br>"; }
         $("draft-hisob").textContent = a + " : " + b;
       }, 800 * (k + 1)));
       setTimeout(() => {
         draft.natijalar.push({ men, raqib });
         kunlikYoz(men, raqib);
-        $("draft-sharh").innerHTML += "🏁 " + (men > raqib ? "🎉 ҒАЛАБА! +500 💎" : men === raqib ? "🤝 Дуранг." : "😞 Мағлубият.") + "<br>";
+        $("draft-sharh").innerHTML += "🏁 " + yakun(men, raqib) + (men > raqib ? " +500 💎" : "") + "<br>";
         $("draft-oyna").disabled = false;
         if (men > raqib) olmosQosh(500); else { saqla(); chizish(); }
         draftChiz();
@@ -799,9 +1026,9 @@
       raqiblar.forEach((r, i) => {
         const q = document.createElement("div");
         q.style.cssText = "display:flex;gap:6px;align-items:center;margin:4px 0";
-        q.innerHTML = '<span style="min-width:70px">' + (i + 1) + '-рақиб (💪' + r.kuch + ')</span>';
+        q.innerHTML = '<span style="min-width:110px">' + t("raqibN", i + 1, r.kuch) + '</span>';
         const inp = document.createElement("input");
-        inp.type = "text"; inp.maxLength = 30; inp.value = r.nom; inp.dataset.i = i;
+        inp.type = "text"; inp.maxLength = 30; inp.value = rNomi(r); inp.dataset.i = i;
         inp.style.cssText = "flex:1;font-size:15px;padding:6px 8px;border-radius:8px;border:1px solid #ccc";
         q.appendChild(inp);
         $("raqib-nomlari").appendChild(q);
@@ -809,20 +1036,35 @@
     }
     $("klub-saqla").onclick = () => {
       const nom = $("klub-nomi").value.trim();
-      if (!nom) { xabar("🏷️ Клуб номи ёзилиши шарт!"); $("klub-nomi").focus(); return; }
+      if (!nom) { xabar(t("klubShart")); $("klub-nomi").focus(); return; }
       klubNomi = nom;
       document.querySelectorAll("#raqib-nomlari input").forEach((inp) => {
         const v = inp.value.trim();
-        if (v) raqiblar[inp.dataset.i].nom = v;     // бўш қолса — эски номи қолади
+        const r = raqiblar[inp.dataset.i];
+        if (!v || r.asl.includes(v)) r.maxsus = "";   // бўш ёки асл номи — тилга қараб ўзгараверади
+        else r.maxsus = v;                            // ўзи ёзган ном — ҳамма тилда шундай қолади
       });
       saqla(); chizish(); draftChiz(); klubFormaChiz();
-      xabar("✅ Сақланди! Клубинг: " + klubNomi);
+      xabar(t("saqlandi", klubNomi));
     };
-    klubFormaChiz();
+
+    // ===================== 13) ТИЛНИ АЛМАШТИРИШ =====================
+    // data-t="калит" бор ҳамма элементга шу тилдаги матнни ёзамиз, кейин ҳамма бўлимни қайта чизамиз
+    function tilQoy(yangi) {
+      til = yangi;
+      try { localStorage.setItem("menejer_til", til); } catch (e) {}
+      document.documentElement.lang = til;
+      document.title = t("title");
+      document.querySelectorAll("[data-t]").forEach((el) => { el.innerHTML = t(el.dataset.t); });
+      document.querySelectorAll("[data-tp]").forEach((el) => { el.placeholder = t(el.dataset.tp); });
+      document.querySelectorAll("#tillar button").forEach((b) => b.classList.toggle("faol", b.dataset.til === til));
+      klubFormaChiz(); chizish(); draftChiz(); vazifalarChiz();
+      kvestTugmaChiz(); savolKorsat(); kvestNatijaChiz();
+    }
+    document.querySelectorAll("#tillar button").forEach((b) => { b.onclick = () => tilQoy(b.dataset.til); });
 
     kunlikTekshir();
-
-    chizish();
+    tilQoy(til);
   </script>
 </body>
 </html>
