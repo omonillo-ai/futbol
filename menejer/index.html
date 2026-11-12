@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Футбол менежер — Мустафо</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; margin: 0; padding: 0 10px 30px;
+      background: linear-gradient(#0b3d1a, #145a2a); color: #fff;
+    }
+    header { text-align: center; padding: 16px 0 6px; }
+    header h1 { margin: 0; font-size: 28px; }
+    header p { margin: 4px 0 0; color: #c8e6c9; }
+    main { max-width: 900px; margin: 0 auto; }
+    .karta { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+             border-radius: 16px; padding: 14px; margin: 12px 0; }
+    .karta h2 { margin: 0 0 10px; font-size: 20px; }
+    button { font-size: 15px; padding: 8px 14px; border-radius: 10px; cursor: pointer;
+             border: 2px solid #ffd54f; background: #ffd54f; color: #3e2723; font-weight: bold; }
+    button:disabled { opacity: .45; cursor: default; }
+    button.oddiy { background: transparent; color: #ffd54f; }
+
+    /* пул ва жамоа ҳолати */
+    .holat { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .holat div { background: rgba(0,0,0,.25); border-radius: 12px; padding: 8px 14px; text-align: center; min-width: 110px; }
+    .holat b { display: block; font-size: 22px; color: #ffd54f; }
+
+    /* позиция тугмалари */
+    .tablar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .tablar button { background: transparent; color: #fff; border-color: rgba(255,255,255,.4); }
+    .tablar button.faol { background: #ffd54f; color: #3e2723; border-color: #ffd54f; }
+
+    /* ўйинчи карточкалари */
+    .royxat { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+    .oyinchi { background: linear-gradient(160deg, #fff8e1, #ffe082); color: #3e2723; border-radius: 12px;
+               padding: 8px 10px; cursor: pointer; border: 3px solid transparent; transition: transform .15s; }
+    .oyinchi:hover { transform: translateY(-3px); }
+    .oyinchi.olingan { border-color: #00e676; background: linear-gradient(160deg, #e8f5e9, #a5d6a7); }
+    .oyinchi .reyting { font-size: 24px; font-weight: 900; }
+    .oyinchi .poz { font-size: 11px; font-weight: bold; background: #3e2723; color: #ffd54f; border-radius: 6px; padding: 1px 6px; }
+    .oyinchi .ism { font-weight: bold; font-size: 14px; margin: 4px 0; min-height: 34px; }
+    .oyinchi .narx { font-size: 13px; }
+
+    /* майдон */
+    .maydon { position: relative; height: 380px; border-radius: 14px; overflow: hidden;
+              background: repeating-linear-gradient(0deg, #2e7d32 0 38px, #388e3c 38px 76px);
+              border: 3px solid rgba(255,255,255,.7); }
+    .maydon::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid rgba(255,255,255,.6); }
+    .maydon::after { content: ""; position: absolute; left: 50%; top: 50%; width: 80px; height: 80px; margin: -40px;
+                     border: 2px solid rgba(255,255,255,.6); border-radius: 50%; }
+    .nuqta { position: absolute; transform: translate(-50%, -50%); text-align: center; width: 84px; z-index: 1; }
+    .nuqta .doira { width: 38px; height: 38px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center;
+                    justify-content: center; font-weight: 900; font-size: 15px; background: #ffd54f; color: #3e2723;
+                    border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+    .nuqta .doira.bosh { background: rgba(255,255,255,.2); color: #fff; border-style: dashed; }
+    .nuqta small { display: block; font-size: 11px; margin-top: 2px; text-shadow: 0 1px 2px #000; }
+
+    /* мавсум */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 6px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.15); }
+    td:first-child, th:first-child { text-align: left; }
+    .galaba { color: #69f0ae; font-weight: bold; } .durang { color: #ffd54f; font-weight: bold; } .maglub { color: #ff8a80; font-weight: bold; }
+    .sharh-quti { background: rgba(0,0,0,.35); border-radius: 12px; padding: 10px; min-height: 120px; max-height: 260px;
+             overflow-y: auto; font-size: 14px; line-height: 1.6; }
+    .hisob { font-size: 34px; font-weight: 900; text-align: center; margin: 6px 0; }
+    .kubok { text-align: center; font-size: 22px; padding: 10px; }
+    .yashirin { display: none !important; }
+    /* бўлимлар (таблар) */
+    .menyu { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 8px 0; }
+    .menyu button { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.3); }
+    .menyu button.faol { background: #ffd54f; color: #3e2723; border-color: #ffd54f; }
+    .olmos { color: #80deea; }
+    .vazifa { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: rgba(0,0,0,.25);
+              border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+    .vazifa .chiziqcha { height: 8px; background: rgba(255,255,255,.15); border-radius: 4px; overflow: hidden; margin-top: 5px; }
+    .vazifa .chiziqcha div { height: 100%; background: #69f0ae; }
+    .savol { font-size: 18px; font-weight: bold; margin: 8px 0 12px; }
+    .javoblar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .javoblar button { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.35); font-weight: normal; }
+    .javoblar button.togri { background: #2e7d32; border-color: #69f0ae; }
+    .javoblar button.notogri { background: #c62828; border-color: #ff8a80; }
+    .mahsulot { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,.25);
+                border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+    #xabar { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #263238; color: #fff;
+             padding: 10px 16px; border-radius: 10px; display: none; z-index: 9; max-width: 90%; text-align: center; }
+    footer { text-align: center; color: #a5d6a7; font-size: 13px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚽ Футбол менежер</h1>
+    <p>Афсоналардан жамоа йиғ ва чемпион бўл! · Ясаган: Мустафо</p>
+  </header>
+
+  <main>
+    <!-- 1) Ҳолат: пул, ўйинчилар сони, жамоа кучи -->
+    <div class="karta">
+      <div class="holat">
+        <div>💰 Пул <b id="pul">115</b> млн</div>
+        <div>👥 Ўйинчилар <b id="soni">0/11</b></div>
+        <div>💪 Жамоа кучи <b id="kuch">—</b></div>
+        <div>💎 Олмос <b id="olmos" class="olmos">0</b></div>
+      </div>
+      <div class="menyu" id="menyu">
+        <button data-b="menejer" class="faol">🏟️ Менежер</button>
+        <button data-b="draft">🎲 Драфт</button>
+        <button data-b="vazifalar">✅ Вазифалар</button>
+        <button data-b="kvest">🧩 Квест</button>
+        <button data-b="dokon">🛍️ Дўкон</button>
+      </div>
+    </div>
+
+    <div id="b-menejer">
+
+    <!-- 2) Майдон (4-3-3) -->
+    <div class="karta">
+      <h2>🏟️ Менинг жамоам (4-3-3)</h2>
+      <div class="maydon" id="maydon"></div>
+    </div>
+
+    <!-- 3) Трансфер бозори -->
+    <div class="karta" id="bozor-karta">
+      <h2>🛒 Трансфер бозори</h2>
+      <div class="tablar" id="tablar"></div>
+      <div class="royxat" id="royxat"></div>
+      <p style="font-size:13px;color:#c8e6c9">Ўйинчини босиб сотиб ол, яна боссанг — сотасан. Керак: 1 дарвозабон, 4 ҳимоячи, 3 ярим ҳимоячи, 3 ҳужумчи.</p>
+    </div>
+
+    <!-- 4) Мавсум -->
+    <div class="karta">
+      <h2>🏆 Мавсум</h2>
+      <p id="mavsum-matn">Аввал 11 та ўйинчини йиғ, кейин мавсумни бошла.</p>
+      <button id="boshla-tugma" disabled>▶️ Мавсумни бошлаш</button>
+      <div id="mavsum" class="yashirin">
+        <table id="jadval"></table>
+        <div class="hisob" id="hisob"></div>
+        <div id="sharh" class="sharh-quti"></div>
+        <p style="text-align:center">
+          <button id="oyna-tugma">⚽ Кейинги ўйин</button>
+          <button id="qayta-tugma" class="oddiy yashirin">🔄 Янги мавсум</button>
+        </p>
+        <div class="kubok" id="kubok"></div>
+      </div>
+    </div>
+    </div><!-- /b-menejer -->
+
+    <!-- ===== ДРАФТ ===== -->
+    <div id="b-draft" class="yashirin">
+      <div class="karta">
+        <h2>🎲 Драфт</h2>
+        <p>Ҳар бир жой учун 3 та тасодифий афсона чиқади — биттасини танлайсан. Пул керак эмас!
+           Жамоа йиғилгач, 5 та ўйин ўйнайсан. Ҳар ғалаба учун <b class="olmos">+500 💎</b>.</p>
+        <p>Кириш нархи: <b class="olmos">1000 💎</b></p>
+        <button id="draft-boshla">🎲 Драфтни бошлаш (1000 💎)</button>
+        <div id="draft-tanlov" class="yashirin">
+          <h3 id="draft-sarlavha"></h3>
+          <div class="royxat" id="draft-variantlar"></div>
+        </div>
+      </div>
+      <div class="karta">
+        <h2>🏟️ Драфт жамоам <span id="draft-kuch"></span></h2>
+        <div class="maydon" id="draft-maydon"></div>
+      </div>
+      <div class="karta yashirin" id="draft-mavsum">
+        <h2>🏆 Драфт ўйинлари</h2>
+        <table id="draft-jadval"></table>
+        <div class="hisob" id="draft-hisob"></div>
+        <div id="draft-sharh" class="sharh-quti"></div>
+        <p style="text-align:center"><button id="draft-oyna">⚽ Кейинги ўйин</button></p>
+        <div class="kubok" id="draft-kubok"></div>
+      </div>
+    </div>
+
+    <!-- ===== КУНЛИК ВАЗИФАЛАР ===== -->
+    <div id="b-vazifalar" class="yashirin">
+      <div class="karta">
+        <h2>✅ Бугунги вазифалар</h2>
+        <p style="font-size:13px;color:#c8e6c9">Ҳар куни 3 та янги вазифа. Бажарсанг, олмосни ол!</p>
+        <div id="vazifa-royxat"></div>
+      </div>
+    </div>
+
+    <!-- ===== КВЕСТ ===== -->
+    <div id="b-kvest" class="yashirin">
+      <div class="karta">
+        <h2>🧩 Футбол квести</h2>
+        <p>10 та тасодифий савол. Ҳар тўғри жавоб — <b class="olmos">300 💎</b>, ҳаммаси тўғри бўлса — <b class="olmos">3000 💎</b>!</p>
+        <button id="kvest-boshla">🧩 Квестни бошлаш</button>
+        <div id="kvest-quti" class="yashirin">
+          <p id="kvest-raqam"></p>
+          <div class="savol" id="kvest-savol"></div>
+          <div class="javoblar" id="kvest-javoblar"></div>
+          <p class="kubok" id="kvest-natija"></p>
+          <p style="text-align:center"><button id="kvest-keyingi" class="yashirin">Кейинги ➡️</button></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ДЎКОН ===== -->
+    <div id="b-dokon" class="yashirin">
+      <div class="karta">
+        <h2>🛍️ Дўкон</h2>
+        <div class="mahsulot"><span>💰 <b>+5 млн</b> трансфер пули (доимий)</span><button data-narx="1000" data-m="pul">1000 💎</button></div>
+        <div class="mahsulot"><span>💰 <b>+15 млн</b> трансфер пули (доимий)</span><button data-narx="2500" data-m="pul15">2500 💎</button></div>
+        <p style="font-size:13px;color:#c8e6c9">Олмосни квест, вазифалар ва драфтдаги ғалабалардан тўплайсан.</p>
+      </div>
+    </div>
+  </main>
+  <div id="xabar"></div>
+
+  <footer>Ўйиндаги кучлар ва нархлар ўйин учун ўйлаб топилган.</footer>
+
+  <script>
+    // ===== 1) ЎЙИНЧИЛАР БАЗАСИ =====
+    // poz: Д — дарвозабон, Ҳ — ҳимоячи, Я — ярим ҳимоячи, Ҳу — ҳужумчи
+    // kuch — ўйиндаги куч (0–99), narx — миллион ҳисобида
+    const oyinchilar = [
+      { ism: "Лев Яшин", poz: "Д", kuch: 92, narx: 14 },
+      { ism: "Жанлуиджи Буффон", poz: "Д", kuch: 90, narx: 12 },
+      { ism: "Мануэль Нойер", poz: "Д", kuch: 89, narx: 11 },
+      { ism: "Икер Касильяс", poz: "Д", kuch: 87, narx: 9 },
+      { ism: "Петр Чех", poz: "Д", kuch: 85, narx: 7 },
+
+      { ism: "Франц Беккенбауэр", poz: "Ҳ", kuch: 93, narx: 15 },
+      { ism: "Паоло Мальдини", poz: "Ҳ", kuch: 92, narx: 14 },
+      { ism: "Франко Барези", poz: "Ҳ", kuch: 90, narx: 12 },
+      { ism: "Серхио Рамос", poz: "Ҳ", kuch: 89, narx: 11 },
+      { ism: "Роберто Карлос", poz: "Ҳ", kuch: 88, narx: 10 },
+      { ism: "Кафу", poz: "Ҳ", kuch: 88, narx: 10 },
+      { ism: "Фабио Каннаваро", poz: "Ҳ", kuch: 88, narx: 10 },
+      { ism: "Карлес Пуйоль", poz: "Ҳ", kuch: 86, narx: 8 },
+
+      { ism: "Зинедин Зидан", poz: "Я", kuch: 94, narx: 16 },
+      { ism: "Андрес Иньеста", poz: "Я", kuch: 91, narx: 13 },
+      { ism: "Хави", poz: "Я", kuch: 90, narx: 12 },
+      { ism: "Лука Модрич", poz: "Я", kuch: 89, narx: 11 },
+      { ism: "Андреа Пирло", poz: "Я", kuch: 88, narx: 10 },
+      { ism: "Стивен Джеррард", poz: "Я", kuch: 87, narx: 9 },
+      { ism: "Франк Лэмпард", poz: "Я", kuch: 86, narx: 8 },
+
+      { ism: "Пеле", poz: "Ҳу", kuch: 96, narx: 18 },
+      { ism: "Диего Марадона", poz: "Ҳу", kuch: 95, narx: 17 },
+      { ism: "Роналдо (Феномен)", poz: "Ҳу", kuch: 94, narx: 16 },
+      { ism: "Йохан Кройф", poz: "Ҳу", kuch: 93, narx: 15 },
+      { ism: "Марко ван Бастен", poz: "Ҳу", kuch: 91, narx: 13 },
+      { ism: "Тьерри Анри", poz: "Ҳу", kuch: 89, narx: 11 },
+      { ism: "Эйсебио", poz: "Ҳу", kuch: 88, narx: 10 }
+    ];
+    const kerak = { "Д": 1, "Ҳ": 4, "Я": 3, "Ҳу": 3 };      // 4-3-3 схемаси
+    const pozNomi = { "Д": "🧤 Дарвозабон", "Ҳ": "🛡️ Ҳимоячи", "Я": "🎯 Ярим ҳимоячи", "Ҳу": "⚡ Ҳужумчи" };
+    const BOSHLANGICH_PUL = 115;
+    const budjet = () => BOSHLANGICH_PUL + qoshimchaPul;   // дўкондан олинган пул ҳам қўшилади
+
+    // ===== 2) РАҚИБЛАР (ўйлаб топилган жамоалар) =====
+    const raqiblar = [
+      { nom: "🦅 Оқ лочинлар", kuch: 82 },
+      { nom: "⛰️ Тоғ бургутлари", kuch: 85 },
+      { nom: "🦁 Олтин шерлар", kuch: 88 },
+      { nom: "🐯 Кўк йўлбарслар", kuch: 90 },
+      { nom: "🛡️ Темир дарвоза", kuch: 92 }
+    ];
+
+    // ===== 3) ҲОЛАТ (localStorage'да сақланади) =====
+    let jamoa = [];          // сотиб олинган ўйинчилар (исмлари)
+    let natijalar = [];      // мавсумдаги ўйинлар: {men, raqib}
+    let mavsumBoshlandi = false;
+    let tanlanganPoz = "Д";
+    let olmos = 2000;        // 💎 бошланғич олмос
+    let qoshimchaPul = 0;    // дўкондан сотиб олинган пул
+    let kunlik = {};         // бугунги вазифалар ҳолати
+    let draft = { faol: false, jamoa: [], natijalar: [] };
+    try {
+      const s = JSON.parse(localStorage.getItem("menejer") || "{}");
+      jamoa = s.jamoa || []; natijalar = s.natijalar || []; mavsumBoshlandi = !!s.mavsumBoshlandi;
+      if (typeof s.olmos === "number") olmos = s.olmos;
+      qoshimchaPul = s.qoshimchaPul || 0;
+      kunlik = s.kunlik || {};
+      draft = s.draft || draft;
+    } catch (e) {}
+    function saqla() {
+      try { localStorage.setItem("menejer", JSON.stringify({ jamoa, natijalar, mavsumBoshlandi, olmos, qoshimchaPul, kunlik, draft })); } catch (e) {}
+    }
+    function xabar(m) {
+      const x = document.getElementById("xabar"); x.innerHTML = m; x.style.display = "block";
+      clearTimeout(xabar.t); xabar.t = setTimeout(() => { x.style.display = "none"; }, 3000);
+    }
+    function olmosQosh(n) { olmos += n; saqla(); chizish(); xabar("💎 +" + n + " олмос!"); }
+
+    const $ = (id) => document.getElementById(id);
+    const topish = (ism) => oyinchilar.find((o) => o.ism === ism);
+    const jamoadagilar = () => jamoa.map(topish);
+    const sarflangan = () => jamoadagilar().reduce((s, o) => s + o.narx, 0);
+    const pozdagilar = (poz) => jamoadagilar().filter((o) => o.poz === poz);
+    function jamoaKuchi() {
+      if (!jamoa.length) return 0;
+      return Math.round(jamoadagilar().reduce((s, o) => s + o.kuch, 0) / jamoa.length);
+    }
+
+    // ===== 4) СОТИБ ОЛИШ / СОТИШ =====
+    function bosildi(ism) {
+      if (mavsumBoshlandi) { alert("Мавсум давомида трансфер ёпиқ. Янги мавсумда ўзгартирасан."); return; }
+      const o = topish(ism);
+      if (jamoa.includes(ism)) {                         // сотамиз
+        jamoa = jamoa.filter((x) => x !== ism);
+      } else {                                           // сотиб оламиз
+        if (pozdagilar(o.poz).length >= kerak[o.poz]) { alert(pozNomi[o.poz] + ": жой қолмади (" + kerak[o.poz] + " та). Аввал биттасини сот."); return; }
+        if (sarflangan() + o.narx > budjet()) { alert("Пул етмайди! 💸 Арзонроқ ўйинчи танла ёки биттасини сот."); return; }
+        jamoa.push(ism);
+      }
+      saqla(); chizish();
+    }
+
+    // ===== 5) ЭКРАНГА ЧИЗИШ =====
+    function chizish() {
+      // ҳолат
+      $("pul").textContent = budjet() - sarflangan();
+      $("olmos").textContent = olmos;
+      $("soni").textContent = jamoa.length + "/11";
+      $("kuch").textContent = jamoa.length ? jamoaKuchi() : "—";
+
+      // позиция тугмалари
+      $("tablar").innerHTML = "";
+      Object.keys(kerak).forEach((poz) => {
+        const b = document.createElement("button");
+        b.textContent = pozNomi[poz] + " (" + pozdagilar(poz).length + "/" + kerak[poz] + ")";
+        if (poz === tanlanganPoz) b.className = "faol";
+        b.onclick = () => { tanlanganPoz = poz; chizish(); };
+        $("tablar").appendChild(b);
+      });
+
+      // ўйинчилар рўйхати
+      $("royxat").innerHTML = "";
+      oyinchilar.filter((o) => o.poz === tanlanganPoz).forEach((o) => {
+        const d = document.createElement("div");
+        d.className = "oyinchi" + (jamoa.includes(o.ism) ? " olingan" : "");
+        d.innerHTML = '<span class="reyting">' + o.kuch + '</span> <span class="poz">' + o.poz + '</span>' +
+                      '<div class="ism">' + o.ism + '</div>' +
+                      '<div class="narx">💰 ' + o.narx + ' млн ' + (jamoa.includes(o.ism) ? "✅" : "") + '</div>';
+        d.onclick = () => bosildi(o.ism);
+        $("royxat").appendChild(d);
+      });
+
+      maydonChiz("maydon", jamoadagilar());
+
+      // мавсум тугмаси
+      $("boshla-tugma").disabled = jamoa.length !== 11 || mavsumBoshlandi;
+      $("boshla-tugma").classList.toggle("yashirin", mavsumBoshlandi);
+      $("mavsum").classList.toggle("yashirin", !mavsumBoshlandi);
+      $("mavsum-matn").textContent = mavsumBoshlandi
+        ? "Мавсум кетяпти! Ҳар бир рақиб билан ўйна."
+        : (jamoa.length === 11 ? "Жамоа тайёр! 💪 Мавсумни бошлашинг мумкин." : "Аввал 11 та ўйинчини йиғ, кейин мавсумни бошла.");
+      if (mavsumBoshlandi) jadvalChiz();
+    }
+
+    // майдонга ўйинчиларни жойлаш (асосий жамоа ҳам, драфт ҳам шуни ишлатади)
+    function maydonChiz(joyId, royxat) {
+      const joylar = {
+        "Ҳу": [[20, 16], [50, 12], [80, 16]],
+        "Я": [[25, 40], [50, 46], [75, 40]],
+        "Ҳ": [[12, 68], [37, 72], [63, 72], [88, 68]],
+        "Д": [[50, 90]]
+      };
+      const joy = $(joyId); joy.innerHTML = "";
+      Object.keys(joylar).forEach((poz) => {
+        const bor = royxat.filter((o) => o.poz === poz);
+        joylar[poz].forEach(([x, y], i) => {
+          const o = bor[i];
+          const n = document.createElement("div");
+          n.className = "nuqta"; n.style.left = x + "%"; n.style.top = y + "%";
+          n.innerHTML = o ? '<div class="doira">' + o.kuch + '</div><small>' + o.ism.split(" ").slice(-1)[0] + '</small>'
+                          : '<div class="doira bosh">' + poz + '</div><small>бўш</small>';
+          joy.appendChild(n);
+        });
+      });
+    }
+
+    // ===== 6) МАВСУМ =====
+    $("boshla-tugma").onclick = () => {
+      mavsumBoshlandi = true; natijalar = [];
+      $("sharh").innerHTML = ""; $("hisob").textContent = ""; $("kubok").textContent = "";
+      saqla(); chizish();
+    };
+
+    function jadvalChiz() {
+      let h = "<tr><th>Рақиб</th><th>Кучи</th><th>Натижа</th></tr>";
+      raqiblar.forEach((r, i) => {
+        const n = natijalar[i];
+        let natija = "—";
+        if (n) {
+          const sinf = n.men > n.raqib ? "galaba" : (n.men === n.raqib ? "durang" : "maglub");
+          natija = '<span class="' + sinf + '">' + n.men + " : " + n.raqib + "</span>";
+        }
+        h += "<tr><td>" + r.nom + "</td><td>" + r.kuch + "</td><td>" + natija + "</td></tr>";
+      });
+      const ochko = natijalar.reduce((s, n) => s + (n.men > n.raqib ? 3 : n.men === n.raqib ? 1 : 0), 0);
+      h += "<tr><td><b>Очколар</b></td><td></td><td><b>" + ochko + " / " + raqiblar.length * 3 + "</b></td></tr>";
+      $("jadval").innerHTML = h;
+      const tugadi = natijalar.length >= raqiblar.length;
+      $("oyna-tugma").classList.toggle("yashirin", tugadi);
+      $("qayta-tugma").classList.toggle("yashirin", !tugadi);
+      if (tugadi) $("kubok").innerHTML = kubokMatni(ochko);
+    }
+
+    function kubokMatni(ochko) {
+      if (ochko >= 13) return "🏆 <b>ЧЕМПИОН!</b> Сен ҳақиқий менежерсан! 🎉";
+      if (ochko >= 9) return "🥈 Яхши мавсум! Кейинги сафар чемпион бўласан 💪";
+      return "😕 Мавсум оғир бўлди. Жамоани кучайтириб, яна уриниб кўр!";
+    }
+
+    // Пуассон тақсимоти — футболда голлар сонини табиий қилади
+    function golSoni(ortacha) {
+      let L = Math.exp(-ortacha), k = 0, p = 1;
+      do { k++; p *= Math.random(); } while (p > L);
+      return k - 1;
+    }
+
+    // голни ким урди? — ҳужумчиларга кўпроқ имконият
+    function golUrdi(royxatJamoa) {
+      const vazn = { "Ҳу": 5, "Я": 3, "Ҳ": 1, "Д": 0 };
+      const royxat = [];
+      (royxatJamoa || jamoadagilar()).forEach((o) => { for (let i = 0; i < vazn[o.poz]; i++) royxat.push(o.ism); });
+      return royxat[Math.floor(Math.random() * royxat.length)];
+    }
+
+    $("oyna-tugma").onclick = () => {
+      const i = natijalar.length;
+      const r = raqiblar[i];
+      const farq = jamoaKuchi() - r.kuch;                         // кучлар фарқи
+      const menOrtacha = Math.max(0.3, Math.min(4, 1.4 + farq * 0.12));
+      const raqibOrtacha = Math.max(0.2, Math.min(4, 1.2 - farq * 0.12));
+      const men = golSoni(menOrtacha), raqib = golSoni(raqibOrtacha);
+
+      // голлар дақиқалари
+      const voqealar = [];
+      for (let g = 0; g < men; g++) voqealar.push({ daq: 1 + Math.floor(Math.random() * 90), biz: true, kim: golUrdi() });
+      for (let g = 0; g < raqib; g++) voqealar.push({ daq: 1 + Math.floor(Math.random() * 90), biz: false });
+      voqealar.sort((a, b) => a.daq - b.daq);
+
+      // жонли шарҳ: ҳар бир воқеа 0.8 сониядан кейин чиқади
+      $("oyna-tugma").disabled = true;
+      $("sharh").innerHTML = "🎙️ Ўйин бошланди! Сизнинг жамоангиз — " + r.nom + "<br>";
+      let a = 0, b = 0;
+      $("hisob").textContent = "0 : 0";
+      voqealar.forEach((v, k) => {
+        setTimeout(() => {
+          if (v.biz) { a++; $("sharh").innerHTML += "⚽ " + v.daq + "' ГООЛ! <b>" + v.kim + "</b> тўпни дарвозага киритди!<br>"; }
+          else { b++; $("sharh").innerHTML += "😬 " + v.daq + "' " + r.nom + " гол урди.<br>"; }
+          $("hisob").textContent = a + " : " + b;
+          $("sharh").scrollTop = 99999;
+        }, 800 * (k + 1));
+      });
+      setTimeout(() => {
+        $("sharh").innerHTML += "🏁 Ўйин тугади! " + (men > raqib ? "🎉 ҒАЛАБА!" : men === raqib ? "🤝 Дуранг." : "😞 Мағлубият.") + "<br>";
+        $("sharh").scrollTop = 99999;
+        natijalar.push({ men, raqib });
+        kunlikYoz(men, raqib);
+        saqla(); jadvalChiz(); chizish();
+        $("oyna-tugma").disabled = false;
+      }, 800 * (voqealar.length + 1));
+    };
+
+    $("qayta-tugma").onclick = () => {
+      mavsumBoshlandi = false; natijalar = [];
+      $("sharh").innerHTML = ""; $("hisob").textContent = ""; $("kubok").textContent = "";
+      saqla(); chizish();
+    };
+
+    // ===================== 7) МЕНЮ (бўлимлар) =====================
+    document.querySelectorAll("#menyu button").forEach((b) => {
+      b.onclick = () => {
+        document.querySelectorAll("#menyu button").forEach((x) => x.classList.toggle("faol", x === b));
+        ["menejer", "draft", "vazifalar", "kvest", "dokon"].forEach((n) =>
+          $("b-" + n).classList.toggle("yashirin", n !== b.dataset.b));
+        if (b.dataset.b === "vazifalar") vazifalarChiz();
+        if (b.dataset.b === "draft") draftChiz();
+      };
+    });
+
+    // ===================== 8) КУНЛИК ВАЗИФАЛАР =====================
+    function bugun() {
+      const d = new Date();
+      return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    }
+    // кун алмашса — вазифалар янгиланади
+    function kunlikTekshir() {
+      if (kunlik.sana !== bugun()) {
+        kunlik = { sana: bugun(), galaba: 0, gol: 0, kvest: 0, olindi: [false, false, false] };
+        saqla();
+      }
+    }
+    const vazifalar = [
+      { matn: "⚽ 2 та ўйинда ғалаба қозон", kalit: "galaba", kerak: 2, sovga: 500 },
+      { matn: "🥅 Жами 5 та гол ур", kalit: "gol", kerak: 5, sovga: 500 },
+      { matn: "🧩 1 та квестни тугат", kalit: "kvest", kerak: 1, sovga: 1000 }
+    ];
+    function kunlikYoz(men, raqib) {
+      kunlikTekshir();
+      kunlik.gol += men;
+      if (men > raqib) kunlik.galaba++;
+      saqla();
+    }
+    function vazifalarChiz() {
+      kunlikTekshir();
+      const joy = $("vazifa-royxat"); joy.innerHTML = "";
+      vazifalar.forEach((v, i) => {
+        const bor = Math.min(kunlik[v.kalit], v.kerak);
+        const quti = document.createElement("div");
+        quti.className = "vazifa";
+        quti.innerHTML = '<div style="flex:1"><b>' + v.matn + '</b> — ' + bor + "/" + v.kerak +
+          '<div class="chiziqcha"><div style="width:' + (bor / v.kerak * 100) + '%"></div></div></div>';
+        const t = document.createElement("button");
+        if (kunlik.olindi[i]) { t.textContent = "✅ Олинди"; t.disabled = true; }
+        else { t.textContent = "+" + v.sovga + " 💎"; t.disabled = bor < v.kerak; }
+        t.onclick = () => { kunlik.olindi[i] = true; olmosQosh(v.sovga); vazifalarChiz(); };
+        quti.appendChild(t);
+        joy.appendChild(quti);
+      });
+    }
+
+    // ===================== 9) КВЕСТ (футбол саволлари) =====================
+    // [савол, тўғри жавоб, 3 та нотўғри]
+    const savollar = [
+      ["2022 йилги жаҳон чемпионатида ким чемпион бўлди?", "Аргентина", ["Франция", "Бразилия", "Хорватия"]],
+      ["2018 йилги жаҳон чемпионатида ким чемпион бўлди?", "Франция", ["Хорватия", "Германия", "Бельгия"]],
+      ["2014 йилги жаҳон чемпионатида ким чемпион бўлди?", "Германия", ["Аргентина", "Бразилия", "Нидерландия"]],
+      ["2010 йилги жаҳон чемпионатида ким чемпион бўлди?", "Испания", ["Нидерландия", "Германия", "Италия"]],
+      ["Жаҳон чемпионатини энг кўп ютган давлат қайси?", "Бразилия", ["Германия", "Италия", "Аргентина"]],
+      ["Пеле неча марта жаҳон чемпиони бўлган?", "3 марта", ["1 марта", "2 марта", "4 марта"]],
+      ["Биринчи жаҳон чемпионати (1930) қайси давлатда бўлган?", "Уругвай", ["Бразилия", "Италия", "Англия"]],
+      ["2022 йилги жаҳон чемпионати қайси давлатда ўтган?", "Қатар", ["Россия", "Бразилия", "АҚШ"]],
+      ["2026 йилги жаҳон чемпионатини қайси давлатлар бирга ўтказди?", "АҚШ, Канада ва Мексика", ["Испания ва Португалия", "Саудия Арабистони", "Англия ва Шотландия"]],
+      ["Ўзбекистон терма жамоаси биринчи марта қайси жаҳон чемпионатига йўлланма олди?", "2026 йил", ["2018 йил", "2022 йил", "2014 йил"]],
+      ["Жаҳон чемпионати неча йилда бир марта ўтказилади?", "4 йилда", ["2 йилда", "3 йилда", "5 йилда"]],
+      ["Футбол жамоасидан майдонда бир вақтда нечта ўйинчи бўлади?", "11 та", ["10 та", "9 та", "12 та"]],
+      ["Футбол ўйинининг асосий вақти неча дақиқа?", "90 дақиқа", ["80 дақиқа", "100 дақиқа", "60 дақиқа"]],
+      ["Пенальти дарвозадан неча метр узоқликдан тепилади?", "11 метр", ["9 метр", "12 метр", "16 метр"]],
+      ["Битта ўйинда иккита сариқ карточка олса, нима бўлади?", "Қизил карточка — майдондан чиқарилади", ["Ҳеч нарса", "Пенальти берилади", "Жарима тўлайди"]],
+      ["Дарвозабон тўпни қўл билан фақат қаерда ушлай олади?", "Ўзининг жарима майдонида", ["Бутун майдонда", "Марказий доирада", "Ҳеч қаерда"]],
+      ["8 марта «Олтин тўп» олган футболчи ким?", "Лионель Месси", ["Криштиану Роналду", "Пеле", "Зинедин Зидан"]],
+      ["Криштиану Роналду қайси давлат футболчиси?", "Португалия", ["Испания", "Бразилия", "Италия"]],
+      ["Лионель Месси футболни қайси клуб академиясида ўрганган?", "Барселона", ["Реал Мадрид", "Манчестер Юнайтед", "ПСЖ"]],
+      ["Эрлинг Холанд қайси давлат футболчиси?", "Норвегия", ["Швеция", "Дания", "Германия"]],
+      ["Муҳаммад Салоҳ қайси давлат футболчиси?", "Миср", ["Марокаш", "Жазоир", "Тунис"]],
+      ["Лука Модрич қайси давлат футболчиси?", "Хорватия", ["Сербия", "Словения", "Босния"]],
+      ["Йохан Кройф қайси давлат футболчиси?", "Нидерландия", ["Бельгия", "Германия", "Дания"]],
+      ["Лев Яшинни қандай лақаб билан аташган?", "Қора ўргимчак", ["Темир девор", "Олтин қўл", "Кекса бургут"]],
+      ["«Феномен» лақабли бразилиялик ҳужумчи ким?", "Роналдо", ["Роналдиньо", "Ромарио", "Кака"]],
+      ["Марадонанинг машҳур «Худо қўли» голи қайси жаҳон чемпионатида урилган?", "1986 йил", ["1982 йил", "1990 йил", "1994 йил"]],
+      ["«Сантьяго Бернабеу» қайси клубнинг стадиони?", "Реал Мадрид", ["Барселона", "Атлетико Мадрид", "Севилья"]],
+      ["«Камп Ноу» қайси клубнинг стадиони?", "Барселона", ["Реал Мадрид", "Валенсия", "Бетис"]],
+      ["«Олд Траффорд» қайси клубнинг стадиони?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]],
+      ["«Анфилд» қайси клубнинг стадиони?", "Ливерпуль", ["Эвертон", "Манчестер Сити", "Тоттенхэм"]],
+      ["«Бавария» клуби қайси шаҳарда?", "Мюнхен", ["Берлин", "Дортмунд", "Гамбург"]],
+      ["«Ювентус» клубини қандай лақаб билан аташади?", "Кекса синьора", ["Қизил шайтонлар", "Тўпчилар", "Сарғишлар"]],
+      ["Евро-2016 чемпионатида ким ғолиб бўлди?", "Португалия", ["Франция", "Германия", "Испания"]],
+      ["Евро-2024 чемпионатида ким ғолиб бўлди?", "Испания", ["Англия", "Франция", "Германия"]],
+      ["Евро-2020 (2021 йилда ўтган) чемпионатида ким ғолиб бўлди?", "Италия", ["Англия", "Испания", "Дания"]],
+      ["Килиан Мбаппе 2018 йилда қайси терма жамоа билан жаҳон чемпиони бўлди?", "Франция", ["Бельгия", "Португалия", "Испания"]],
+      ["Зинедин Зидан қайси давлат терма жамоасида ўйнаган?", "Франция", ["Алжир", "Испания", "Италия"]],
+      ["Паоло Мальдини бутун карьерасини қайси клубда ўтказган?", "Милан", ["Интер", "Ювентус", "Рома"]],
+      ["Франц Беккенбауэрни қандай лақаб билан аташган?", "Кайзер", ["Барон", "Дюк", "Шоҳ"]],
+      ["Футболда «хет-трик» нима дегани?", "Бир ўйинда 3 та гол уриш", ["3 та сариқ карточка", "3 та пенальти", "3 марта ғалаба"]],
+      ["Лионель Месси қайси давлат футболчиси?", "Аргентина", ["Испания", "Уругвай", "Бразилия"]],
+      ["Неймар қайси давлат футболчиси?", "Бразилия", ["Аргентина", "Португалия", "Колумбия"]],
+      ["Роберт Левандовски қайси давлат футболчиси?", "Польша", ["Чехия", "Украина", "Германия"]],
+      ["Кевин Де Брёйне қайси давлат футболчиси?", "Бельгия", ["Нидерландия", "Дания", "Франция"]],
+      ["Гарри Кейн қайси давлат футболчиси?", "Англия", ["Шотландия", "Ирландия", "Уэльс"]],
+      ["Вирджил ван Дейк қайси давлат футболчиси?", "Нидерландия", ["Бельгия", "Германия", "Англия"]],
+      ["Златан Ибрагимович қайси давлат терма жамоасида ўйнаган?", "Швеция", ["Норвегия", "Босния", "Дания"]],
+      ["Дидье Дрогба қайси давлат терма жамоасида ўйнаган?", "Кот-д'Ивуар", ["Гана", "Нигерия", "Камерун"]],
+      ["Самуэль Это'о қайси давлат терма жамоасида ўйнаган?", "Камерун", ["Сенегал", "Гана", "Кот-д'Ивуар"]],
+      ["Андрей Шевченко қайси давлат терма жамоасида ўйнаган?", "Украина", ["Россия", "Беларусь", "Грузия"]],
+      ["Луис Суарес қайси давлат терма жамоасида ўйнаган?", "Уругвай", ["Аргентина", "Чили", "Парагвай"]],
+      ["2018 йилда «Олтин тўп»ни ким олди?", "Лука Модрич", ["Криштиану Роналду", "Лионель Месси", "Килиан Мбаппе"]],
+      ["2022 йилда «Олтин тўп»ни ким олди?", "Карим Бензема", ["Роберт Левандовски", "Лионель Месси", "Садио Мане"]],
+      ["Криштиану Роналду неча марта «Олтин тўп» олган?", "5 марта", ["3 марта", "4 марта", "7 марта"]],
+      ["«Арсенал» тарихидаги энг кўп гол урган футболчи ким?", "Тьерри Анри", ["Ян Райт", "Деннис Бергкамп", "Робин ван Перси"]],
+      ["Премьер-лига қайси давлатнинг чемпионати?", "Англия", ["Испания", "Италия", "Германия"]],
+      ["Ла Лига қайси давлатнинг чемпионати?", "Испания", ["Португалия", "Италия", "Франция"]],
+      ["Серия А қайси давлатнинг чемпионати?", "Италия", ["Испания", "Бразилия", "Франция"]],
+      ["Бундеслига қайси давлатнинг чемпионати?", "Германия", ["Австрия", "Нидерландия", "Швейцария"]],
+      ["«Эль-Класико» қайси икки клуб ўйини?", "Реал Мадрид ва Барселона", ["Милан ва Интер", "Ливерпуль ва Эвертон", "Бавария ва Боруссия"]],
+      ["«Альянц Арена» қайси клубнинг стадиони?", "Бавария", ["Боруссия Дортмунд", "Ювентус", "Интер"]],
+      ["«Сигнал Идуна Парк» қайси клубнинг стадиони?", "Боруссия Дортмунд", ["Бавария", "Шальке", "Байер"]],
+      ["Машҳур «Маракана» стадиони қайси шаҳарда?", "Рио-де-Жанейро", ["Буэнос-Айрес", "Сан-Паулу", "Мадрид"]],
+      ["«Уэмбли» стадиони қайси шаҳарда?", "Лондон", ["Манчестер", "Ливерпуль", "Бирмингем"]],
+      ["Катталар футболида қайси ўлчамдаги тўп ишлатилади?", "5-ўлчам", ["3-ўлчам", "4-ўлчам", "6-ўлчам"]],
+      ["Футбол ўйинини ким бошқаради?", "Ҳакам", ["Мураббий", "Капитан", "Дарвозабон"]],
+      ["Футболдаги VAR нима?", "Видео ёрдамчи ҳакам", ["Янги тўп тури", "Жарима тури", "Турнир номи"]],
+      ["Тўп ҳимоячига тегиб, ўз дарвоза чизиғидан чиқиб кетса, нима тайинланади?", "Бурчак тўпи (корнер)", ["Пенальти", "Аут", "Эркин зарба"]],
+      ["Қўшимча вақт (экстра тайм) жами неча дақиқа?", "30 дақиқа", ["10 дақиқа", "20 дақиқа", "45 дақиқа"]],
+      ["Ҳозирги қоидада жамоа ўйинда (асосий вақтда) нечта алмаштириш қила олади?", "5 та", ["3 та", "4 та", "6 та"]],
+      ["Футбол дарвозасининг кенглиги қанча?", "7,32 метр", ["5 метр", "6 метр", "9 метр"]],
+      ["Футбол дарвозасининг баландлиги қанча?", "2,44 метр", ["2 метр", "2,8 метр", "3 метр"]],
+      ["2006 йилги жаҳон чемпионатида ким чемпион бўлди?", "Италия", ["Франция", "Германия", "Бразилия"]],
+      ["2002 йилги жаҳон чемпионатида ким чемпион бўлди?", "Бразилия", ["Германия", "Туркия", "Жанубий Корея"]],
+      ["1998 йилги жаҳон чемпионатида ким чемпион бўлди?", "Франция", ["Бразилия", "Хорватия", "Нидерландия"]],
+      ["1986 йилги жаҳон чемпионатида ким чемпион бўлди?", "Аргентина", ["Германия", "Бразилия", "Италия"]],
+      ["2014 йилги жаҳон чемпионати финалида ғалаба голини ким урди?", "Марио Гётце", ["Томас Мюллер", "Мирослав Клозе", "Месут Озил"]],
+      ["2010 йилги жаҳон чемпионати финалида ғалаба голини ким урди?", "Андрес Иньеста", ["Давид Вилья", "Фернандо Торрес", "Хави"]],
+      ["2022 йилги жаҳон чемпионати финалида хет-трик урган футболчи ким?", "Килиан Мбаппе", ["Лионель Месси", "Хулиан Альварес", "Анхель Ди Мария"]],
+      ["Жаҳон чемпионатлари тарихида энг кўп гол урган футболчи ким?", "Мирослав Клозе", ["Пеле", "Роналдо", "Лионель Месси"]],
+      ["Евро-2004 чемпионатида ким ғолиб бўлди?", "Греция", ["Португалия", "Чехия", "Нидерландия"]],
+      ["Евро-2008 ва Евро-2012 да кетма-кет ким ғолиб бўлди?", "Испания", ["Германия", "Италия", "Франция"]],
+      ["2024 йилги Копа Америка кубогини ким ютди?", "Аргентина", ["Колумбия", "Бразилия", "Уругвай"]],
+      ["2024 йилда ўтган Осиё кубогини (Осиё-2023) ким ютди?", "Қатар", ["Иордания", "Япония", "Жанубий Корея"]],
+      ["Чемпионлар лигасини энг кўп ютган клуб қайси?", "Реал Мадрид", ["Милан", "Бавария", "Ливерпуль"]],
+      ["2025 йилда Чемпионлар лигасини ким ютди?", "ПСЖ", ["Интер", "Барселона", "Арсенал"]],
+      ["«Манчестер Сити» биринчи марта Чемпионлар лигасини қайси йили ютди?", "2023 йил", ["2019 йил", "2021 йил", "2012 йил"]],
+      ["Сэр Алекс Фергюсон қайси клубда узоқ йиллар мураббий бўлган?", "Манчестер Юнайтед", ["Ливерпуль", "Челси", "Арсенал"]],
+      ["Жозе Моуриньо ўзини қандай лақаб билан атаган?", "Махсус одам", ["Профессор", "Кайзер", "Генерал"]],
+      ["Пеленинг асл исми нима?", "Эдсон Арантис ду Насименту", ["Рональдо Луис Назарио", "Рикардо Изексон", "Жоао Пауло"]],
+      ["Диего Марадона Италияда қайси клубда машҳур бўлган?", "Наполи", ["Ювентус", "Милан", "Рома"]],
+      ["Криштиану Роналдунинг машҳур рақами қайси?", "7", ["9", "10", "11"]],
+      ["2022 йилги жаҳон чемпионатида ярим финалга чиққан биринчи Африка давлати қайси?", "Марокаш", ["Сенегал", "Камерун", "Гана"]],
+      ["Хорватия 2018 йилги жаҳон чемпионатида нечанчи ўринни олди?", "2-ўрин", ["1-ўрин", "3-ўрин", "4-ўрин"]],
+      ["Ўзбекистон чемпионатини энг кўп ютган клуб қайси?", "Пахтакор", ["Бунёдкор", "Насаф", "Навбаҳор"]],
+      ["«Пахтакор» клуби қайси шаҳардан?", "Тошкент", ["Самарқанд", "Наманган", "Қарши"]],
+      ["Ўзбекистон терма жамоасининг лақаби нима?", "Оқ бўрилар", ["Кўк бургутлар", "Олтин шерлар", "Тоғ барслари"]],
+      ["Абдукодир Хусанов 2025 йилда қайси клубга ўтди?", "Манчестер Сити", ["Ливерпуль", "Реал Мадрид", "Бавария"]],
+      ["Футзалда (зал футболида) майдонда ҳар жамоадан нечта ўйинчи бўлади?", "5 та", ["6 та", "7 та", "11 та"]],
+      ["«Олтин тўп» маросимида энг яхши дарвозабонга қайси афсона номидаги мукофот берилади?", "Лев Яшин", ["Жанлуиджи Буффон", "Олливер Кан", "Петр Чех"]],
+      // ⭐ Мустафонинг ўз саволи
+      ["Бу ўйинни ясаган Мустафонинг севимли клуби қайси?", "Реал Мадрид", ["Барселона", "Милан", "Бавария"]]
+    ];
+    let kvest = null;   // { savollar: [...10], i, togri, javobBerildi }
+    function aralash(m) { const k = m.slice(); for (let i = k.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [k[i], k[j]] = [k[j], k[i]]; } return k; }
+
+    $("kvest-boshla").onclick = () => {
+      kvest = { savollar: aralash(savollar).slice(0, 10), i: 0, togri: 0 };   // 101 тадан 10 таси тасодифий
+      $("kvest-boshla").classList.add("yashirin");
+      $("kvest-quti").classList.remove("yashirin");
+      $("kvest-natija").textContent = "";
+      savolKorsat();
+    };
+    function savolKorsat() {
+      const [savol, togri, notogri] = kvest.savollar[kvest.i];
+      $("kvest-raqam").textContent = "Савол " + (kvest.i + 1) + " / 10 · ✅ " + kvest.togri;
+      $("kvest-savol").textContent = savol;
+      $("kvest-javoblar").innerHTML = "";
+      $("kvest-keyingi").classList.add("yashirin");
+      aralash([togri].concat(notogri)).forEach((j) => {
+        const b = document.createElement("button");
+        b.textContent = j;
+        b.onclick = () => {
+          document.querySelectorAll("#kvest-javoblar button").forEach((x) => {
+            x.disabled = true;
+            if (x.textContent === togri) x.classList.add("togri");
+          });
+          if (j === togri) kvest.togri++; else b.classList.add("notogri");
+          $("kvest-raqam").textContent = "Савол " + (kvest.i + 1) + " / 10 · ✅ " + kvest.togri;
+          $("kvest-keyingi").textContent = kvest.i < 9 ? "Кейинги ➡️" : "Натижа 🏆";
+          $("kvest-keyingi").classList.remove("yashirin");
+        };
+        $("kvest-javoblar").appendChild(b);
+      });
+    }
+    $("kvest-keyingi").onclick = () => {
+      if (kvest.i < 9) { kvest.i++; savolKorsat(); return; }
+      // квест тугади
+      const sovga = kvest.togri * 300;
+      $("kvest-savol").textContent = "";
+      $("kvest-javoblar").innerHTML = "";
+      $("kvest-keyingi").classList.add("yashirin");
+      $("kvest-raqam").textContent = "";
+      $("kvest-natija").innerHTML = (kvest.togri === 10 ? "🏆 АЪЛО! Ҳаммаси тўғри!" : "🧩 Квест тугади!") +
+        "<br>Тўғри жавоблар: " + kvest.togri + " / 10 · Мукофот: <b class='olmos'>" + sovga + " 💎</b>";
+      kunlikTekshir(); kunlik.kvest++;
+      $("kvest-boshla").classList.remove("yashirin");
+      $("kvest-boshla").textContent = "🔄 Яна квест";
+      if (sovga) olmosQosh(sovga); else { saqla(); chizish(); }
+    };
+
+    // ===================== 10) ДЎКОН =====================
+    document.querySelectorAll("#b-dokon button[data-narx]").forEach((b) => {
+      b.onclick = () => {
+        const narx = Number(b.dataset.narx);
+        if (olmos < narx) { xabar("💎 Олмос етмайди! Квест ва вазифаларни бажар."); return; }
+        olmos -= narx;
+        qoshimchaPul += (b.dataset.m === "pul15" ? 15 : 5);
+        saqla(); chizish();
+        xabar("✅ Трансфер пули ошди! Энди: " + budjet() + " млн");
+      };
+    });
+
+    // ===================== 11) ДРАФТ =====================
+    const tartib = ["Д", "Ҳ", "Ҳ", "Ҳ", "Ҳ", "Я", "Я", "Я", "Ҳу", "Ҳу", "Ҳу"];   // қайси жой қачон танланади
+    let draftVariantlar = [];
+    const draftJamoa = () => draft.jamoa.map(topish);
+    const draftKuchi = () => draft.jamoa.length ? Math.round(draftJamoa().reduce((s, o) => s + o.kuch, 0) / draft.jamoa.length) : 0;
+
+    $("draft-boshla").onclick = () => {
+      if (draft.faol && draft.jamoa.length < 11) { xabar("Драфт давом этяпти — танлашни тугат!"); return; }
+      if (olmos < 1000) { xabar("💎 Драфт учун 1000 олмос керак. Квест ўйна!"); return; }
+      olmos -= 1000;
+      draft = { faol: true, jamoa: [], natijalar: [] };
+      draftVariantlar = [];
+      saqla(); chizish(); draftChiz();
+    };
+    function draftChiz() {
+      maydonChiz("draft-maydon", draftJamoa());
+      $("draft-kuch").textContent = draft.jamoa.length ? "· 💪 " + draftKuchi() : "";
+      const tanlash = draft.faol && draft.jamoa.length < 11;
+      $("draft-tanlov").classList.toggle("yashirin", !tanlash);
+      $("draft-boshla").classList.toggle("yashirin", draft.faol && draft.natijalar.length < raqiblar.length);
+      $("draft-mavsum").classList.toggle("yashirin", !(draft.faol && draft.jamoa.length === 11) && !draft.natijalar.length);
+      if (tanlash) {
+        const poz = tartib[draft.jamoa.length];
+        if (!draftVariantlar.length) {
+          // шу позициядаги, ҳали олинмаган ўйинчилардан 3 та тасодифийси
+          draftVariantlar = aralash(oyinchilar.filter((o) => o.poz === poz && !draft.jamoa.includes(o.ism))).slice(0, 3).map((o) => o.ism);
+        }
+        $("draft-sarlavha").textContent = "Танла: " + pozNomi[poz] + " (" + (draft.jamoa.length + 1) + "/11)";
+        $("draft-variantlar").innerHTML = "";
+        draftVariantlar.map(topish).forEach((o) => {
+          const d = document.createElement("div");
+          d.className = "oyinchi";
+          d.innerHTML = '<span class="reyting">' + o.kuch + '</span> <span class="poz">' + o.poz + '</span><div class="ism">' + o.ism + '</div><div class="narx">👆 Танлаш</div>';
+          d.onclick = () => { draft.jamoa.push(o.ism); draftVariantlar = []; saqla(); draftChiz(); };
+          $("draft-variantlar").appendChild(d);
+        });
+      }
+      draftJadval();
+    }
+    function draftJadval() {
+      let h = "<tr><th>Рақиб</th><th>Кучи</th><th>Натижа</th></tr>";
+      raqiblar.forEach((r, i) => {
+        const n = draft.natijalar[i];
+        const nat = n ? '<span class="' + (n.men > n.raqib ? "galaba" : n.men === n.raqib ? "durang" : "maglub") + '">' + n.men + " : " + n.raqib + "</span>" : "—";
+        h += "<tr><td>" + r.nom + "</td><td>" + r.kuch + "</td><td>" + nat + "</td></tr>";
+      });
+      $("draft-jadval").innerHTML = h;
+      const tugadi = draft.natijalar.length >= raqiblar.length;
+      $("draft-oyna").classList.toggle("yashirin", tugadi || draft.jamoa.length < 11);
+      if (tugadi) {
+        const g = draft.natijalar.filter((n) => n.men > n.raqib).length;
+        $("draft-kubok").innerHTML = "Драфт тугади! Ғалабалар: " + g + " / 5 · Ютуқ: <b class='olmos'>" + g * 500 + " 💎</b>";
+      } else $("draft-kubok").textContent = "";
+    }
+    $("draft-oyna").onclick = () => {
+      const r = raqiblar[draft.natijalar.length];
+      const farq = draftKuchi() - r.kuch;
+      const men = golSoni(Math.max(0.3, Math.min(4, 1.4 + farq * 0.12)));
+      const raqib = golSoni(Math.max(0.2, Math.min(4, 1.2 - farq * 0.12)));
+      const voqealar = [];
+      for (let g = 0; g < men; g++) voqealar.push({ daq: 1 + Math.floor(Math.random() * 90), biz: true, kim: golUrdi(draftJamoa()) });
+      for (let g = 0; g < raqib; g++) voqealar.push({ daq: 1 + Math.floor(Math.random() * 90), biz: false });
+      voqealar.sort((a, b) => a.daq - b.daq);
+      $("draft-oyna").disabled = true;
+      $("draft-sharh").innerHTML = "🎙️ Драфт ўйини: сизнинг жамоа — " + r.nom + "<br>";
+      $("draft-hisob").textContent = "0 : 0";
+      let a = 0, b = 0;
+      voqealar.forEach((v, k) => setTimeout(() => {
+        if (v.biz) { a++; $("draft-sharh").innerHTML += "⚽ " + v.daq + "' ГООЛ! <b>" + v.kim + "</b>!<br>"; }
+        else { b++; $("draft-sharh").innerHTML += "😬 " + v.daq + "' " + r.nom + " гол урди.<br>"; }
+        $("draft-hisob").textContent = a + " : " + b;
+      }, 800 * (k + 1)));
+      setTimeout(() => {
+        draft.natijalar.push({ men, raqib });
+        kunlikYoz(men, raqib);
+        $("draft-sharh").innerHTML += "🏁 " + (men > raqib ? "🎉 ҒАЛАБА! +500 💎" : men === raqib ? "🤝 Дуранг." : "😞 Мағлубият.") + "<br>";
+        $("draft-oyna").disabled = false;
+        if (men > raqib) olmosQosh(500); else { saqla(); chizish(); }
+        draftChiz();
+      }, 800 * (voqealar.length + 1));
+    };
+
+    kunlikTekshir();
+
+    chizish();
+  </script>
+</body>
+</html>
