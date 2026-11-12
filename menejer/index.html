@@ -111,6 +111,19 @@
       </div>
     </div>
 
+    <!-- ===== КЛУБ НОМЛАРИ ===== -->
+    <div class="karta">
+      <h2>🏷️ Клубим ва рақиблар</h2>
+      <label>Менинг клубим номи <b style="color:#ff8a80">*</b></label>
+      <input type="text" id="klub-nomi" maxlength="30" placeholder="Масалан: Мустафо ФК"
+             style="width:100%;box-sizing:border-box;font-size:17px;padding:8px 10px;border-radius:10px;border:2px solid #ffd54f;margin:4px 0 10px">
+      <details>
+        <summary style="cursor:pointer">🆚 Рақиб клублар номларини ўзгартириш</summary>
+        <div id="raqib-nomlari" style="margin-top:8px"></div>
+      </details>
+      <p style="text-align:center;margin:10px 0 0"><button id="klub-saqla">💾 Сақлаш</button></p>
+    </div>
+
     <div id="b-menejer">
 
     <!-- 2) Майдон (4-3-3) -->
@@ -252,14 +265,15 @@
     const BOSHLANGICH_PUL = 115;
     const budjet = () => BOSHLANGICH_PUL + qoshimchaPul;   // дўкондан олинган пул ҳам қўшилади
 
-    // ===== 2) РАҚИБЛАР (ўйлаб топилган жамоалар) =====
+    // ===== 2) РАҚИБЛАР — номларини ўйинчи ўзгартира олади, кучлари ўйин учун ўйлаб топилган =====
     const raqiblar = [
-      { nom: "🦅 Оқ лочинлар", kuch: 82 },
-      { nom: "⛰️ Тоғ бургутлари", kuch: 85 },
-      { nom: "🦁 Олтин шерлар", kuch: 88 },
-      { nom: "🐯 Кўк йўлбарслар", kuch: 90 },
-      { nom: "🛡️ Темир дарвоза", kuch: 92 }
+      { nom: "🇳🇱 Аякс", kuch: 82 },
+      { nom: "🇵🇹 Порту", kuch: 85 },
+      { nom: "🇩🇪 Боруссия Дортмунд", kuch: 88 },
+      { nom: "🇪🇸 Барселона", kuch: 90 },
+      { nom: "🇩🇪 Бавария", kuch: 92 }
     ];
+    let klubNomi = "";     // ўз клубингнинг номи (ёзилиши шарт)
 
     // ===== 3) ҲОЛАТ (localStorage'да сақланади) =====
     let jamoa = [];          // сотиб олинган ўйинчилар (исмлари)
@@ -277,9 +291,12 @@
       qoshimchaPul = s.qoshimchaPul || 0;
       kunlik = s.kunlik || {};
       draft = s.draft || draft;
+      klubNomi = s.klubNomi || "";
+      (s.raqibNomlari || []).forEach((n, i) => { if (n && raqiblar[i]) raqiblar[i].nom = n; });
     } catch (e) {}
     function saqla() {
-      try { localStorage.setItem("menejer", JSON.stringify({ jamoa, natijalar, mavsumBoshlandi, olmos, qoshimchaPul, kunlik, draft })); } catch (e) {}
+      try { localStorage.setItem("menejer", JSON.stringify({ jamoa, natijalar, mavsumBoshlandi, olmos, qoshimchaPul, kunlik, draft,
+        klubNomi, raqibNomlari: raqiblar.map((r) => r.nom) })); } catch (e) {}
     }
     function xabar(m) {
       const x = document.getElementById("xabar"); x.innerHTML = m; x.style.display = "block";
@@ -376,7 +393,15 @@
     }
 
     // ===== 6) МАВСУМ =====
+    // клуб номи ёзилмаган бўлса — ўйин бошланмайди
+    function klubBormi() {
+      if (klubNomi) return true;
+      xabar("🏷️ Аввал клубингнинг номини ёз ва «Сақлаш»ни бос!");
+      $("klub-nomi").focus(); $("klub-nomi").scrollIntoView({ behavior: "smooth", block: "center" });
+      return false;
+    }
     $("boshla-tugma").onclick = () => {
+      if (!klubBormi()) return;
       mavsumBoshlandi = true; natijalar = [];
       $("sharh").innerHTML = ""; $("hisob").textContent = ""; $("kubok").textContent = "";
       saqla(); chizish();
@@ -439,7 +464,7 @@
 
       // жонли шарҳ: ҳар бир воқеа 0.8 сониядан кейин чиқади
       $("oyna-tugma").disabled = true;
-      $("sharh").innerHTML = "🎙️ Ўйин бошланди! Сизнинг жамоангиз — " + r.nom + "<br>";
+      $("sharh").innerHTML = "🎙️ Ўйин бошланди! <b>" + klubNomi + "</b> — " + r.nom + "<br>";
       let a = 0, b = 0;
       $("hisob").textContent = "0 : 0";
       voqealar.forEach((v, k) => {
@@ -691,6 +716,7 @@
     const draftKuchi = () => draft.jamoa.length ? Math.round(draftJamoa().reduce((s, o) => s + o.kuch, 0) / draft.jamoa.length) : 0;
 
     $("draft-boshla").onclick = () => {
+      if (!klubBormi()) return;
       if (draft.faol && draft.jamoa.length < 11) { xabar("Драфт давом этяпти — танлашни тугат!"); return; }
       if (olmos < 1000) { xabar("💎 Драфт учун 1000 олмос керак. Квест ўйна!"); return; }
       olmos -= 1000;
@@ -748,7 +774,7 @@
       for (let g = 0; g < raqib; g++) voqealar.push({ daq: 1 + Math.floor(Math.random() * 90), biz: false });
       voqealar.sort((a, b) => a.daq - b.daq);
       $("draft-oyna").disabled = true;
-      $("draft-sharh").innerHTML = "🎙️ Драфт ўйини: сизнинг жамоа — " + r.nom + "<br>";
+      $("draft-sharh").innerHTML = "🎙️ Драфт ўйини: <b>" + klubNomi + "</b> — " + r.nom + "<br>";
       $("draft-hisob").textContent = "0 : 0";
       let a = 0, b = 0;
       voqealar.forEach((v, k) => setTimeout(() => {
@@ -765,6 +791,34 @@
         draftChiz();
       }, 800 * (voqealar.length + 1));
     };
+
+    // ===================== 12) КЛУБ НОМЛАРИ =====================
+    function klubFormaChiz() {
+      $("klub-nomi").value = klubNomi;
+      $("raqib-nomlari").innerHTML = "";
+      raqiblar.forEach((r, i) => {
+        const q = document.createElement("div");
+        q.style.cssText = "display:flex;gap:6px;align-items:center;margin:4px 0";
+        q.innerHTML = '<span style="min-width:70px">' + (i + 1) + '-рақиб (💪' + r.kuch + ')</span>';
+        const inp = document.createElement("input");
+        inp.type = "text"; inp.maxLength = 30; inp.value = r.nom; inp.dataset.i = i;
+        inp.style.cssText = "flex:1;font-size:15px;padding:6px 8px;border-radius:8px;border:1px solid #ccc";
+        q.appendChild(inp);
+        $("raqib-nomlari").appendChild(q);
+      });
+    }
+    $("klub-saqla").onclick = () => {
+      const nom = $("klub-nomi").value.trim();
+      if (!nom) { xabar("🏷️ Клуб номи ёзилиши шарт!"); $("klub-nomi").focus(); return; }
+      klubNomi = nom;
+      document.querySelectorAll("#raqib-nomlari input").forEach((inp) => {
+        const v = inp.value.trim();
+        if (v) raqiblar[inp.dataset.i].nom = v;     // бўш қолса — эски номи қолади
+      });
+      saqla(); chizish(); draftChiz(); klubFormaChiz();
+      xabar("✅ Сақланди! Клубинг: " + klubNomi);
+    };
+    klubFormaChiz();
 
     kunlikTekshir();
 
